@@ -8,4 +8,3 @@ if Wagn.config.gmail_user
   end
   
 end
-#scheduler.join
