@@ -88,7 +88,7 @@ end
 
 format :html do
   view :missing  do |args|
-    if card.new_card? && (l=left) && l.respond_to? :vote_count
+    if card.new_card? && (l=left) && l.respond_to?( :vote_count )
       Auth.as_bot do
         card.update_votecount
         card.save!
