@@ -41,18 +41,18 @@ def direct_contribution_count
   return left.upvote_count.to_i + left.downvote_count.to_i
 end
 
-def update_votecount 
+def update_votecount
   up_count   = Auth.as_bot { Card.search( :right_plus=>[{:codename=>'upvotes'  },:link_to=>left.name], :return=>'count' ) }
   down_count = Auth.as_bot { Card.search( :right_plus=>[{:codename=>'downvotes'},:link_to=>left.name], :return=>'count' ) }
-  
+
   uvc = left.upvote_count_card
   uvc.auto_content = true
   subcards[uvc.name] = up_count.to_s
-  
+
   dvc = left.downvote_count_card
   dvc.auto_content = true
   subcards[dvc.name] = down_count.to_s
-  
+
   self.content = (up_count - down_count).to_s
   self.auto_content = true
 end
@@ -78,7 +78,7 @@ event :vote, :before=>:approve, :on=>:update, :when=>proc{ |c| Env.params['vote'
     when 'down' then vote_down
     end
   else
-   path_hash = {:card=>self, :action=>:update, 
+   path_hash = {:card=>self, :action=>:update,
                  :success=>{:id=>left.name}, :vote=>Env.params['vote'] }
    self.format.save_interrupted_action path_hash
    abort :success => "REDIRECT: #{Card[:signin].cardname.url_key}"
@@ -86,7 +86,7 @@ event :vote, :before=>:approve, :on=>:update, :when=>proc{ |c| Env.params['vote'
 end
 
 
-format :html do  
+format :html do
   view :missing  do |args|
     if card.new_card? && (l=left) && l.respond_to? :vote_count
       Auth.as_bot do
@@ -98,21 +98,21 @@ format :html do
       super(args)
     end
   end
-  
+
   view :new, :missing
-  
+
   def disabled_vote_link up_or_down, message, extra={}
-    button_tag({:disabled=>true, 
+    button_tag({:disabled=>true,
         :class=>"slotter disabled-vote-link vote-button", :type=>'button', :title=>message}.merge(extra)) do
-      "<i class=\"fa fa-angle-#{up_or_down} fa-4x\"></i>"
+      "<i class=\"fa fa-angle-#{up_or_down} \"></i>"
     end
   end
 
   def vote_link text, title, up_or_down, view, extra={}
-    path_hash = {:card=>card, :action=>:update, :view=>view} #, 
+    path_hash = {:card=>card, :action=>:update, :view=>view} #,
     path_hash[:vote] = up_or_down
-    
-    button_tag({:href=>path(path_hash), 
+
+    button_tag({:href=>path(path_hash),
         :class=>"slotter vote-link vote-button", :type=>'button', :title=>title, :remote=>true, :method=>'post'}.merge(extra)) do
       text
     end
@@ -125,7 +125,7 @@ format :html do
     when '+'
       disabled_vote_link :up, "You have already upvoted this claim."
     else
-      vote_link '<i class="fa fa-angle-up fa-4x"></i>', "Vote up", :up, success_view
+      vote_link '<i class="fa fa-angle-up "></i>', "Vote up", :up, success_view
     end
   end
 
@@ -134,15 +134,15 @@ format :html do
     when '-'
       disabled_vote_link :down, "You have already downvoted this claim."
     else
-      vote_link '<i class="fa fa-angle-down fa-4x"></i>', "Vote down", :down, success_view
+      vote_link '<i class="fa fa-angle-down "></i>', "Vote down", :down, success_view
     end
   end
-  
+
 
   def wrap_with_class css_class
      "<div class=\"#{css_class}\">#{output yield}</div>"
   end
-  
+
   view :content do |args|
     wrap args.merge(:slot_class=>'card-content nodblclick') do
       [
@@ -153,14 +153,14 @@ format :html do
       ]
     end
   end
-  
+
   view :core do |args|
     wrap_with_class('vote-count') do
       super(args)
     end
   end
-  
-  def up_details 
+
+  def up_details
     render_haml :up_count=>card.left.upvote_count do %{
 %span.vote-details
   <i class="fa fa-users"></i>
@@ -170,7 +170,7 @@ format :html do
       }
     end
   end
-  
+
   def down_details
     render_haml :down_count=>card.left.downvote_count do %{
 %span.vote-details
@@ -181,25 +181,24 @@ format :html do
       }
     end
   end
-  
+
   view :details do |args |
-    wrap args.merge(:slot_class=>'nodblclick') do 
+    wrap args.merge(:slot_class=>'nodblclick') do
       [
-        wrap_with_class('vote-up') do 
+        wrap_with_class('vote-up') do
           [
             vote_up_link(:details),
             up_details
           ]
-        end, 
+        end,
         _render_core( args ),
         wrap_with_class('vote-down') do
           [
             vote_down_link(:details),
             down_details
           ]
-        end 
-      ]      
+        end
+      ]
     end
   end
 end
-
