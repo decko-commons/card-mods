@@ -1,4 +1,4 @@
-if Wagn.config.gmail_user
+if Wagn.config.respond_to?(:gmail_user) && Wagn.config.gmail_user
   require 'rufus-scheduler'
 
   scheduler = Rufus::Scheduler.new
