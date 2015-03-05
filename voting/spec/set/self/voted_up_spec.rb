@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Set::Self::Voted do 
+describe Card::Set::Self::VotedUp do 
   before do
     Card::Auth.current_id = Card['Joe Admin'].id
     @claim = create_claim "another voting claim"
