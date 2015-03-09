@@ -2,9 +2,10 @@ include Card::FollowOption
 
 self.restrictive_follow_opts :position=>3
 
-def applies_to? card, user_id
-  (user= Card.fetch user_id.to_i) && (user.upvotes_card.include_item?(card.id) || user.downvotes_card.include_item?(card.id))
+self.follower_candidate_ids do |card|
+  Card.search :right_plus=>[ Card[:upvotes].name, { :refer_to=>card.name } ]
 end
+
 
 def title
   'Following content you voted up'
