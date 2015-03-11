@@ -78,8 +78,7 @@ event :vote, :before=>:approve, :on=>:update, :when=>proc{ |c| Env.params['vote'
     when 'down' then vote_down
     end
   else
-   path_hash = {:card=>self, :action=>:update,
-                 :success=>{:id=>left.name}, :vote=>Env.params['vote'] }
+   path_hash = {:action=>:update, :success=>{:id=>left.name}, :vote=>Env.params['vote'] }
    self.format.save_interrupted_action path_hash
    abort :success => "REDIRECT: #{Card[:signin].cardname.url_key}"
   end
@@ -109,7 +108,7 @@ format :html do
   end
 
   def vote_link text, title, up_or_down, view, extra={}
-    path_hash = {:card=>card, :action=>:update, :view=>view} #,
+    path_hash = {:action=>:update, :view=>view} #,
     path_hash[:vote] = up_or_down
 
     button_tag({:href=>path(path_hash),
