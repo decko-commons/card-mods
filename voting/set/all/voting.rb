@@ -1,3 +1,28 @@
+def save_session_votes
+  [:up_vote, :down_vote].each do |vote_type| 
+    if Env.session[vote_type]
+      Env.session[vote_type].each do |votee_name|
+        if (votee = Card.fetch(votee_name))
+          update_vote votee, vote_type
+        end
+      end
+      Env.session.delete(vote_type)
+    end
+  end
+end
+
+
+def update_vote votee, vote_type
+  vote_card = votee.vote_count_card
+  case vote_type
+  when :up_vote
+    vote_card.force_up
+  when :down_vote
+    vote_card.force_down
+  end
+  vote_card.save!
+end
+
 format :html do
   
   view :titled_with_voting, :tags=>:comment do |args|
