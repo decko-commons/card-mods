@@ -19,14 +19,13 @@ describe Card::Set::Self::VotedUp do
     end 
     context "when upvoted by Joe User" do
       before do
-        Card::Auth.as_bot { @card.vote_up; @card.save! }
-        Card.follow_caches_expired
+        Card::Auth.as_bot { @card.vote_up }
       end
       it { is_expected.to include("Joe User")}
     end
     context "when downvoted by Joe User" do
       before do
-        Card::Auth.as_bot { @card.vote_down; @card.save! }
+        Card::Auth.as_bot { @card.vote_down }
       end
       it { is_expected.not_to include("Joe User")}
     end
