@@ -189,6 +189,10 @@ format :html do
     end
   end
 
+  def vote_link text, title, up_or_down, view, extra={}
+    path_hash = {:action=>:update, :view=>view} #,
+    path_hash[:vote] = up_or_down
+
   view :core do |args|
     wrap_with :div, :class=>'vote-count' do
       super(args)

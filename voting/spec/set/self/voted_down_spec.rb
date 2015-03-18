@@ -11,12 +11,12 @@ describe Card::Set::Self::VotedDown do
   
   
   describe "follow card I voted for" do
-    subject { 
-      @claim.follower_names
-    }
+    subject { @claim.follower_names }
+    
     context "when not voted" do
       it { is_expected.not_to include("Joe User")}
-    end 
+    end
+    
     context "when upvoted by user" do
       before do
         Card::Auth.as_bot { @card.vote_up }
@@ -24,11 +24,14 @@ describe Card::Set::Self::VotedDown do
       end
       it { is_expected.not_to include("Joe User")}
     end
+    
     context "when downvoted by user" do
       before do
         Card::Auth.as_bot { @card.vote_down }  
+        Card.follow_caches_expired
+        
       end
-      it { is_expected.to include("Joe User")}
+      it { is_expected.to include("Joe User")   }
     end
   end
 end

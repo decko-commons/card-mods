@@ -3,7 +3,7 @@ include Card::FollowOption
 self.restrictive_follow_opts :position=>3
 
 self.follower_candidate_ids do |card|
-  Card.search :right_plus=>[ Card[:downvotes].name, { :refer_to=>card.name } ]
+  Card.search :right_plus=>[ Card[:downvotes].name, { :refer_to=>card.name } ], :return=>:id
 end
 
 
