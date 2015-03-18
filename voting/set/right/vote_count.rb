@@ -15,78 +15,92 @@ def votee
   cardname.left
 end
 
-def vote_up
+def vote_up insert_before_id=false
   if Auth.signed_in?
     Auth.as_bot do
       case vote_status
       when '?'
         uv_card = Auth.current.upvotes_card
-        if uv_card.add_id left.id
-          uv_card.save!
-          update_votecount
-        end
+        add_vote uv_card, left.id, insert_before_id
       when '-'
         dv_card = Auth.current.downvotes_card
-        if dv_card.drop_id left.id
-          dv_card.save!
-          update_votecount
-        end
+        delete_vote dv_card, left.id
       end
     end
   elsif session_vote?
     if downvoted_in_session?
-      Env.session[:down_vote].delete votee
+      Env.session[:down_vote].delete left.id
     else
-      Env.session[:up_vote] ||= []
-      Env.session[:up_vote] << votee
+      add_vote_to_session :up_vote, left.id, insert_before_id
     end
   end
 end
 
-def vote_down
+def vote_down insert_before_id=false
   if Auth.signed_in?
     Auth.as_bot do
       case vote_status
       when '?'
         dv_card = Auth.current.downvotes_card
-        if dv_card.add_id left.id
-          dv_card.save!
-          update_votecount
-        end
+        add_vote dv_card, left.id, insert_before_id
       when '+'
         uv_card = Auth.current.upvotes_card
-        if uv_card.drop_id left.id
-          uv_card.save!
-          update_votecount
-        end
+        delete_vote uv_card, left.id
       end
     end
   elsif session_vote?    
     if upvoted_in_session?
-      Env.session[:up_vote].delete votee
+      Env.session[:up_vote].delete left.id
     else
-      Env.session[:down_vote] ||= []
-      Env.session[:down_vote] << votee
+      add_vote_to_session :down_vote, left.id, insert_before_id
     end
   end
 end
+
+def add_vote vote_card, votee_id, insert_before_id=false
+  if insert_before_id
+    vote_card.insert_id_before votee_id, insert_before_id
+    vote_card.save!
+    update_votecount
+  else vote_card.add_id votee_id
+    vote_card.save!
+    update_votecount
+  end
+end
+
+def delete_vote vote_card, votee_id
+  if vote_card.drop_id votee_id
+    vote_card.save!
+    update_votecount
+  end
+end
+
+def add_vote_to_session vote_type, votee_id, insert_before_id
+  Env.session[vote_type] ||= []
+  if insert_before_id
+    index = Env.session[vote_type].index(insert_before_id)
+    Env.session[vote_type].insert(index, votee_id)
+  else
+    Env.session[vote_type] << votee_id
+  end
+end
     
-def force_up
-  vote_up
-  vote_up if vote_status != '+'
+def force_up insert_before_id=false
+  vote_up insert_before_id
+  vote_up(insert_before_id) if vote_status != '+'
 end
 
-def force_down
-  vote_down
-  vote_down if vote_status != '-'
+def force_down insert_before_id=false
+  vote_down insert_before_id
+  vote_down(insert_before_id) if vote_status != '-'
 end
 
-def force_neutral
+def force_neutral insert_before_id=false
   case vote_status
   when '-'
-    vote_up
+    vote_up insert_before_id
   when '+'
-    vote_down
+    vote_down insert_before_id
   end
 end
 
@@ -147,11 +161,11 @@ end
 event :vote, :before=>:approve, :on=>:update, :when=>proc{ |c| Env.params['vote'] } do
   if Auth.signed_in? || session_vote?
     case Env.params['vote']
-    when 'up' then vote_up
-    when 'down' then vote_down
-    when 'force-up' then force_up
-    when 'force-down' then force_down
-    when 'force-neutral' then force_neutral
+    when 'up' then vote_up Env.params['insert-before']
+    when 'down' then vote_down Env.params['insert-before']
+    when 'force-up' then force_up Env.params['insert-before']
+    when 'force-down' then force_down Env.params['insert-before']
+    when 'force-neutral' then force_neutral Env.params['insert-before']
     end
   else
     path_hash = {:card=>self, :action=>:update,
