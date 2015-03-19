@@ -1,8 +1,8 @@
 def save_session_votes
   [:up_vote, :down_vote].each do |vote_type| 
     if Env.session[vote_type]
-      Env.session[vote_type].each do |votee_name|
-        if (votee = Card.fetch(votee_name))
+      Env.session[vote_type].each do |votee_id|
+        if (votee = Card.fetch(votee_id))
           update_vote votee, vote_type
         end
       end

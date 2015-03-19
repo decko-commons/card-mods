@@ -5,10 +5,10 @@ def session_vote?
 end
   
 def downvoted_in_session?
-  Env.session[:down_vote] && Env.session[:down_vote].include?(votee)
+  Env.session[:down_vote] && Env.session[:down_vote].include?(left.id)
 end
 def upvoted_in_session?
-  Env.session[:up_vote] && Env.session[:up_vote].include?(votee)
+  Env.session[:up_vote] && Env.session[:up_vote].include?(left.id)
 end
 
 def votee
@@ -77,8 +77,8 @@ end
 
 def add_vote_to_session vote_type, votee_id, insert_before_id
   Env.session[vote_type] ||= []
-  if insert_before_id
-    index = Env.session[vote_type].index(insert_before_id)
+  Env.session[vote_type].delete(votee_id)
+  if insert_before_id && (index = Env.session[vote_type].index(insert_before_id))
     Env.session[vote_type].insert(index, votee_id)
   else
     Env.session[vote_type] << votee_id
@@ -107,9 +107,9 @@ end
 
 def raw_content
   if !Auth.signed_in? && session_vote?    
-    if Env.session[:up_vote] && Env.session[:up_vote].include?(cardname.left)
+    if Env.session[:up_vote] && Env.session[:up_vote].include?(left.id)
       return (content.to_i + 1).to_s
-    elsif Env.session[:down_vote] && Env.session[:down_vote].include?(cardname.left)
+    elsif Env.session[:down_vote] && Env.session[:down_vote].include?(left.id)
       return (content.to_i - 1).to_s
     end
   end
@@ -160,13 +160,16 @@ end
 
 event :vote, :before=>:approve, :on=>:update, :when=>proc{ |c| Env.params['vote'] } do
   if Auth.signed_in? || session_vote?
+    successor_id = (Env.params['insert-before'] && Env.params['insert-before'].to_i)
     case Env.params['vote']
-    when 'up' then vote_up Env.params['insert-before']
-    when 'down' then vote_down Env.params['insert-before']
-    when 'force-up' then force_up Env.params['insert-before']
-    when 'force-down' then force_down Env.params['insert-before']
-    when 'force-neutral' then force_neutral Env.params['insert-before']
+    when 'up' then vote_up successor_id
+    when 'down' then vote_down successor_id
+    when 'force-up' then force_up successor_id
+    when 'force-down' then force_down successor_id
+    when 'force-neutral' then force_neutral successor_id
     end
+    
+    abort :success if !Auth.signed_in? && session_vote?
   else
     path_hash = {:card=>self, :action=>:update,
                  :success=>{:id=>left.name}, :vote=>Env.params['vote'] }

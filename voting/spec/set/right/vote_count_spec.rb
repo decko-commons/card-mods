@@ -186,4 +186,80 @@ describe Card::Set::Right::VoteCount do
       end
     end
   end
+  
+  describe "session votes" do
+    subject { @vcard.raw_content.to_i }
+    before do
+      Card::Auth.current_id = Card::AnonymousID
+      @topic = get_a_sample_topic
+      @vcard = @topic.vote_count_card
+    end
+    
+    
+    describe "#vote_up" do
+      context "when voted down" do
+        before do
+          @vcard.vote_down
+          @vc = @vcard.raw_content.to_i
+          @vcard.vote_up
+        end
+        it "increases vote count" do
+          is_expected.to eq @vc+1
+        end
+      end
+      context "when not voted" do
+        before do
+          @vc = @vcard.raw_content.to_i
+          @vcard.vote_up
+        end
+        it "increases vote count" do
+          is_expected.to eq @vc+1
+        end
+        it "increases upvote count only once" do
+          @vcard.vote_up
+          is_expected.to eq @vc+1
+        end
+        it 'gets saved after signin' do
+          Card::Auth.current_id = Card.fetch_id 'Joe Admin'
+          @vcard.save_session_votes
+          @vcard = @topic.vote_count_card
+          expect(@vcard.content.to_i).to eq @vc+1
+        end
+      end
+    end
+    
+    describe "#vote_down" do
+      context "when voted up" do
+        before do
+          @vcard.vote_up
+          @vc = @vcard.raw_content.to_i
+          @vcard.vote_down
+        end
+        it "decreases vote count" do
+          is_expected.to eq @vc-1
+        end
+      end
+      context "when not voted" do
+        before do
+            @vc = @vcard.content.to_i
+            @vcard.vote_down
+        end
+        it "decreases vote count" do
+          is_expected.to eq @vc-1
+        end
+        it "decreases upvote count only once" do
+          @vcard.vote_down
+          is_expected.to eq @vc-1
+        end
+        it 'gets saved after signin' do
+          Card::Auth.current_id = Card.fetch_id 'Joe Admin'
+          @vcard.save_session_votes
+          @vcard = @topic.vote_count_card
+          expect(@vcard.content.to_i).to eq @vc-1
+        end
+      end
+    end
+      
+    
+  end
 end
