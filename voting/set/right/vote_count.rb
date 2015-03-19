@@ -76,7 +76,6 @@ def delete_vote vote_card, votee_id
 end
 
 def add_vote_to_session vote_type, votee_id, insert_before_id
-  binding.pry
   Env.session[vote_type] ||= []
   Env.session[vote_type].delete(votee_id)
   if insert_before_id && (index = Env.session[vote_type].index(insert_before_id))
@@ -170,7 +169,7 @@ event :vote, :before=>:approve, :on=>:update, :when=>proc{ |c| Env.params['vote'
     when 'force-neutral' then force_neutral successor_id
     end
     
-    abort :success if session_vote?
+    abort :success if !Auth.signed_in? && session_vote?
   else
     path_hash = {:card=>self, :action=>:update,
                  :success=>{:id=>left.name}, :vote=>Env.params['vote'] }
