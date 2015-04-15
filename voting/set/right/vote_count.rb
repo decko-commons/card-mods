@@ -1,9 +1,9 @@
 def session_vote?
-  # override with true to allow voting for users who are not logged in 
+  # override with true to allow voting for users who are not logged in
   # and save votes in session
   false
 end
-  
+
 def downvoted_in_session?
   Env.session[:down_vote] && Env.session[:down_vote].include?(left.id)
 end
@@ -48,7 +48,7 @@ def vote_down insert_before_id=false
         delete_vote uv_card, left.id
       end
     end
-  elsif session_vote?    
+  elsif session_vote?
     if upvoted_in_session?
       Env.session[:up_vote].delete left.id
     else
@@ -84,7 +84,7 @@ def add_vote_to_session vote_type, votee_id, insert_before_id
     Env.session[vote_type] << votee_id
   end
 end
-    
+
 def force_up insert_before_id=false
   vote_up insert_before_id
   vote_up(insert_before_id) if vote_status != '+'
@@ -106,7 +106,7 @@ end
 
 
 def raw_content
-  if !Auth.signed_in? && session_vote?    
+  if !Auth.signed_in? && session_vote?
     if Env.session[:up_vote] && Env.session[:up_vote].include?(left.id)
       return (content.to_i + 1).to_s
     elsif Env.session[:down_vote] && Env.session[:down_vote].include?(left.id)
@@ -168,7 +168,7 @@ event :vote, :before=>:approve, :on=>:update, :when=>proc{ |c| Env.params['vote'
     when 'force-down' then force_down successor_id
     when 'force-neutral' then force_neutral successor_id
     end
-    
+
     abort :success if !Auth.signed_in? && session_vote?
   else
     path_hash = {:card=>self, :action=>:update,
@@ -231,7 +231,7 @@ format :html do
       ]
     end
   end
-  
+
   def vote_up_link success_view
     link = case card.vote_status
     when '+'
@@ -263,13 +263,13 @@ format :html do
       text
     end
   end
-  
+
   def vote_path up_or_down=nil, view='content'
-    path_hash = {:card=>card, :action=>:update, :view=>view}
+    path_hash = {:name=>card.name, :action=>:update, :view=>view}
     path_hash[:vote] = up_or_down if up_or_down
     path path_hash
   end
-  
+
   def up_details
     render_haml :up_count=>card.left.upvote_count do %{
 %span.vote-details
