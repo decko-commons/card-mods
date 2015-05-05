@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+require 'airbrake'
 
 filename = File.join Wagn.root, 'config/airbrake.key'
 if File.exists? filename or File.symlink? filename
