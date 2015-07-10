@@ -1,3 +1,5 @@
+# session vote won't be saved to real vote count until user login 
+# users will see a different vote count as the vote from anonymous would be counted in rendering the vote count 
 def session_vote?
   # override with true to allow voting for users who are not logged in
   # and save votes in session
@@ -15,6 +17,8 @@ def votee
   cardname.left
 end
 
+# insert_before_id is used while a votable card is dragged and dropped in user's profile. 
+# it will insert the card to specific position in the pointer card which contains what users voted
 def vote_up insert_before_id=false
   if Auth.signed_in?
     Auth.as_bot do
