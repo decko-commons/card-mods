@@ -17,7 +17,9 @@ def votee
   cardname.left
 end
 
-# insert_before_id is used while a votable card is dragged and dropped in user's profile. 
+# The voted card ids will be stored in a pointer card. insert_before_id is used to add the id in front of another id. 
+# it may just affect the showing order of the the votes only. 
+# In wikirate, insert_before_id is used while a votable card is dragged and dropped in user's profile. 
 # it will insert the card to specific position in the pointer card which contains what users voted
 def vote_up insert_before_id=false
   if Auth.signed_in?
