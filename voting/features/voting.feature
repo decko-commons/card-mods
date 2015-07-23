@@ -6,16 +6,16 @@ Feature: voting
   Background:
     Given Wikirate
     #Given I am signed in as Joe Admin
-    And I create Phrase card "Book+*type+*autoname" with content "Book_1"
+  #   And I create Phrase card "Book+*type+*autoname" with content "Book_1"
 
-  Scenario: Simple cardtype autoname
-    When I go to new Book
-    And I press "Submit"
-    Then I should see "Book_1"
+  # Scenario: Simple cardtype autoname
+  #   When I go to new Book
+  #   And I press "Submit"
+  #   Then I should see "Book_1"
     
-    And I go to new Book
-    And I press "Submit"
-    Then I should see "Book_2"
+  #   And I go to new Book
+  #   And I press "Submit"
+  #   Then I should see "Book_2"
 
 #    And I go to new Book
 #    Then I should see "Book 2"
