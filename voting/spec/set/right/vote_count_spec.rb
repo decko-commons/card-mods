@@ -1,20 +1,25 @@
-describe Card::Set::Right::VoteCount do 
+describe Card::Set::Right::VoteCount do
+  before(:all) do
+    Capybara.current_driver = :selenium
+  end
+
+
   before do
     Card::Auth.current_id = Card['Joe Admin'].id
     @claim = create_claim "another voting claim"
     @card = @claim.vote_count_card
     Card::Auth.current_id = Card['Joe User'].id
   end
-  
+
   it 'default vote count is 1' do
     expect(@claim.vote_count.to_i).to eq 1
   end
-  
+
   describe "#vote_status" do
     subject { @card.vote_status}
     context "when not voted by user" do
       it { is_expected.to eq("?")}
-    end 
+    end
     context "when upvoted by user" do
       before do
         Card::Auth.as_bot { @card.vote_up }
@@ -23,19 +28,19 @@ describe Card::Set::Right::VoteCount do
     end
     context "when downvoted by user" do
       before do
-        Card::Auth.as_bot { @card.vote_down }  
+        Card::Auth.as_bot { @card.vote_down }
       end
       it { is_expected.to eq("-")}
     end
     context "when not signed in" do
-      subject do 
+      subject do
         Card::Auth.current_id = Card::AnonymousID
         @card.vote_status
       end
       it { is_expected.to eq("#")}
     end
   end
-  
+
   describe "#vote_up" do
     context "when voted down" do
       before do
@@ -91,7 +96,7 @@ describe Card::Set::Right::VoteCount do
       end
     end
   end
-  
+
   describe "#vote_down" do
     context "when voted up" do
       before do
@@ -147,7 +152,7 @@ describe Card::Set::Right::VoteCount do
       end
     end
   end
-  
+
   describe "content view" do
     before do
       Card::Auth.as_bot  do
@@ -186,7 +191,7 @@ describe Card::Set::Right::VoteCount do
       end
     end
   end
-  
+
   describe "session votes" do
     subject { @vcard.raw_content.to_i }
     before do
@@ -194,8 +199,8 @@ describe Card::Set::Right::VoteCount do
       @topic = get_a_sample_topic
       @vcard = @topic.vote_count_card
     end
-    
-    
+
+
     describe "#vote_up" do
       context "when voted down" do
         before do
@@ -227,7 +232,7 @@ describe Card::Set::Right::VoteCount do
         end
       end
     end
-    
+
     describe "#vote_down" do
       context "when voted up" do
         before do
@@ -259,7 +264,7 @@ describe Card::Set::Right::VoteCount do
         end
       end
     end
-      
-    
+
+
   end
 end
