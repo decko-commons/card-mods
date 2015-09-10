@@ -1,5 +1,12 @@
 require_dependency 'logger'
 
+# Not the pefect place. Ideally this should happen after loader.rb#load_mods
+# so that it's possible to log any method.
+# With this approach we can only log methods of mods that get loaded before this mod.
+if Card.config.performance_logger
+  ::Logger::Performance.load_config Card.config.performance_logger
+end
+
 event :start_performance_logger_on_change, :before=>:handle, :when => proc { |c| c.performance_log? } do
   start_performance_logger
   @handle_logger = true
@@ -44,9 +51,9 @@ end
 
 
 module ClassMethods
-  def execute_query query
+  def execute_query query, &block
     ::Logger.with_logging :search, :message=>query.query, :details=>query.sql.strip do
-      Card::Set::All::Collection::ClassMethods.instance_method(:execute_query).bind(binding).call(query)
+      Card::Set::All::Collection::ClassMethods.instance_method(:execute_query).bind(binding).call(query, &block)
     end
   end
 end
