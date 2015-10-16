@@ -132,11 +132,11 @@ def update_votecount
 
   uvc = left.upvote_count_card
   uvc.auto_content = true
-  subcards.add uvc.name, content: up_count.to_s 
+  subcards.add uvc.name, content: up_count.to_s
 
   dvc = left.downvote_count_card
   dvc.auto_content = true
-  subcards.add dvc.name, content: down_count.to_s 
+  subcards.add dvc.name, content: down_count.to_s
 
   self.content = (up_count - down_count).to_s
   self.auto_content = true
