@@ -14,3 +14,9 @@ def insert_id_before new_id, successor_id
     add_item "~#{new_id}"
   end
 end
+
+def followable?
+  # we may want these to be followable at some point,
+  # but for now we are skipping that to optimize
+  false
+end
