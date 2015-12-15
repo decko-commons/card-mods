@@ -50,15 +50,16 @@ def performance_log?
 end
 
 
-module ClassMethods
-  def execute_query query, &block
-    ::Logger.with_logging :search, :message=>query.query, :details=>query.sql.strip do
-      Card::Set::All::Collection::ClassMethods.instance_method(:execute_query).bind(binding).call(query, &block)
+class ::Card
+  class Query
+    alias_method :original_run, :run
+    def run
+      ::Logger.with_logging :search, :message=>@statement, :details=>sql do
+        original_run
+      end
     end
   end
-end
 
-class ::Card
   alias_method :original_run_callbacks, :run_callbacks
   def run_callbacks event, &block
     ::Logger.with_logging :event, :message=>event, :context=>self.name do
@@ -81,7 +82,7 @@ class ::Card
    class << self
       alias_method :original_fetch, :fetch
       def fetch(format, view, args, &block)
-        ::Logger.with_logging :view, :message=>view, :context=>format.card.name, :details=>args, :category=>'content' do
+        ::Logger.with_logging :fetch, :message=>view, :context=>format.card.name, :details=>args, :category=>'content' do
           original_fetch(format,view, args, &block)
         end
       end
