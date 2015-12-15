@@ -7,9 +7,9 @@ def session_vote?
   false
 end
 
-def history?
-  false
-end
+#def history?
+#  false
+#end
 
 def downvoted_in_session?
   Env.session[:down_vote] && Env.session[:down_vote].include?(left.id)
