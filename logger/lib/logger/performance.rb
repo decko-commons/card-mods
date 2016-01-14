@@ -43,7 +43,7 @@ class Logger
                               :context => nil
                             }
 
-  SPECIAL_METHODS     = [:search, :view, :event, :fetch, :rule, :execute]  # these methods have already a Wagn.with_logging block
+  SPECIAL_METHODS     = [:search, :view, :event, :rule, :execute]  # these methods have already a Wagn.with_logging block
                                                   # we don't have to monkey patch them, only turn the logging on with adding the symbol to the methods hash
 
 
