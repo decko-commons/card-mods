@@ -37,9 +37,13 @@ def start_performance_logger
   if Env.params[:performance_log]
     ::Logger::Performance.load_config Env.params[:performance_log]
   end
-
-  method = Env[:controller].env['REQUEST_METHOD']
-  path   = Env[:controller].env['PATH_INFO']
+  if Env[:controller]
+    method = Env[:controller].env['REQUEST_METHOD']
+    path   = Env[:controller].env['PATH_INFO']
+  else
+    method = 'no request'
+    path = 'no path'
+  end
   ::Logger::Performance.start method: method, message: path, category: 'format'
 end
 
@@ -89,23 +93,23 @@ class ::Card
         ::Logger.with_logging :view,
                               message: view, category: 'content',
                               context: format.card.name, details: args  do
-          original_fetch_view(format, view, args, &block)
+          original_fetch(format, view, args, &block)
         end
       end
     end
   end
 end
 
-module ::ActiveRecord::ConnectionAdapters
-  class AbstractMysqlAdapter
-    unless method_defined? :original_execute
-      alias_method :original_execute, :execute
-      def execute sql, name=nil
-        ::Logger.with_logging :execute,
-                              message: 'SQL', category: 'SQL', details: sql do
-          original_execute(sql, name)
-        end
-      end
-    end
-  end
-end
+# module ::ActiveRecord::ConnectionAdapters
+#   class AbstractMysqlAdapter
+#     unless method_defined? :original_execute
+#       alias_method :original_execute, :execute
+#       def execute sql, name=nil
+#         ::Logger.with_logging :execute,
+#                               message: 'SQL', category: 'SQL', details: sql do
+#           original_execute(sql, name)
+#         end
+#       end
+#     end
+#   end
+# end
