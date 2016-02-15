@@ -20,16 +20,16 @@ event :stop_performance_logger_on_change,
 end
 
 event :start_performance_logger_on_read,
-      before: :show, on: :read, when: proc { |c| c.performance_log? } do
+      before: :show_page, on: :read, when: proc { |c| c.performance_log? } do
   start_performance_logger unless @handle_logger
 end
 event :stop_performance_logger_on_read,
-      after: :show, on: :read, when: proc { |c| c.performance_log? } do
+      after: :show_page, on: :read, when: proc { |c| c.performance_log? } do
   stop_performance_logger unless @handle_logger
 end
 
 event :request_logger,
-      after: :show, when: proc { |c| Card.config.request_logger } do
+      after: :show_page, when: proc { |c| Card.config.request_logger } do
   ::Logger::Request.write_log_entry Env[:controller]
 end
 
