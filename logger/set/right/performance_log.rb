@@ -65,37 +65,9 @@ format :html do
       end.compact.join "\n"
     browser_data = CSV.parse(File.read(card.csv_path))
     output [
-      table(browser_data, true),
+      table(browser_data, header: true),
       wagn_data
     ]
-  end
-
-  def table data, with_header=false
-    thead = if with_header
-              content_tag :thead do
-                content_tag :tr do
-                  data.shift.map do |item|
-                    content_tag :th, item
-                  end.join "\n"
-                end
-              end
-            end
-    tbody = content_tag :tbody do
-              data.map do |row|
-                content_tag :tr do
-                  row.map do |item|
-                    content_tag :td, item
-                  end.join "\n"
-                end
-              end.join "\n"
-            end
-
-    %{
-      <table class="table">
-        #{thead}
-        #{tbody}
-      </table>
-    }
   end
 end
 
