@@ -197,7 +197,8 @@ class Logger
     def print_log
       if @output == :card && @output_card
         html_log =  HtmlFormatter.new(self).output
-        card = Card.fetch "#{@output_card}+#{Card[:performance_log].name}", :new=>{:type_id=>Card::PointerID}
+        card = @output_card.fetch trait: :performance_log,
+                                  new: { :type_id=>Card::PointerID }
         card.add_log_entry @@log.first.message, html_log
       elsif @output == :html
         HtmlFormatter.new(self).output
