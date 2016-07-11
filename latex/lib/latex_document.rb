@@ -92,7 +92,7 @@ module LatexDocument
   end
   
   def tex_compiler    
-    @tex || = TexCompiler.new self
+    @tex ||= TexCompiler.new self
   end
       
   def tex_template content  # no line breaks before content otherwise the line numbers for errors are wrong

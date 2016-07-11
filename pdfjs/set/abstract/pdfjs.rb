@@ -19,6 +19,6 @@ format :html do
   end
 
   view :pdfjs_viewer do |args|
-
+    Pdfjs.viewer
   end
 end
