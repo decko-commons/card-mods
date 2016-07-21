@@ -234,7 +234,10 @@ format :html do
   end
 
   view :core do |args|
-    wrap_with :div, class: 'vote-count' do
+    html_class = "vote-count"
+    html_class += " current-user-up" if card.vote_status == "+"
+    html_class += " current-user-down" if card.vote_status == "-"
+    wrap_with :div, class: html_class do
       super(args)
     end
   end
@@ -279,8 +282,10 @@ format :html do
   end
 
   def disabled_vote_link up_or_down, message, extra={}
+    html_class = "current-user-" + up_or_down.to_s
+    html_class += " slotter disabled-vote-link vote-button"
     button_tag({disabled: true,
-        class: 'slotter disabled-vote-link vote-button', type: 'button', title: message}.merge(extra)) do
+        class: html_class, type: 'button', title: message}.merge(extra)) do
       "<i class=\"fa fa-angle-#{up_or_down} \"></i>"
     end
   end
