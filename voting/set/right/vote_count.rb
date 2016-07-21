@@ -267,7 +267,7 @@ format :html do
     when '+'
       disabled_vote_link :up, 'You have already upvoted this claim.'
     else
-      vote_link '<i class="fa fa-angle-up"></i>', 'Vote up', :up, success_view
+      vote_link '<i class="fa fa-chevron-up"></i>', 'Vote up', :up, success_view
     end
   end
 
@@ -276,7 +276,7 @@ format :html do
     when '-'
       disabled_vote_link :down, 'You have already downvoted this claim.'
     else
-      vote_link '<i class="fa fa-angle-down"></i>', 'Vote down', :down,
+      vote_link '<i class="fa fa-chevron-down"></i>', 'Vote down', :down,
                 success_view
     end
   end
@@ -286,7 +286,7 @@ format :html do
     html_class += " slotter disabled-vote-link vote-button"
     button_tag({disabled: true,
         class: html_class, type: 'button', title: message}.merge(extra)) do
-      "<i class=\"fa fa-angle-#{up_or_down} \"></i>"
+      "<i class=\"fa fa-chevron-#{up_or_down} \"></i>"
     end
   end
 
