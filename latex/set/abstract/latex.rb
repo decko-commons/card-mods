@@ -1,8 +1,11 @@
 include LatexDocument
 include_set Abstract::Pdfjs
 
-LATEX_TYPE_IDS = [Card::SurveyID, Card::LatexID, Card::ProblemID,
-                  Card::DefinitionID]
+unless const_defined?(Card::SurveyID)
+  LATEX_TYPE_IDS = [Card::SurveyID, Card::LatexID, Card::ProblemID,
+                    Card::DefinitionID]
+end
+
 
 def clean_html?
   false
@@ -35,28 +38,27 @@ end
 def typeset_document
   content.gsub!("\r\n","\n")
   self.content.gsub!("\r\n","\n")
-  if not Env.params[:ignore_errors]
-    begin
-      typeset_preview content
-    rescue TexTypesetError => e
-      errors.add 'LaTeX errors', e.message
-    rescue TexConfigError => e
-      errors.add 'LaTeX', e.message
-    ensure
-      if Env.params[:success] and Env.params[:success][:typeset] == "true" and errors.empty?
-        Env.params[:success][:preview_filename] = doc_basename
-        Card::Auth.as_bot do
-          preview_card = Card.fetch "#{self.name}+preview", :new => {:type => Card::PlainTextID}
-          preview_card.content = self.content
-          preview_card.save
+  return if Env.params[:ignore_errors]
+  typeset_preview content
+rescue TexTypesetError => e
+  errors.add 'LaTeX errors', e.message
+rescue TexConfigError => e
+  errors.add 'LaTeX', e.message
+ensure
+  if typesetting_preview? && errors.empty?
+    Env.params[:success][:preview_filename] = doc_basename
+    Card::Auth.as_bot do
+      preview_card = Card.fetch "#{self.name}+preview",
+                                new: { type: Card::PlainTextID }
+      preview_card.content = self.content
+      preview_card.save
 
-          preview_pdf_card = Card.fetch "#{self.name}+preview+pdf", :new => {:type => Card::FileID}
-          preview_pdf_card.update_attributes :file => File.open(preview_pdf_path, "r")
-        end
-        self.content =  Card.find(self).content # restore old content
-        #abort :success
-      end
+      preview_pdf_card = Card.fetch "#{self.name}+preview+pdf",
+                                    new: { type: Card::FileID }
+      preview_pdf_card.update_attributes file: File.open(preview_pdf_path, "r")
     end
+    self.content = Card.find(self).content # restore old content
+    #abort :success
   end
 end
 
@@ -78,6 +80,17 @@ def create_default_preview
   end
 end
 
+format :json do
+  view :preview_path do |args|
+    { src: "assets/web/viewer.html?file=#{card.pdf_preview_url}" }.to_json
+  end
+
+  view :errors do |args|
+    card.format(:html)._render_tex_errors(args)
+    #{ errors: card.format(:html)._render_tex_errors(args) }.to_json
+  end
+end
+
 format :html do
   LATEX_EDIT_LAYOUT = "Latex_split_Layout"
   PDF_VIEW_LAYOUT = "New_Layout"
@@ -88,7 +101,7 @@ format :html do
     args[:hidden] ||= {}
     args[:hidden][:success] = {:redirect => true, :view=>'split', :layout =>LATEX_EDIT_LAYOUT}
     args[:buttons] = %{
-    #{ submit_tag 'Submit', :class=>'submit-button' }
+    #{ submit_tag 'Submit', :class=>'submit-button btn btn-primary' }
     #{ button_tag 'Cancel', :class=>'cancel-button', :onclick => "window.location.href='#{path(:view=>'open',  :id=>card.id, :layout => PDF_VIEW_LAYOUT)}'", :type=>'button' }
     }
     args
@@ -102,7 +115,7 @@ format :html do
     #{ _render_typeset_fieldset(args) if @slot_view.to_s.eql? 'split' or args[:split]}
     #{ #load_pdf_preview if args[:split]
       }
-    #{ submit_tag 'Submit', :class=>'submit-button' }
+    #{ submit_tag 'Submit', :class=>'submit-button btn btn-primary' }
     #{ button_tag 'Cancel', :class=>'cancel-button', :onclick => "window.location.href='#{path(:view=>'open',  :id=>card.id, :layout => PDF_VIEW_LAYOUT)}'", :type=>'button' }
     }
     args
@@ -166,7 +179,8 @@ format :html do
   view :header do |args|
     args[:optional_toggle] = :hide
     if @slot_view == :open
-      _render_pdf_toolbar args
+      super(args)
+      #_render_pdf_toolbar args
     else
       args[:optional_title_link] = :show
       super(args) # _final_header args
@@ -174,7 +188,7 @@ format :html do
   end
 
   view :split do |args|
-    _render_edit args.merge(:split => true)
+    _render_edit args.merge(split: true)
   end
 
   def default_new_args args
@@ -184,13 +198,30 @@ format :html do
 
   view :edit do |args|
     args = default_latex_edit_args args
-    args[:split] ||= @slot_view.to_s.eql? 'split'
-    if Env.params[:typeset] == "true" and preview_card = card.preview_card and preview_card.content.present?
-      card.content = preview_card.content
-      content = card.content
+    #args[:split] ||= @slot_view.to_s.eql? 'split'
+    if !args[:split]
+      _render_redirect_split
+    else
+      if Env.params[:typeset] == "true" and preview_card = card.preview_card and preview_card.content.present?
+        card.content = preview_card.content
+        content = card.content
+      end
+      #_final_edit args
+      <<-HTML
+      <div class="col-md-6" id="splitviewtex">
+        #{super(args)}
+      <p id="localizeerror">
+      </p>
+        </div>
+      <div class="col-md-6" id="splitviewpdf">
+        #{_render_edit_preview args}
+      </div>
+      HTML
     end
-    super(args)
-    #_final_edit args
+  end
+
+  view :edit_preview do |args|
+    _render_pdf_viewer args
   end
 
   view :preview do |args|
@@ -202,8 +233,8 @@ format :html do
   end
 
   view :editor do |args|
-# At the beginning and at the end misterious newlines \r\n occur and I couldn't get rid of them
-# Switching editor to windows line break helped
+    # At the beginning and at the end misterious newlines \r\n occur and I couldn't get rid of them
+    # Switching editor to windows line break helped
     if Env.params[:card]
       card.content = Env.params[:card][:content] || card.content
     end
@@ -248,9 +279,9 @@ format :html do
     return '' if card.errors.empty?
 
     wrap args do
-      %{  <div class="errors-view"> <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
+      %{  <div class="errors-view"> <h3>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h3> } +
         card.errors.map { |attrib, msg| "<div style='text-align: left;'>#{attrib.to_s.upcase}: #{msg}</div>" } * '' +   %{
-      #{ submit_tag 'Submit with errors', :class=>'submit-button', :name=>"ignore_errors", :value=>"Submit with errors" }
+      #{ submit_tag 'Submit with errors', :class=>'submit-button btn btn-default', :name=>"ignore_errors", :value=>"Submit with errors" }
         </div>
       }
     end
@@ -260,21 +291,25 @@ format :html do
   view :typeset_fieldset do |args |
     %{
     #{ hidden_field_tag :success_typeset, false, :name => "success[typeset]"}
-    #{ button_tag 'Typeset', :id=>'typeset-button', :class=>'typeset-button',  :value=>'Typeset', :name=>"typeset-button", :type=>'button' }
-      <script>
-        $('#typeset-button').click (function(){
-            $('#success_typeset').val('true');
-            $('#success_view').val('split');
-            $('#success_redirect').val('false');
-            $('#success_layout').val('#{LATEX_EDIT_LAYOUT}');
-            $('#edit_card_#{card.id}').submit();
-            $('#success_typeset').val('false');
-            $('#success_view').val('open');
-            $('#success_redirect').val('true');
-            $('#success_layout').val('#{PDF_VIEW_LAYOUT}');
-        });
-      </script>
+    #{ button_tag 'Typeset', :id=>'typeset-button',
+                             :class=>'typeset-button btn btn-primary',
+                             :value=>'Typeset', :name=>"typeset-button",
+                             :type=>'button' }
+
     }
+    # <script>
+    #    $('#typeset-button').click (function(){
+    #        $('#success_typeset').val('true');
+    #        $('#success_view').val('split');
+    #        $('#success_redirect').val('false');
+    #        $('#success_layout').val('#{LATEX_EDIT_LAYOUT}');
+    #        $('#edit_card_#{card.id}').submit();
+    #        $('#success_typeset').val('false');
+    #        $('#success_view').val('open');
+    #        $('#success_redirect').val('true');
+    #        $('#success_layout').val('#{PDF_VIEW_LAYOUT}');
+    #    });
+    #  </script>
   end
 
   view :content_fieldsets do |args|
@@ -287,8 +322,7 @@ format :html do
     end
     %{
       <div class="card-editor editor">
-        #{ edit_form
-    }
+        #{ edit_form }
       </div>
     }
   end
@@ -300,13 +334,10 @@ format :html do
     #               Card.fetch "#{card.name}+#{disc_tagname}", :skip_virtual=>true, :skip_modules=>true, :new=>{}
     #             end
     %{
-    #{ _render_pdf_viewer args }
-        <br/>
-        #{ process_content_object "{{+pdf bottom}}"}
+      #{ _render_pdf_viewer args }
+      <br/>
+      #{ process_content_object "{{+pdf bottom|core}}"}
     }
-    #{ process_content_object "{{+references|closed|closed;hide:menu,closed_content;type:Bibitem}}" if refs }
-    #{ process_content_object "{{+discussion|closed; show:comment_box}}"}
-    #{ process_content_object "{{+page management|closed;hide:closed_content}}" }
   end
 
   view :closed_content do |args|
@@ -334,20 +365,29 @@ format :html do
   end
 
   view :pdf_viewer do |args|
-    %{
-    #{ ::Pdfjs.viewer }
-    #{ load_pdf args[:preview] || Env.params[:preview_filename]}
-    }
+    # %{
+    # #{ ::Pdfjs.viewer }
+    # #{ load_pdf args[:preview] || Env.params[:preview_filename]}
+    # }
+    _render_pdfjs_iframe pdf_url: args[:preview] ||
+                                  Env.params[:preview_filename] || card.pdf_url
   end
 
   view :errors do |args|
     if card.errors.any?
-      original_wrap args do
-        %{  <div class="errors-view"> <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
-          card.errors.map { |attrib, msg| "<div style='text-align: left;'>#{attrib.to_s.upcase}: #{msg}</div>" } * '' +   %{
-        #{ submit_tag 'Submit with errors', :class=>'submit-button', :name=>"ignore_errors", :value=>"Submit with errors" }
+      error_msg = card.errors.map { |attrib, msg| "<div style='text-align: left;'>#{attrib.to_s.upcase}: #{msg}</div>" } * ''
+      wrap args do
+        <<-HTML
+          <div class="errors-view">
+            <h2>
+              Problems #{%{with <em>#{card.name}</em>} unless card.name.blank?}
+            </h2>
+            #{error_msg}
+            #{ submit_tag 'Submit with errors',
+                          :class=>'submit-button btn btn-default',
+                          :name=>"ignore_errors", :value=>"Submit with errors" }
           </div>
-        }
+        HTML
       end
     end
   end
