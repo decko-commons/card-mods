@@ -185,8 +185,8 @@ def vote_status
   end
 end
 
-event :vote,
-      before: :approve, on: :update,
+event :vote, :prepare_to_validate,
+      on: :update,
       when: proc { |c| Env.params['vote'] } do
   if Auth.signed_in? || session_vote?
     successor_id = Env.params['insert-before'] &&

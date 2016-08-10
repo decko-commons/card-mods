@@ -1,50 +1,15 @@
 # -*- encoding : utf-8 -*-
 
-describe Logger::Request do
-  before do
-    controller = double()
-    allow(controller).to receive(:env) do
-      hash = {}
-      %w( REMOTE_ADDR REQUEST_METHOD REQUEST_URI HTTP_ACCEPT_LANGUAGE HTTP_REFERER).each do |key|
-        hash[key] = key
-      end
-      hash
-    end
-    card = double()
-    allow(card).to receive(:name) { 'cardname' }
-    allow(controller).to receive(:card) { card }
-    allow(controller).to receive(:action_name) { 'action_name' }
-    allow(controller).to receive(:params) { {'view' => 'view'} }
-    allow(controller).to receive(:status) { 'status' }
-    Logger::Request.write_log_entry controller
-  end
-  it 'creates csv file' do
-    expect(File.exist? Logger::Request.path).to be_truthy
-  end
-
-  describe 'log file' do
-    subject { File.read Logger::Request.path }
-
-    it { is_expected.to include 'REMOTE_ADDR' }
-    it { is_expected.to include 'REQUEST_METHOD' }
-    it { is_expected.to include 'view' }
-    it { is_expected.to include 'status' }
-    it { is_expected.to include 'cardname' }
-  end
-end
-
-
 describe Logger::Performance do
   def log_method opts
-     Logger::Performance.load_config(:methods=>opts)
+    Logger::Performance.load_config methods: opts
   end
 
   def expect_logger_to_receive_once message
-    allow(Rails.logger).to receive(:info).with(/((?!#{message}).)*/ )
+    allow(Rails.logger).to receive(:info).with(/((?!#{message}).)*/)
     expect(Rails.logger).to receive(:info).once.with(message)
     with_logging { yield }
   end
-
 
   def expect_logger_to_receive message
     allow(Rails.logger).to receive(:info)
@@ -63,32 +28,29 @@ describe Logger::Performance do
   end
 
   def with_logging
-    Logger::Performance.start :method=>'test'
-      yield
+    Logger::Performance.start method: 'test'
+    yield
     Logger::Performance.stop
   end
 
-
-
   it 'creates tree for nested method calls' do
     log_method [:view]
-    expect_logger_to_receive(/\n\
+    expect_logger_to_receive(
+/\n\
 \([\d.]+ms\) test\n\
 \s{2}\|--\([\d.]+ms\) process: c1\n\
 \s{5}\|--\([\d.]+ms\) view\: core\n\
 \s{8}\|--\([\d.]+ms\) view\: raw\n\
 content: [\d.]+ms\n\
 total: [\d.]+ms\n/
-    ) do
+                            ) do
       Card['c1'].format.render_core
     end
   end
 
-
   describe 'logger configuration' do
-
     it 'handles array with method name' do   # log arbitrary card method
-      log_method( [:content] )
+      log_method [:content]
       expect_logger_to_receive(/content/) do
         Card[:all].content
       end
@@ -96,12 +58,14 @@ total: [\d.]+ms\n/
 
     it 'handles instance method type' do
       class Card
-        def test a, b
+        def test _a, _b
           Rails.logger.info("orignal method is still alive")
         end
         def self.test a, b; end
       end
-      log_method( { Card => { :instance => { :test=> { :title=>:name, :message=>2 }}}} )
+      log_method(
+        Card => { :instance => { :test=> { :title=>:name, :message=>2 } } }
+      )
 
       expect_logger_to_receive([/still alive/,/all: magic/]) do
         Card[:all].test "ignore this argument", "magic"
@@ -110,9 +74,9 @@ total: [\d.]+ms\n/
     end
 
     it 'handles classes and singleton method type' do
-      log_method( { Card => { :singleton=>[:fetch] } } )
+      log_method Card => { singleton: [:fetch] }
       expect_logger_to_receive(/fetch/) do
-        Card.fetch 'A'
+        Card.fetch 'A', new: {}
       end
     end
 
@@ -144,7 +108,6 @@ total: [\d.]+ms\n/
         Card['c1'].name = 'Alfred'
       end
     end
-
 
     describe 'special methods' do
       # FIXME: this test fails because of the logging stuff above. Need a way to reset the Card class or use test classes in all tests
@@ -178,10 +141,7 @@ total: [\d.]+ms\n/
           Card::Auth.as_bot { Card.fetch('c1').update_attributes!(:content=>'c1') }
         end
       end
-
-
     end
-
   end
 
   describe  Logger::Performance::BigBrother do
@@ -192,7 +152,6 @@ total: [\d.]+ms\n/
         def self.sing_m; end
       end
     end
-
 
     describe '#watch_singleton_method' do
       before do
@@ -230,7 +189,6 @@ total: [\d.]+ms\n/
       end
     end
 
-
     describe '#watch_all_singleton_methods' do
       before do
         TestClass.watch_all_singleton_methods
@@ -266,8 +224,5 @@ total: [\d.]+ms\n/
         end
       end
     end
-
   end
-
-
 end
