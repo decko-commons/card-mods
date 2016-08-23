@@ -1,11 +1,11 @@
-describe Card::Set::Right::VoteCount do 
+describe Card::Set::Right::VoteCount do
   before do
     Card::Auth.current_id = Card['Joe Admin'].id
     @claim = create_claim "another voting claim"
     @card = @claim.vote_count_card
     Card::Auth.current_id = Card['Joe User'].id
   end
-  
+
   it 'default vote count is 1' do
     expect(@claim.vote_count.to_i).to eq 1
   end
@@ -78,7 +78,7 @@ describe Card::Set::Right::VoteCount do
         Card::Auth.as_bot do
           @claim2 = create_claim "another voting claim2"
           @card2 = @claim2.vote_count_card
- 
+
         end
         Card::Auth.current_id = Card['Joe User'].id
         Card::Auth.as_bot do
@@ -129,11 +129,11 @@ describe Card::Set::Right::VoteCount do
         Card::Auth.as_bot do
           @card.vote_up
           @card.save!
-        end    
+        end
         uvc = @claim.upvote_count.to_i
         vc = @claim.vote_count.to_i
         Card::Auth.as_bot do
-          @card.force_neutral 
+          @card.force_neutral
           @card.save!
         end
         expect(@claim.upvote_count.to_i).to eq(uvc-1)
@@ -145,11 +145,11 @@ describe Card::Set::Right::VoteCount do
         Card::Auth.as_bot do
           @card.vote_down
           @card.save!
-        end    
+        end
         uvc = @claim.downvote_count.to_i
         vc = @claim.vote_count.to_i
         Card::Auth.as_bot do
-          @card.force_neutral 
+          @card.force_neutral
           @card.save!
         end
         expect(@claim.downvote_count.to_i).to eq(uvc-1)
@@ -214,7 +214,7 @@ describe Card::Set::Right::VoteCount do
   end
   describe "event vote" do
      before do
-        @vc = @claim.vote_count.to_i  
+        @vc = @claim.vote_count.to_i
       end
     context "signed in or anonymous with session_vote enabled" do
       it "votes up" do
@@ -261,7 +261,7 @@ describe Card::Set::Right::VoteCount do
         expect(@claim.vote_count.to_i).to eq vc-1
       end
     end
-   
+
   end
   describe "content view" do
     before do
@@ -272,11 +272,15 @@ describe Card::Set::Right::VoteCount do
     let(:content_view)  { @card.format.render_content }
     it "has 'vote up' button" do
       assert_view_select content_view, 'button i[class~=fa-angle-up]'
-      assert_view_select content_view, 'button[disabled="disabled"] i[class~=fa-angle-up]', :count=>0
+      assert_view_select content_view,
+                         'button[disabled="disabled"] i[class~=fa-angle-up]',
+                         :count=>0
     end
     it "has 'vote down' button" do
       assert_view_select content_view, 'button i[class~=fa-angle-down]'
-      assert_view_select content_view, 'button[disabled="disabled"] i[class~=fa-angle-down]', :count=>0
+      assert_view_select content_view,
+                         'button[disabled="disabled"] i[class~=fa-angle-down]',
+                         :count=>0
     end
     context "when voted up" do
       before do
@@ -286,7 +290,8 @@ describe Card::Set::Right::VoteCount do
         end
       end
       it "has disabled 'vote up' button" do
-        assert_view_select content_view, 'button[disabled="disabled"] i[class~=fa-angle-up]'
+        assert_view_select content_view,
+                           'button[disabled="disabled"] i[class~=fa-angle-up]'
       end
     end
     context "when voted down" do
@@ -297,7 +302,8 @@ describe Card::Set::Right::VoteCount do
         end
       end
       it "has disabled 'vote down' button" do
-        assert_view_select content_view, 'button[disabled="disabled"] i[class~=fa-angle-down]'
+        assert_view_select content_view,
+                           'button[disabled="disabled"] i[class~=fa-angle-down]'
       end
     end
   end
@@ -374,7 +380,5 @@ describe Card::Set::Right::VoteCount do
         end
       end
     end
-
-
   end
 end
