@@ -90,10 +90,12 @@ class ::Card
     module ViewCache
       class << self
         alias_method :original_fetch, :fetch
-        def fetch format, view, args, &block
+        def fetch(format, view, args, &block)
           ::Logger.with_logging :view,
-                                message: view, category: 'content',
-                                context: format.card.name, details: args  do
+                                message: view,
+                                context: format.card.name,
+                                details: args,
+                                category: 'content' do
             original_fetch(format, view, args, &block)
           end
         end

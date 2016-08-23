@@ -136,29 +136,31 @@ def direct_contribution_count
 end
 
 def update_votecount
-  up_count = Auth.as_bot do
-              Card.search(
-                right_plus: [{ codename: 'upvotes' }, link_to: left.name],
-                return: 'count'
-              )
-            end
-  down_count = Auth.as_bot do
-                 Card.search(
-                   right_plus: [{ codename: 'downvotes' }, link_to: left.name],
-                   return: 'count'
-                 )
-               end
+  Auth.as_bot do
+    up_count =
+      Card.search(
+        { right_plus: [{ codename: 'upvotes' }, { link_to: left.name }],
+          return: 'count' },
+        "upvotes linking to #{left.name}"
+      )
+    down_count =
+      Card.search(
+        { right_plus: [{ codename: 'downvotes' }, { link_to: left.name }],
+          return: 'count' },
+        "downvotes linking to #{left.name}"
+      )
 
-  uvc = left.upvote_count_card
-  uvc.auto_content = true
-  subcards.add uvc.name, content: up_count.to_s
+    uvc = left.upvote_count_card
+    uvc.auto_content = true
+    subcards.add uvc.name, content: up_count.to_s
 
-  dvc = left.downvote_count_card
-  dvc.auto_content = true
-  subcards.add dvc.name, content: down_count.to_s
+    dvc = left.downvote_count_card
+    dvc.auto_content = true
+    subcards.add dvc.name, content: down_count.to_s
 
-  self.content = (up_count - down_count).to_s
-  self.auto_content = true
+    self.content = (up_count - down_count).to_s
+    self.auto_content = true
+  end
 end
 
 def vote_status

@@ -11,9 +11,9 @@ describe Card::Set::Right::VoteCount do
   end
 
   describe "#vote_status" do
-    subject { @card.vote_status}
+    subject { @card.vote_status }
     context "when not voted by user" do
-      it { is_expected.to eq("?")}
+      it { is_expected.to eq("?") }
     end
     context "when upvoted by user" do
       before do
