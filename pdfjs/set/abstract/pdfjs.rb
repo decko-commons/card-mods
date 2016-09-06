@@ -1,17 +1,18 @@
 format :html do
-
   def pdf?
-    (mime = card.file.content_type) && mime == "application/pdf"
+    card.respond_to?(:file) && (mime = card.file.content_type) && mime == "application/pdf"
   end
 
   def default_pdfjs_iframe_args args
-    args[:pdf_url] ||= card.file.url
+    args[:pdf_url] ||= card.file.url if card.respond_to?(:file)
+    args[:viewer_path] ||= "pdfjs/web/viewer.html"
+    args[:viewer_path] << "?file=#{args[:pdf_url]}" if args[:pdf_url]
   end
 
   view :pdfjs_iframe do |args|
     <<-HTML
-      <iframe id="source-preview-iframe"
-              src="assets/web/viewer.html?file=#{args[:pdf_url]}"
+      <iframe style="width: 100%" id="source-preview-iframe"
+              src= #{args[:viewer_path]}
               security="restricted"
               sandbox="allow-same-origin allow-scripts allow-forms" >
       </iframe>
@@ -19,6 +20,7 @@ format :html do
   end
 
   view :pdfjs_viewer do |args|
-    Pdfjs.viewer
+    # TODO: show pdfjs viewer directly without iframe
+    # Pdfjs.viewer
   end
 end
