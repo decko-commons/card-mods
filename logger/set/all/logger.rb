@@ -9,12 +9,12 @@ if Card.config.performance_logger
 end
 
 event :start_performance_logger_on_change,
-      before: :handle, when: proc { |c| c.performance_log? } do
+      before: :act, when: proc { |c| c.performance_log? } do
   start_performance_logger
   @handle_logger = true
 end
 event :stop_performance_logger_on_change,
-      after: :handle, when: proc { |c| c.performance_log? } do
+      after: :act, when: proc { |c| c.performance_log? } do
   stop_performance_logger
   @handle_logger = false
 end
