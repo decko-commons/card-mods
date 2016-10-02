@@ -1,16 +1,44 @@
 def save_session_votes
-  [:up_vote, :down_vote].each do |vote_type| 
-    if Env.session[vote_type]
-      Env.session[vote_type].each do |votee_id|
-        if (votee = Card.fetch(votee_id))
-          update_vote votee, vote_type
-        end
+  [:up_vote, :down_vote].each do |vote_type|
+    next unless Env.session[vote_type]
+    Env.session[vote_type].each do |votee_id|
+      if (votee = Card.fetch(votee_id))
+        update_vote votee, vote_type
       end
-      Env.session.delete(vote_type)
     end
+    Env.session.delete(vote_type)
   end
 end
 
+def vote_key card_id=id
+  "~#{card_id}"
+end
+
+def vote_status
+  if Auth.signed_in?
+    if Auth.current.upvotes_card.include_item? vote_key
+      :upvoted
+    elsif Auth.current.downvotes_card.include_item? vote_key
+      :downvoted
+    else
+      :no_vote
+    end
+  elsif try(:session_vote?)
+    session_vote_status
+  else
+    :no_vote
+  end
+end
+
+def session_vote_status
+  if upvoted_in_session?
+    :upvoted
+  elsif downvoted_in_session?
+    :downvoted
+  else
+    :no_vote
+  end
+end
 
 def update_vote votee, vote_type
   vote_card = votee.vote_count_card
@@ -24,21 +52,20 @@ def update_vote votee, vote_type
 end
 
 format :html do
-  
-  view :titled_with_voting, :tags=>:comment do |args|
-    wrap args do   
+  view :titled_with_voting, tags: :comment do |args|
+    wrap args do
       [
-        subformat( card.vote_count_card ).render_content,
-        _render_header( args.reverse_merge :optional_menu=>:hide ),
-        wrap_body( :content=>true ) { _render_core args },
-        optional_render( :comment_box, args )
+        subformat(card.vote_count_card).render_content,
+        _render_header(args.reverse_merge(optional_menu: :hide)),
+        wrap_body(content: true) { _render_core args },
+        optional_render(:comment_box, args)
       ]
     end
   end
-  
+
   view :header_with_voting do |args|
-    render_haml( :args=>args ) do
-      %{
+    render_haml(args: args) do
+      <<-HAML
 .header-with-vote
   .header-vote
     = subformat( card.vote_count_card ).render_details
@@ -47,7 +74,15 @@ format :html do
     .creator-credit
       = process_content "{{_self | structure:creator credit}}"
 .clear-line
-      }
+      HAML
     end
   end
+end
+
+def downvoted_in_session?
+  Env.session[:down_vote] && Env.session[:down_vote].include?(id)
+end
+
+def upvoted_in_session?
+  Env.session[:up_vote] && Env.session[:up_vote].include?(id)
 end
