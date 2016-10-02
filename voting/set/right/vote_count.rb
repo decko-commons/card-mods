@@ -31,7 +31,7 @@ def vote_up insert_before_id=false
       end
     end
   elsif session_vote?
-    if downvoted_in_session?
+    if left.downvoted_in_session?
       Env.session[:down_vote].delete left.id
     else
       add_vote_to_session :up_vote, left.id, insert_before_id
@@ -52,7 +52,7 @@ def vote_down insert_before_id=false
       end
     end
   elsif session_vote?
-    if upvoted_in_session?
+    if left.upvoted_in_session?
       Env.session[:up_vote].delete left.id
     else
       add_vote_to_session :down_vote, left.id, insert_before_id
