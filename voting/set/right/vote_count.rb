@@ -210,22 +210,23 @@ event :vote, :prepare_to_validate,
 end
 
 format :html do
-  view :missing  do |args|
-    if card.new_card? && (l=card.left) && l.respond_to?(:vote_count)
+  view :missing do
+    if card.new_card? && (l = card.left) && l.respond_to?(:vote_count)
       Auth.as_bot do
         card.update_votecount
         card.save!
       end
-      render(args[:denied_view], args)
+      render @denied_view
     else
-      super(args)
+      super()
     end
   end
 
   view :new, :missing
 
   view :content do |args|
-    wrap args.merge(slot_class: 'card-content nodblclick') do
+    class_up "card-slot", "card-content nodblclick"
+    wrap do
       [
         _optional_render(:menu, args, :hide),
         wrap_with(:div, class: 'vote-up') { vote_up_link(:content) },
@@ -244,8 +245,10 @@ format :html do
     end
   end
 
+
   view :details do |args |
-    wrap args.merge(slot_class: 'nodblclick') do
+    class_up "card-slot", "nodblclick"
+    wrap do
       [
         wrap_with(:div, class: 'vote-up') do
           [

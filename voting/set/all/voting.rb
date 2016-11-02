@@ -1,5 +1,5 @@
 def save_session_votes
-  [:up_vote, :down_vote].each do |vote_type| 
+  [:up_vote, :down_vote].each do |vote_type|
     if Env.session[vote_type]
       Env.session[vote_type].each do |votee_id|
         if (votee = Card.fetch(votee_id))
@@ -24,9 +24,9 @@ def update_vote votee, vote_type
 end
 
 format :html do
-  
+
   view :titled_with_voting, :tags=>:comment do |args|
-    wrap args do   
+    wrap do
       [
         subformat( card.vote_count_card ).render_content,
         _render_header( args.reverse_merge :optional_menu=>:hide ),
@@ -35,7 +35,7 @@ format :html do
       ]
     end
   end
-  
+
   view :header_with_voting do |args|
     render_haml( :args=>args ) do
       %{
