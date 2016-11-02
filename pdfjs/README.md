@@ -1,0 +1,1 @@
+Create a symbolic link in your deck from public/pdfjs to the files directory of this mod.

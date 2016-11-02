@@ -9,12 +9,12 @@ if Card.config.performance_logger
 end
 
 event :start_performance_logger_on_change,
-      before: :handle, when: proc { |c| c.performance_log? } do
+      before: :act, when: proc { |c| c.performance_log? } do
   start_performance_logger
   @handle_logger = true
 end
 event :stop_performance_logger_on_change,
-      after: :handle, when: proc { |c| c.performance_log? } do
+      after: :act, when: proc { |c| c.performance_log? } do
   stop_performance_logger
   @handle_logger = false
 end
@@ -86,14 +86,18 @@ class ::Card
     end
   end
 
-  module ViewCache
-    class << self
-      alias_method :original_fetch, :fetch
-      def fetch format, view, args, &block
-        ::Logger.with_logging :view,
-                              message: view, category: 'content',
-                              context: format.card.name, details: args  do
-          original_fetch(format, view, args, &block)
+  class Cache
+    module ViewCache
+      class << self
+        alias_method :original_fetch, :fetch
+        def fetch(format, view, args, &block)
+          ::Logger.with_logging :view,
+                                message: view,
+                                context: format.card.name,
+                                details: args,
+                                category: 'content' do
+            original_fetch(format, view, args, &block)
+          end
         end
       end
     end

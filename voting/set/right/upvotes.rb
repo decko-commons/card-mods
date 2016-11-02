@@ -1,1 +1,1 @@
-include Right::Downvotes
+include_set Abstract::Votes
