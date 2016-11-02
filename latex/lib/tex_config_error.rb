@@ -1,0 +1,2 @@
+class TexConfigError < StandardError
+end

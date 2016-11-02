@@ -7,18 +7,6 @@ def session_vote?
   false
 end
 
-#def history?
-#  false
-#end
-
-def downvoted_in_session?
-  Env.session[:down_vote] && Env.session[:down_vote].include?(left.id)
-end
-
-def upvoted_in_session?
-  Env.session[:up_vote] && Env.session[:up_vote].include?(left.id)
-end
-
 def votee
   cardname.left
 end
@@ -34,16 +22,16 @@ def vote_up insert_before_id=false
   if Auth.signed_in?
     Auth.as_bot do
       case vote_status
-      when '?'
+      when :no_vote
         uv_card = Auth.current.upvotes_card
         add_vote uv_card, left.id, insert_before_id
-      when '-'
+      when :downvoted
         dv_card = Auth.current.downvotes_card
         delete_vote dv_card, left.id
       end
     end
   elsif session_vote?
-    if downvoted_in_session?
+    if left.downvoted_in_session?
       Env.session[:down_vote].delete left.id
     else
       add_vote_to_session :up_vote, left.id, insert_before_id
@@ -55,16 +43,16 @@ def vote_down insert_before_id=false
   if Auth.signed_in?
     Auth.as_bot do
       case vote_status
-      when '?'
+      when :no_vote
         dv_card = Auth.current.downvotes_card
         add_vote dv_card, left.id, insert_before_id
-      when '+'
+      when :upvoted
         uv_card = Auth.current.upvotes_card
         delete_vote uv_card, left.id
       end
     end
   elsif session_vote?
-    if upvoted_in_session?
+    if left.upvoted_in_session?
       Env.session[:up_vote].delete left.id
     else
       add_vote_to_session :down_vote, left.id, insert_before_id
@@ -84,10 +72,9 @@ def add_vote vote_card, votee_id, insert_before_id=false
 end
 
 def delete_vote vote_card, votee_id
-  if vote_card.drop_id votee_id
-    vote_card.save!
-    update_votecount
-  end
+  return unless vote_card.drop_id votee_id
+  vote_card.save!
+  update_votecount
 end
 
 def add_vote_to_session vote_type, votee_id, insert_before_id
@@ -103,50 +90,50 @@ end
 
 def force_up insert_before_id=false
   vote_up insert_before_id
-  vote_up(insert_before_id) if vote_status != '+'
+  vote_up(insert_before_id) if vote_status != :upvoted
 end
 
 def force_down insert_before_id=false
   vote_down insert_before_id
-  vote_down(insert_before_id) if vote_status != '-'
+  vote_down(insert_before_id) if vote_status != :downvoted
 end
 
 def force_neutral insert_before_id=false
   case vote_status
-  when '-'
+  when :downvoted
     vote_up insert_before_id
-  when '+'
+  when :upvoted
     vote_down insert_before_id
   end
 end
 
 def raw_content
-  if !Auth.signed_in? && session_vote?
-    if Env.session[:up_vote] && Env.session[:up_vote].include?(left.id)
-      return (content.to_i + 1).to_s
-    elsif Env.session[:down_vote] && Env.session[:down_vote].include?(left.id)
-      return (content.to_i - 1).to_s
-    end
+  return super if Auth.signed_in? || !session_vote?
+  if Env.session[:up_vote] && Env.session[:up_vote].include?(left.id)
+    (content.to_i + 1).to_s
+  elsif Env.session[:down_vote] && Env.session[:down_vote].include?(left.id)
+    (content.to_i - 1).to_s
+  else
+    super
   end
-  super
 end
 
 def direct_contribution_count
-  return left.upvote_count.to_i + left.downvote_count.to_i
+  left.upvote_count.to_i + left.downvote_count.to_i
 end
 
 def update_votecount
   Auth.as_bot do
     up_count =
       Card.search(
-        { right_plus: [{ codename: 'upvotes' }, { link_to: left.name }],
-          return: 'count' },
+        { right_plus: [{ codename: "upvotes" }, { link_to: left.name }],
+          return: "count" },
         "upvotes linking to #{left.name}"
       )
     down_count =
       Card.search(
-        { right_plus: [{ codename: 'downvotes' }, { link_to: left.name }],
-          return: 'count' },
+        { right_plus: [{ codename: "downvotes" }, { link_to: left.name }],
+          return: "count" },
         "downvotes linking to #{left.name}"
       )
 
@@ -164,45 +151,27 @@ def update_votecount
 end
 
 def vote_status
-  if Auth.signed_in?
-    if Auth.current.upvotes_card.include_item? "~#{left.id}"
-      '+'
-    elsif Auth.current.downvotes_card.include_item? "~#{left.id}"
-      '-'
-    else
-      '?'
-    end
-  elsif session_vote?
-    if upvoted_in_session?
-      '+'
-    elsif downvoted_in_session?
-      '-'
-    else
-      '?'
-    end
-  else
-    '#'
-  end
+  left.vote_status
 end
 
 event :vote, :prepare_to_validate,
       on: :update,
-      when: proc { |c| Env.params['vote'] } do
+      when: proc { |_c| Env.params["vote"] } do
   if Auth.signed_in? || session_vote?
-    successor_id = Env.params['insert-before'] &&
-                   Env.params['insert-before'].to_i
-    case Env.params['vote']
-    when 'up' then vote_up successor_id
-    when 'down' then vote_down successor_id
-    when 'force-up' then force_up successor_id
-    when 'force-down' then force_down successor_id
-    when 'force-neutral' then force_neutral successor_id
+    successor_id = Env.params["insert-before"] &&
+                   Env.params["insert-before"].to_i
+    case Env.params["vote"]
+    when "up" then vote_up successor_id
+    when "down" then vote_down successor_id
+    when "force-up" then force_up successor_id
+    when "force-down" then force_down successor_id
+    when "force-neutral" then force_neutral successor_id
     end
 
     abort :success if !Auth.signed_in? && session_vote?
   else
-    path_hash = { action: :update, vote: Env.params['vote'],
-                  success: '*previous' }
+    path_hash = { action: :update, vote: Env.params["vote"],
+                  success: "*previous" }
     uri = format.page_path cardname, path_hash
     Env.save_interrupted_action uri
     abort success: "REDIRECT: #{Card[:signin].cardname.url_key}"
@@ -229,35 +198,36 @@ format :html do
     wrap do
       [
         _optional_render(:menu, args, :hide),
-        wrap_with(:div, class: 'vote-up') { vote_up_link(:content) },
+        wrap_with(:div, class: "vote-up") { vote_up_link(:content) },
         _render_core(args),
-        wrap_with(:div, class: 'vote-down') {vote_down_link(:content) }
+        wrap_with(:div, class: "vote-down") { vote_down_link(:content) }
       ]
     end
   end
 
-  view :core do |args|
+  view :core do
     html_class = "vote-count"
-    html_class += " current-user-up" if card.vote_status == "+"
-    html_class += " current-user-down" if card.vote_status == "-"
+    case card.vote_status
+    when :upvoted then html_class += " current-user-up"
+    when :downvoted then html_class += " current-user-down"
+    end
     wrap_with :div, class: html_class do
-      super(args)
+      super()
     end
   end
 
-
-  view :details do |args |
+  view :details do
     class_up "card-slot", "nodblclick"
     wrap do
       [
-        wrap_with(:div, class: 'vote-up') do
+        wrap_with(:div, class: "vote-up") do
           [
             vote_up_link(:details),
             up_details
           ]
         end,
-        _render_core(args),
-        wrap_with(:div, class: 'vote-down') do
+        _render_core,
+        wrap_with(:div, class: "vote-down") do
           [
             vote_down_link(:details),
             down_details
@@ -268,20 +238,20 @@ format :html do
   end
 
   def vote_up_link success_view
-    link = case card.vote_status
-    when '+'
-      disabled_vote_link :up, 'You have already upvoted this claim.'
+    case card.left.vote_status
+    when :upvoted
+      disabled_vote_link :up, "You have already upvoted this claim."
     else
-      vote_link '<i class="fa fa-chevron-up"></i>', 'Vote up', :up, success_view
+      vote_link '<i class="fa fa-chevron-up"></i>', "Vote up", :up, success_view
     end
   end
 
   def vote_down_link success_view
-    link = case card.vote_status
-    when '-'
-      disabled_vote_link :down, 'You have already downvoted this claim.'
+    case card.left.vote_status
+    when :downvoted
+      disabled_vote_link :down, "You have already downvoted this claim."
     else
-      vote_link '<i class="fa fa-chevron-down"></i>', 'Vote down', :down,
+      vote_link '<i class="fa fa-chevron-down"></i>', "Vote down", :down,
                 success_view
     end
   end
@@ -289,44 +259,48 @@ format :html do
   def disabled_vote_link up_or_down, message, extra={}
     html_class = "current-user-" + up_or_down.to_s
     html_class += " slotter disabled-vote-link vote-button"
-    button_tag({disabled: true,
-        class: html_class, type: 'button', title: message}.merge(extra)) do
+    button_tag({ disabled: true,
+                 class: html_class, type: "button",
+                 title: message }.merge(extra)) do
       "<i class=\"fa fa-chevron-#{up_or_down} \"></i>"
     end
   end
 
   def vote_link text, title, up_or_down, view, extra={}
-    button_tag({href: vote_path(up_or_down, view),
-        class: 'slotter vote-link vote-button', type: 'button', title: title, remote: true, method: 'post'}.merge(extra)) do
+    button_tag({ href: vote_path(up_or_down, view),
+                 class: "slotter vote-link vote-button", type: "button",
+                 title: title, remote: true, method: "post" }.merge(extra)) do
       text
     end
   end
 
-  def vote_path up_or_down=nil, view='content'
-    path_hash = {name: card.name, action: :update, view: view}
+  def vote_path up_or_down=nil, view="content"
+    path_hash = { name: card.name, action: :update, view: view }
     path_hash[:vote] = up_or_down if up_or_down
     path path_hash
   end
 
   def up_details
-    render_haml up_count: card.left.upvote_count do %{
+    render_haml up_count: card.left.upvote_count do
+      %(
 %span.vote-details
   <i class="fa fa-users"></i>
   %span.vote-number
     = up_count
   Important
-      }
+      )
     end
   end
 
   def down_details
-    render_haml down_count: card.left.downvote_count do %{
+    render_haml down_count: card.left.downvote_count do
+      %(
 %span.vote-details
   <i class="fa fa-users"></i>
   %span.vote-number
     = down_count
   Not important
-      }
+      )
     end
   end
 end

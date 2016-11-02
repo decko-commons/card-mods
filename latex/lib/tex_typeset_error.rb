@@ -1,0 +1,2 @@
+class TexTypesetError < StandardError
+end

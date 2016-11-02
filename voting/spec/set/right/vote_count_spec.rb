@@ -13,26 +13,26 @@ describe Card::Set::Right::VoteCount do
   describe "#vote_status" do
     subject { @card.vote_status }
     context "when not voted by user" do
-      it { is_expected.to eq("?") }
+      it { is_expected.to eq(:no_vote) }
     end
     context "when upvoted by user" do
       before do
         Card::Auth.as_bot { @card.vote_up }
       end
-      it { is_expected.to eq("+")}
+      it { is_expected.to eq(:upvoted)}
     end
     context "when downvoted by user" do
       before do
         Card::Auth.as_bot { @card.vote_down }
       end
-      it { is_expected.to eq("-")}
+      it { is_expected.to eq(:downvoted)}
     end
     context "when not signed in" do
       subject do
         Card::Auth.current_id = Card::AnonymousID
         @card.vote_status
       end
-      it { is_expected.to eq("#")}
+      it { is_expected.to eq(:no_vote)}
     end
   end
 
@@ -316,9 +316,9 @@ describe Card::Set::Right::VoteCount do
   describe "session votes" do
     subject { @vcard.raw_content.to_i }
     before do
-      Card::Auth.current_id = Card::AnonymousID
       @topic = get_a_sample_topic
       @vcard = @topic.vote_count_card
+      Card::Auth.current_id = Card::AnonymousID
     end
 
     describe "#vote_up" do
