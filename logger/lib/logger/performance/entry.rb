@@ -6,7 +6,7 @@ class Logger::Performance
     def initialize( parent, level, args )
       @start = Time.new
       start_category_timer
-      @message = "#{ voo.title ||  args[:method] || '' }"
+      @message = "#{ args[:title] ||  args[:method] || '' }"
       @message += ": #{ args[:message] }" if args[:message]
       @details = args[:details]
       @context = args[:context]
