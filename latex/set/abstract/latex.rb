@@ -175,16 +175,10 @@ format :html do
     end
   end
 
-
   view :header do |args|
-    args[:optional_toggle] = :hide
-    if @slot_view == :open
-      super(args)
-      #_render_pdf_toolbar args
-    else
-      args[:optional_title_link] = :show
-      super(args) # _final_header args
-    end
+    voo.hide! :optional_toggle
+    voo.show! :optional_title_link unless @slot_view == :open
+    ""#super
   end
 
   view :split do |args|
@@ -312,13 +306,15 @@ format :html do
     #  </script>
   end
 
-  view :content_fieldsets do |args|
+  #view :content_fieldsets do |args|
+  def new_content_formgroup
+    binding.pry
     if structure = card.rule(:attributes) and @slot_view.to_s.eql? "new"
       edit_form = structure.scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc|
         process_content( inc ).strip
       end.join
     else
-      edit_form = edit_slot args
+      edit_form = edit_slot #args
     end
     %{
       <div class="card-editor editor">
@@ -336,7 +332,8 @@ format :html do
     %{
       #{ _render_pdf_viewer args }
       <br/>
-      #{ process_content_object "{{+pdf bottom|core}}"}
+      #{#field_subformat("+pdf bottom").render_core
+    }
     }
   end
 
