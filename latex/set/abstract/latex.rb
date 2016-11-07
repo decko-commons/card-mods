@@ -306,9 +306,7 @@ format :html do
     #  </script>
   end
 
-  #view :content_fieldsets do |args|
-  def new_content_formgroup
-    binding.pry
+  view :content_formgroup do |args|
     if structure = card.rule(:attributes) and @slot_view.to_s.eql? "new"
       edit_form = structure.scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc|
         process_content( inc ).strip
