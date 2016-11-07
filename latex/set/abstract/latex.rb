@@ -1,7 +1,7 @@
 include LatexDocument
 include_set Abstract::Pdfjs
 
-unless const_defined?(Card::SurveyID)
+if Card::Codename[:survey]
   LATEX_TYPE_IDS = [Card::SurveyID, Card::LatexID, Card::ProblemID,
                     Card::DefinitionID]
 end
