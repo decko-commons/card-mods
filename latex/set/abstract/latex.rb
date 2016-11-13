@@ -35,6 +35,17 @@ def store_pdf
   save_preview unless typesetting_preview?
 end
 
+def update_preview
+  preview_card = Card.fetch "#{self.name}+preview",
+                            new: { type: Card::PlainTextID }
+  preview_card.content = self.content
+  preview_card.save
+
+  preview_pdf_card = Card.fetch "#{self.name}+preview+pdf",
+                                new: { type: Card::FileID }
+  preview_pdf_card.update_attributes file: File.open(preview_pdf_path, "r")
+end
+
 def typeset_document
   content.gsub!("\r\n","\n")
   self.content.gsub!("\r\n","\n")
@@ -48,14 +59,7 @@ ensure
   if typesetting_preview? && errors.empty?
     Env.params[:success][:preview_filename] = doc_basename
     Card::Auth.as_bot do
-      preview_card = Card.fetch "#{self.name}+preview",
-                                new: { type: Card::PlainTextID }
-      preview_card.content = self.content
-      preview_card.save
-
-      preview_pdf_card = Card.fetch "#{self.name}+preview+pdf",
-                                    new: { type: Card::FileID }
-      preview_pdf_card.update_attributes file: File.open(preview_pdf_path, "r")
+      update_preview
     end
     self.content = Card.find(self).content # restore old content
     #abort :success
@@ -75,7 +79,8 @@ end
 def create_default_preview
   return unless (pdf_card = default_pdf_card)
   Card::Auth.as_bot do
-    preview_pdf = Card.fetch "#{name}+preview+pdf", :new => {:type => Card::FileID}
+    preview_pdf = Card.fetch "#{name}+preview+pdf",
+                             :new => {:type => Card::FileID}
     preview_pdf.update_attributes(file: pdf_card.file.file )
   end
 end
@@ -181,7 +186,7 @@ format :html do
     ""#super
   end
 
-  view :split do |args|
+  view :split, cache: :never do |args|
     _render_edit args.merge(split: true)
   end
 
@@ -200,7 +205,6 @@ format :html do
         card.content = preview_card.content
         content = card.content
       end
-      #_final_edit args
       <<-HTML
       <div class="col-md-6" id="splitviewtex">
         #{super(args)}
@@ -214,11 +218,11 @@ format :html do
     end
   end
 
-  view :edit_preview do |args|
+  view :edit_preview, cache: :never do |args|
     _render_pdf_viewer args
   end
 
-  view :preview do |args|
+  view :preview, cache: :never do |args|
     unless Env.params[:preview_filename]
       card.new_preview_from_original
       Env.params[:preview_filename] = card.doc_basename
@@ -269,7 +273,7 @@ format :html do
     HTML
   end
 
-  view :tex_errors do |args|
+  view :tex_errors, cache: :never do |args|
     return '' if card.errors.empty?
 
     wrap args do
@@ -282,7 +286,7 @@ format :html do
   end
 
 
-  view :typeset_fieldset do |args |
+  view :typeset_fieldset do |args|
     %{
     #{ hidden_field_tag :success_typeset, false, :name => "success[typeset]"}
     #{ button_tag 'Typeset', :id=>'typeset-button',
@@ -359,7 +363,7 @@ format :html do
     }
   end
 
-  view :pdf_viewer do |args|
+  view :pdf_viewer, cache: :never do |args|
     # %{
     # #{ ::Pdfjs.viewer }
     # #{ load_pdf args[:preview] || Env.params[:preview_filename]}
@@ -387,7 +391,7 @@ format :html do
     end
   end
 
-  view :redirect_split do |args|
+  view :redirect_split, cache: :never do |args|
     %{
       <script> window.location = "/~#{card.id}?view=split&layout=#{LATEX_EDIT_LAYOUT}"; </script>
     }
