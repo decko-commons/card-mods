@@ -1,6 +1,9 @@
 include LatexDocument
 include_set Abstract::Pdfjs
 
+add_attributes :ignore_tex_errors
+attr_accessor :ignore_tex_errors
+
 if Card::Codename[:survey]
   LATEX_TYPE_IDS = [Card::SurveyID, Card::LatexID, Card::ProblemID,
                     Card::DefinitionID]
@@ -52,7 +55,7 @@ def typeset_document
   return if Env.params[:ignore_errors]
   typeset_preview content
 rescue TexTypesetError => e
-  errors.add 'LaTeX errors', e.message
+  errors.add 'LaTeX errors', e.message unless ignore_tex_errors
 rescue TexConfigError => e
   errors.add 'LaTeX', e.message
 ensure
@@ -180,14 +183,15 @@ format :html do
     end
   end
 
-  view :header do |args|
+  view :header do #|args|
     voo.hide! :optional_toggle
     voo.show! :optional_title_link unless @slot_view == :open
     ""#super
   end
 
   view :split, cache: :never do |args|
-    _render_edit args.merge(split: true)
+    @split = true
+    _render_edit # args.merge(split: true)
   end
 
   def default_new_args args
@@ -195,10 +199,11 @@ format :html do
     args.merge! :nopdfview => true # disables the pdf.js toolbar
   end
 
-  view :edit do |args|
+  view :edit do #|args|
+    args = {}
     args = default_latex_edit_args args
     #args[:split] ||= @slot_view.to_s.eql? 'split'
-    if !args[:split]
+    if !@split
       _render_redirect_split
     else
       if Env.params[:typeset] == "true" and preview_card = card.preview_card and preview_card.content.present?

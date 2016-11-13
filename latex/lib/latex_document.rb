@@ -1,8 +1,6 @@
 # -*- encoding : utf-8 -*-
 
 module LatexDocument
-  @@typeset_prefix = 'ts_'
-  @@bib_prefix = 'bib_'
   PREPROCESS_RULES =
     { /\[\[\s*(http\:[^|\]]+)\s*\|\s*([^\]]+)\s*\]\]/ => '\href{http:\1}{\2}',
       /\[\[\s*([^|\]]+)\s*\|\s*([^\]]+)\s*\]\]/ => '\href{/\1}{\2}',   # Reference with link name

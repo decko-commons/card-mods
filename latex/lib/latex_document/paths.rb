@@ -1,5 +1,7 @@
 module LatexDocument
   module Paths
+    BIB_PREFIX = 'bib_'
+    TYPESET_PREFIX = 'ts_'
     def pdf_url
       pdf_card.file.url
       #File.join '', '/tex', uuid[0..(Wagn.config.tex_store_level-1)].chars.to_a, "#{uuid}.pdf"
@@ -8,8 +10,8 @@ module LatexDocument
     def home
       @home || @home = path_for_uuid
     end
-    def bib_basename;      "#{@@bib_prefix}#{uuid}"        end
-    def doc_basename;      "#{@@typeset_prefix}#{typeset_uuid}"    end
+    def bib_basename;      "#{BIB_PREFIX}#{uuid}"        end
+    def doc_basename;      "#{TYPESET_PREFIX}#{typeset_uuid}"    end
 
     def bib_path
       File.join home, "#{bib_basename}.bib"
