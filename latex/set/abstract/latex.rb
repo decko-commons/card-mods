@@ -208,13 +208,14 @@ format :html do
     if !@split
       _render_redirect_split
     else
-      if Env.params[:typeset] == "true" and preview_card = card.preview_card and preview_card.content.present?
+      if params[:typeset] == "true" and preview_card = card.preview_card and preview_card.content.present?
         card.content = preview_card.content
         content = card.content
       end
+      voo.show :toolbar, :help
       <<-HTML
       <div class="col-md-6" id="splitviewtex">
-        #{super()}
+        #{edit_form}
       <p id="localizeerror">
       </p>
         </div>
@@ -222,6 +223,24 @@ format :html do
         #{_render_edit_preview @args}
       </div>
       HTML
+    end
+  end
+
+  def hidden_edit_fields
+    hidden_tags(
+      success: { hard_redirect: true, view: 'open',
+                 layout: PDF_VIEW_LAYOUT,
+                 id: '_self' }
+    )
+  end
+
+  def edit_form
+    frame_and_form :update, redirect: true do
+      [
+        hidden_edit_fields,
+        _optional_render_content_formgroup,
+        _optional_render_edit_buttons
+      ]
     end
   end
 
@@ -261,30 +280,6 @@ format :html do
     theme = theme ? theme.content : "textmate"
     formid = args[:view] == "new" ? "#new_card" : "#edit_card_#{card.id}"
     args[:ace_mode] = "latex"
-    # <script>
-    # { load_editor_js }
-    # </script>
-    # %{
-    # #{ Card.fetch("*load editor", :new => {}).raw_content
-    # }
-    #   <a name=editor></a>
-    #   <div id="texeditor">#{HTMLEntities.new.encode(card.content)}</div>
-    #   <script>
-    #            var editor = ace.edit('texeditor');
-    #            editor.getSession().setNewLineMode("windows");
-    #            editor.setTheme( 'ace/theme/#{theme}' );
-    #            editor.getSession().setMode('ace/mode/latex');
-    #            editor.getSession().setUseWrapMode(true);
-    #            $('#{formid}').submit(function (event)
-    #            {
-    #              $('#card_content').val(editor.getValue());
-    #            });
-    #            #{ if params['line'] then "editor.gotoLine(#{params['line']});" end }
-    #            editor.focus();
-    #   </script>
-    #   #{form.hidden_field :content, :id=>"card_content", :value=>"Empty"}
-    # #{ errors }
-    # }
     <<-HTML
     #{text_area :content, rows: 5,
                         class: "card-content ace-editor-textarea",
@@ -314,20 +309,20 @@ format :html do
                              :value=>'Typeset', :name=>"typeset-button",
                              :type=>'button' }
 
+    <script>
+       $('#typeset-button').click (function(){
+           $('#success_typeset').val('true');
+           $('#success_view').val('split');
+
+           $('#success_layout').val('#{LATEX_EDIT_LAYOUT}');
+           $('#edit_card_#{card.id}').submit();
+           $('#success_typeset').val('false');
+           $('#success_view').val('open');
+           $('#success_redirect').val('true');
+           $('#success_layout').val('#{PDF_VIEW_LAYOUT}');
+       });
+     </script>
     }
-    # <script>
-    #    $('#typeset-button').click (function(){
-    #        $('#success_typeset').val('true');
-    #        $('#success_view').val('split');
-    #        $('#success_redirect').val('false');
-    #        $('#success_layout').val('#{LATEX_EDIT_LAYOUT}');
-    #        $('#edit_card_#{card.id}').submit();
-    #        $('#success_typeset').val('false');
-    #        $('#success_view').val('open');
-    #        $('#success_redirect').val('true');
-    #        $('#success_layout').val('#{PDF_VIEW_LAYOUT}');
-    #    });
-    #  </script>
   end
 
   view :content_formgroup do |args|
