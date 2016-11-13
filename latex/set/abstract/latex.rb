@@ -1,5 +1,6 @@
 include LatexDocument
 include_set Abstract::Pdfjs
+include_set Abstract::AceEditor
 
 add_attributes :ignore_tex_errors
 attr_accessor :ignore_tex_errors
@@ -186,10 +187,10 @@ format :html do
   view :header do #|args|
     voo.hide! :optional_toggle
     voo.show! :optional_title_link unless @slot_view == :open
-    ""#super
+    super()
   end
 
-  view :split, cache: :never do |args|
+  view :split do |args|
     @split = true
     _render_edit # args.merge(split: true)
   end
@@ -200,8 +201,9 @@ format :html do
   end
 
   view :edit do #|args|
-    args = {}
-    args = default_latex_edit_args args
+    @args = {}
+    default_latex_edit_args @args
+    voo.show! :header
     #args[:split] ||= @slot_view.to_s.eql? 'split'
     if !@split
       _render_redirect_split
@@ -212,7 +214,7 @@ format :html do
       end
       <<-HTML
       <div class="col-md-6" id="splitviewtex">
-        #{super(args)}
+        #{super()}
       <p id="localizeerror">
       </p>
         </div>
@@ -223,7 +225,21 @@ format :html do
     end
   end
 
-  view :edit_preview, cache: :never do |args|
+  view :edit_buttons do
+    args = @args
+    button_formgroup do
+      %{
+      #{ _render_typeset_fieldset(args) if @slot_view.to_s.eql?('split') || @args[:split] || @split }
+      #{ #load_pdf_preview if args[:split]
+        }
+      #{ submit_tag 'Submit', :class=>'submit-button btn btn-primary' }
+      #{ button_tag 'Cancel', :class=>'cancel-button', :onclick => "window.location.href='#{path(:view=>'open',  :id=>card.id, :layout => PDF_VIEW_LAYOUT)}'", :type=>'button' }
+      }
+      #%[standard_submit_button, standard_cancel_button]
+    end
+  end
+
+  view :edit_preview do |args|
     _render_pdf_viewer args
   end
 
@@ -244,7 +260,7 @@ format :html do
     theme = Card.fetch(card.rule_card(:theme).content)
     theme = theme ? theme.content : "textmate"
     formid = args[:view] == "new" ? "#new_card" : "#edit_card_#{card.id}"
-
+    args[:ace_mode] = "latex"
     # <script>
     # { load_editor_js }
     # </script>
@@ -270,10 +286,9 @@ format :html do
     # #{ errors }
     # }
     <<-HTML
-     #{text_area :content,
-                 rows: 5,
-                 class: 'card-content ace-editor-textarea',
-                 'data-card-type-code' => card.type_code}
+    #{text_area :content, rows: 5,
+                        class: "card-content ace-editor-textarea",
+                        "data-ace-mode" => args[:ace_mode]}
       #{_render_tex_errors(args)}
     HTML
   end
