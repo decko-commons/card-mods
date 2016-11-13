@@ -219,7 +219,7 @@ format :html do
       </p>
         </div>
       <div class="col-md-6" id="splitviewpdf">
-        #{_render_edit_preview args}
+        #{_render_edit_preview @args}
       </div>
       HTML
     end
@@ -354,7 +354,7 @@ format :html do
     %{
       #{ _render_pdf_viewer args }
       <br/>
-      #{#field_subformat("+pdf bottom").render_core
+      #{field_subformat("+pdf bottom").render_core
     }
     }
   end
