@@ -101,8 +101,8 @@ format :json do
 end
 
 format :html do
-  LATEX_EDIT_LAYOUT = "Latex_split_Layout"
-  PDF_VIEW_LAYOUT = "New_Layout"
+  LATEX_EDIT_LAYOUT = "latex_split_layout"
+  PDF_VIEW_LAYOUT = "new_layout"
 
   #alias_method :original_wrap, :wrap
 
@@ -118,8 +118,8 @@ format :html do
 
   def default_latex_edit_args args
     args[:optional_help] = :show
-    args[:hidden] ||= {}
-    args[:hidden][:success] = {:redirect=>true,:view => 'open', :layout=>PDF_VIEW_LAYOUT, :id=>'_self'}
+    #args[:hidden] ||= {}
+    #args[:hidden][:success] = {:redirect=>true,:view => 'open', :layout=>PDF_VIEW_LAYOUT, :id=>'_self'}
     args[:buttons] = %{
     #{ _render_typeset_fieldset(args) if @slot_view.to_s.eql? 'split' or args[:split]}
     #{ #load_pdf_preview if args[:split]
@@ -204,44 +204,41 @@ format :html do
     @args = {}
     default_latex_edit_args @args
     voo.show! :header
-    #args[:split] ||= @slot_view.to_s.eql? 'split'
     if !@split
       _render_redirect_split
     else
       if params[:typeset] == "true" and preview_card = card.preview_card and preview_card.content.present?
         card.content = preview_card.content
-        content = card.content
       end
       voo.show :toolbar, :help
+      @no_slot = true
+      wrap do
       <<-HTML
-      <div class="col-md-6" id="splitviewtex">
-        #{edit_form}
-      <p id="localizeerror">
-      </p>
+        <div class="col-md-6" id="splitviewtex">
+          #{super()}
+          <p id="localizeerror"></p>
         </div>
-      <div class="col-md-6" id="splitviewpdf">
-        #{_render_edit_preview @args}
-      </div>
+        <div class="col-md-6" id="splitviewpdf">
+          #{_render_edit_preview @args}
+        </div>
       HTML
+      end
     end
   end
 
+
   def hidden_edit_fields
     hidden_tags(
-      success: { hard_redirect: true, view: 'open',
-                 layout: PDF_VIEW_LAYOUT,
+      success: { redirect: true,
+                 view: :open,
+                 typeset: false,
+                 # layout: PDF_VIEW_LAYOUT,
                  id: '_self' }
     )
   end
 
-  def edit_form
-    frame_and_form :update, redirect: true do
-      [
-        hidden_edit_fields,
-        _optional_render_content_formgroup,
-        _optional_render_edit_buttons
-      ]
-    end
+  def standard_frame slot=true
+    super(!@no_slot)
   end
 
   view :edit_buttons do
@@ -281,9 +278,9 @@ format :html do
     formid = args[:view] == "new" ? "#new_card" : "#edit_card_#{card.id}"
     args[:ace_mode] = "latex"
     <<-HTML
-    #{text_area :content, rows: 5,
-                        class: "card-content ace-editor-textarea",
-                        "data-ace-mode" => args[:ace_mode]}
+      #{text_area :content, rows: 5,
+                            class: "card-content ace-editor-textarea",
+                           "data-ace-mode" => args[:ace_mode]}
       #{_render_tex_errors(args)}
     HTML
   end
@@ -300,10 +297,9 @@ format :html do
     end
   end
 
-
   view :typeset_fieldset do |args|
-    %{
     #{ hidden_field_tag :success_typeset, false, :name => "success[typeset]"}
+    %{
     #{ button_tag 'Typeset', :id=>'typeset-button',
                              :class=>'typeset-button btn btn-primary',
                              :value=>'Typeset', :name=>"typeset-button",
@@ -313,13 +309,14 @@ format :html do
        $('#typeset-button').click (function(){
            $('#success_typeset').val('true');
            $('#success_view').val('split');
-
-           $('#success_layout').val('#{LATEX_EDIT_LAYOUT}');
+           $('#success_redirect').val('false');
+           //$('#success_layout').val('#{LATEX_EDIT_LAYOUT}');
+           $('#success_layout').remove();
            $('#edit_card_#{card.id}').submit();
+           $('#success_redirect').val('true');
            $('#success_typeset').val('false');
            $('#success_view').val('open');
-           $('#success_redirect').val('true');
-           $('#success_layout').val('#{PDF_VIEW_LAYOUT}');
+           //$('#success_layout').val('#{PDF_VIEW_LAYOUT}');
        });
      </script>
     }
@@ -340,12 +337,16 @@ format :html do
     }
   end
 
+  def default_open_args args
+    voo.show :horizontal_menu
+  end
   view :open_content do |args|
     # refs = Card.fetch card.name + "+references"
     # disc_tagname = Card.fetch(:discussion, :skip_modules=>true).cardname
     # disc_card = unless card.new_card? or card.junction? && card.cardname.tag_name.key == disc_tagname.key
     #               Card.fetch "#{card.name}+#{disc_tagname}", :skip_virtual=>true, :skip_modules=>true, :new=>{}
     #             end
+
     %{
       #{ _render_pdf_viewer args }
       <br/>
@@ -383,6 +384,9 @@ format :html do
     # #{ ::Pdfjs.viewer }
     # #{ load_pdf args[:preview] || Env.params[:preview_filename]}
     # }
+    if params[:success] && params[:success][:preview_filename]
+      args[:preview] = card.pdf_preview_url
+    end
     _render_pdfjs_iframe pdf_url: args[:preview] ||
                                   Env.params[:preview_filename] || card.pdf_url
   end
