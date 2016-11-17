@@ -1,5 +1,9 @@
 include LatexDocument
 include_set Abstract::Pdfjs
+include_set Abstract::AceEditor
+
+add_attributes :ignore_tex_errors
+attr_accessor :ignore_tex_errors
 
 if Card::Codename[:survey]
   LATEX_TYPE_IDS = [Card::SurveyID, Card::LatexID, Card::ProblemID,
@@ -35,27 +39,31 @@ def store_pdf
   save_preview unless typesetting_preview?
 end
 
+def update_preview
+  preview_card = Card.fetch "#{self.name}+preview",
+                            new: { type: Card::PlainTextID }
+  preview_card.content = self.content
+  preview_card.save
+
+  preview_pdf_card = Card.fetch "#{self.name}+preview+pdf",
+                                new: { type: Card::FileID }
+  preview_pdf_card.update_attributes file: File.open(preview_pdf_path, "r")
+end
+
 def typeset_document
   content.gsub!("\r\n","\n")
   self.content.gsub!("\r\n","\n")
   return if Env.params[:ignore_errors]
   typeset_preview content
 rescue TexTypesetError => e
-  errors.add 'LaTeX errors', e.message
+  errors.add 'LaTeX errors', e.message unless ignore_tex_errors
 rescue TexConfigError => e
   errors.add 'LaTeX', e.message
 ensure
   if typesetting_preview? && errors.empty?
     Env.params[:success][:preview_filename] = doc_basename
     Card::Auth.as_bot do
-      preview_card = Card.fetch "#{self.name}+preview",
-                                new: { type: Card::PlainTextID }
-      preview_card.content = self.content
-      preview_card.save
-
-      preview_pdf_card = Card.fetch "#{self.name}+preview+pdf",
-                                    new: { type: Card::FileID }
-      preview_pdf_card.update_attributes file: File.open(preview_pdf_path, "r")
+      update_preview
     end
     self.content = Card.find(self).content # restore old content
     #abort :success
@@ -75,7 +83,8 @@ end
 def create_default_preview
   return unless (pdf_card = default_pdf_card)
   Card::Auth.as_bot do
-    preview_pdf = Card.fetch "#{name}+preview+pdf", :new => {:type => Card::FileID}
+    preview_pdf = Card.fetch "#{name}+preview+pdf",
+                             :new => {:type => Card::FileID}
     preview_pdf.update_attributes(file: pdf_card.file.file )
   end
 end
@@ -92,8 +101,8 @@ format :json do
 end
 
 format :html do
-  LATEX_EDIT_LAYOUT = "Latex_split_Layout"
-  PDF_VIEW_LAYOUT = "New_Layout"
+  LATEX_EDIT_LAYOUT = "latex_split_layout"
+  PDF_VIEW_LAYOUT = "new_layout"
 
   #alias_method :original_wrap, :wrap
 
@@ -109,8 +118,8 @@ format :html do
 
   def default_latex_edit_args args
     args[:optional_help] = :show
-    args[:hidden] ||= {}
-    args[:hidden][:success] = {:redirect=>true,:view => 'open', :layout=>PDF_VIEW_LAYOUT, :id=>'_self'}
+    #args[:hidden] ||= {}
+    #args[:hidden][:success] = {:redirect=>true,:view => 'open', :layout=>PDF_VIEW_LAYOUT, :id=>'_self'}
     args[:buttons] = %{
     #{ _render_typeset_fieldset(args) if @slot_view.to_s.eql? 'split' or args[:split]}
     #{ #load_pdf_preview if args[:split]
@@ -175,20 +184,15 @@ format :html do
     end
   end
 
-
-  view :header do |args|
-    args[:optional_toggle] = :hide
-    if @slot_view == :open
-      super(args)
-      #_render_pdf_toolbar args
-    else
-      args[:optional_title_link] = :show
-      super(args) # _final_header args
-    end
+  view :header do #|args|
+    voo.hide! :optional_toggle
+    voo.show! :optional_title_link unless @slot_view == :open
+    super()
   end
 
   view :split do |args|
-    _render_edit args.merge(split: true)
+    @split = true
+    _render_edit # args.merge(split: true)
   end
 
   def default_new_args args
@@ -196,27 +200,58 @@ format :html do
     args.merge! :nopdfview => true # disables the pdf.js toolbar
   end
 
-  view :edit do |args|
-    args = default_latex_edit_args args
-    #args[:split] ||= @slot_view.to_s.eql? 'split'
-    if !args[:split]
+  view :edit do #|args|
+    @args = {}
+    default_latex_edit_args @args
+    voo.show! :header
+    if !@split
       _render_redirect_split
     else
-      if Env.params[:typeset] == "true" and preview_card = card.preview_card and preview_card.content.present?
+      if params[:typeset] == "true" and preview_card = card.preview_card and preview_card.content.present?
         card.content = preview_card.content
-        content = card.content
       end
-      #_final_edit args
+      voo.show :toolbar, :help
+      @no_slot = true
+      wrap do
       <<-HTML
-      <div class="col-md-6" id="splitviewtex">
-        #{super(args)}
-      <p id="localizeerror">
-      </p>
+        <div class="col-md-6" id="splitviewtex">
+          #{super()}
+          <p id="localizeerror"></p>
         </div>
-      <div class="col-md-6" id="splitviewpdf">
-        #{_render_edit_preview args}
-      </div>
+        <div class="col-md-6" id="splitviewpdf">
+          #{_render_edit_preview @args}
+        </div>
       HTML
+      end
+    end
+  end
+
+
+  def hidden_edit_fields
+    hidden_tags(
+      success: { redirect: true,
+                 view: :open,
+                 typeset: false,
+                 # layout: PDF_VIEW_LAYOUT,
+                 id: '_self' }
+    )
+  end
+
+  def standard_frame slot=true
+    super(!@no_slot)
+  end
+
+  view :edit_buttons do
+    args = @args
+    button_formgroup do
+      %{
+      #{ _render_typeset_fieldset(args) if @slot_view.to_s.eql?('split') || @args[:split] || @split }
+      #{ #load_pdf_preview if args[:split]
+        }
+      #{ submit_tag 'Submit', :class=>'submit-button btn btn-primary' }
+      #{ button_tag 'Cancel', :class=>'cancel-button', :onclick => "window.location.href='#{path(:view=>'open',  :id=>card.id, :layout => PDF_VIEW_LAYOUT)}'", :type=>'button' }
+      }
+      #%[standard_submit_button, standard_cancel_button]
     end
   end
 
@@ -224,7 +259,7 @@ format :html do
     _render_pdf_viewer args
   end
 
-  view :preview do |args|
+  view :preview, cache: :never do |args|
     unless Env.params[:preview_filename]
       card.new_preview_from_original
       Env.params[:preview_filename] = card.doc_basename
@@ -241,41 +276,16 @@ format :html do
     theme = Card.fetch(card.rule_card(:theme).content)
     theme = theme ? theme.content : "textmate"
     formid = args[:view] == "new" ? "#new_card" : "#edit_card_#{card.id}"
-
-    # <script>
-    # { load_editor_js }
-    # </script>
-    # %{
-    # #{ Card.fetch("*load editor", :new => {}).raw_content
-    # }
-    #   <a name=editor></a>
-    #   <div id="texeditor">#{HTMLEntities.new.encode(card.content)}</div>
-    #   <script>
-    #            var editor = ace.edit('texeditor');
-    #            editor.getSession().setNewLineMode("windows");
-    #            editor.setTheme( 'ace/theme/#{theme}' );
-    #            editor.getSession().setMode('ace/mode/latex');
-    #            editor.getSession().setUseWrapMode(true);
-    #            $('#{formid}').submit(function (event)
-    #            {
-    #              $('#card_content').val(editor.getValue());
-    #            });
-    #            #{ if params['line'] then "editor.gotoLine(#{params['line']});" end }
-    #            editor.focus();
-    #   </script>
-    #   #{form.hidden_field :content, :id=>"card_content", :value=>"Empty"}
-    # #{ errors }
-    # }
+    args[:ace_mode] = "latex"
     <<-HTML
-     #{text_area :content,
-                 rows: 5,
-                 class: 'card-content ace-editor-textarea',
-                 'data-card-type-code' => card.type_code}
+      #{text_area :content, rows: 5,
+                            class: "card-content ace-editor-textarea",
+                           "data-ace-mode" => args[:ace_mode]}
       #{_render_tex_errors(args)}
     HTML
   end
 
-  view :tex_errors do |args|
+  view :tex_errors, cache: :never do |args|
     return '' if card.errors.empty?
 
     wrap args do
@@ -287,38 +297,38 @@ format :html do
     end
   end
 
-
-  view :typeset_fieldset do |args |
-    %{
+  view :typeset_fieldset do |args|
     #{ hidden_field_tag :success_typeset, false, :name => "success[typeset]"}
+    %{
     #{ button_tag 'Typeset', :id=>'typeset-button',
                              :class=>'typeset-button btn btn-primary',
                              :value=>'Typeset', :name=>"typeset-button",
                              :type=>'button' }
 
+    <script>
+       $('#typeset-button').click (function(){
+           $('#success_typeset').val('true');
+           $('#success_view').val('split');
+           $('#success_redirect').val('false');
+           //$('#success_layout').val('#{LATEX_EDIT_LAYOUT}');
+           $('#success_layout').remove();
+           $('#edit_card_#{card.id}').submit();
+           $('#success_redirect').val('true');
+           $('#success_typeset').val('false');
+           $('#success_view').val('open');
+           //$('#success_layout').val('#{PDF_VIEW_LAYOUT}');
+       });
+     </script>
     }
-    # <script>
-    #    $('#typeset-button').click (function(){
-    #        $('#success_typeset').val('true');
-    #        $('#success_view').val('split');
-    #        $('#success_redirect').val('false');
-    #        $('#success_layout').val('#{LATEX_EDIT_LAYOUT}');
-    #        $('#edit_card_#{card.id}').submit();
-    #        $('#success_typeset').val('false');
-    #        $('#success_view').val('open');
-    #        $('#success_redirect').val('true');
-    #        $('#success_layout').val('#{PDF_VIEW_LAYOUT}');
-    #    });
-    #  </script>
   end
 
-  view :content_fieldsets do |args|
+  view :content_formgroup do |args|
     if structure = card.rule(:attributes) and @slot_view.to_s.eql? "new"
       edit_form = structure.scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc|
         process_content( inc ).strip
       end.join
     else
-      edit_form = edit_slot args
+      edit_form = edit_slot #args
     end
     %{
       <div class="card-editor editor">
@@ -327,16 +337,21 @@ format :html do
     }
   end
 
+  def default_open_args args
+    voo.show :horizontal_menu
+  end
   view :open_content do |args|
     # refs = Card.fetch card.name + "+references"
     # disc_tagname = Card.fetch(:discussion, :skip_modules=>true).cardname
     # disc_card = unless card.new_card? or card.junction? && card.cardname.tag_name.key == disc_tagname.key
     #               Card.fetch "#{card.name}+#{disc_tagname}", :skip_virtual=>true, :skip_modules=>true, :new=>{}
     #             end
+
     %{
       #{ _render_pdf_viewer args }
       <br/>
-      #{ process_content_object "{{+pdf bottom|core}}"}
+      #{field_subformat("+pdf bottom").render_core
+    }
     }
   end
 
@@ -364,11 +379,14 @@ format :html do
     }
   end
 
-  view :pdf_viewer do |args|
+  view :pdf_viewer, cache: :never do |args|
     # %{
     # #{ ::Pdfjs.viewer }
     # #{ load_pdf args[:preview] || Env.params[:preview_filename]}
     # }
+    if params[:success] && params[:success][:preview_filename]
+      args[:preview] = card.pdf_preview_url
+    end
     _render_pdfjs_iframe pdf_url: args[:preview] ||
                                   Env.params[:preview_filename] || card.pdf_url
   end
@@ -392,7 +410,7 @@ format :html do
     end
   end
 
-  view :redirect_split do |args|
+  view :redirect_split, cache: :never do |args|
     %{
       <script> window.location = "/~#{card.id}?view=split&layout=#{LATEX_EDIT_LAYOUT}"; </script>
     }

@@ -9,12 +9,12 @@ format :html do
     args[:viewer_path] << "?file=#{args[:pdf_url]}" if args[:pdf_url]
   end
 
-  view :pdfjs_iframe do |args|
+  view :pdfjs_iframe, cache: :never do |args|
     <<-HTML
-      <iframe style="width: 100%" id="source-preview-iframe"
+      <iframe style="width: 100%" id="source-preview-iframe" class="pdfjs-iframe"
               src= #{args[:viewer_path]}
               security="restricted"
-              sandbox="allow-same-origin allow-scripts allow-forms" >
+              sandbox="allow-same-origin allow-scripts allow-forms allow-modals allow-top-navigation" >
       </iframe>
     HTML
   end
