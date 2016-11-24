@@ -71,7 +71,7 @@ ensure
 end
 
 def typesetting_preview?
-  Env.params[:success] and Env.params[:success][:typeset] == "true"
+  Env.params[:success].is_a?(Hash) && Env.params[:success][:typeset] == "true"
 end
 
 def create_default_subcards
@@ -249,7 +249,9 @@ format :html do
       #{ #load_pdf_preview if args[:split]
         }
       #{ submit_tag 'Submit', :class=>'submit-button btn btn-primary' }
-      #{ button_tag 'Cancel', :class=>'cancel-button', :onclick => "window.location.href='#{path(:view=>'open',  :id=>card.id, :layout => PDF_VIEW_LAYOUT)}'", :type=>'button' }
+      #{ button_tag 'Cancel',
+                    :class=>'cancel-button',
+                    :onclick => "window.location.href='#{path(:view=>'open',  :id=>card.id, :layout => PDF_VIEW_LAYOUT)}'", :type=>'button' }
       }
       #%[standard_submit_button, standard_cancel_button]
     end
@@ -258,6 +260,19 @@ format :html do
   view :edit_preview do |args|
     _render_pdf_viewer args
   end
+
+  view :pdf_viewer, cache: :never do |args|
+    # %{
+    # #{ ::Pdfjs.viewer }
+    # #{ load_pdf args[:preview] || Env.params[:preview_filename]}
+    # }
+    if params[:success] && params[:success][:preview_filename]
+      args[:preview] = card.pdf_preview_url
+    end
+    _render_pdfjs_iframe pdf_url: args[:preview] ||
+                         Env.params[:preview_filename] || card.pdf_url
+  end
+
 
   view :preview, cache: :never do |args|
     unless Env.params[:preview_filename]
@@ -379,17 +394,7 @@ format :html do
     }
   end
 
-  view :pdf_viewer, cache: :never do |args|
-    # %{
-    # #{ ::Pdfjs.viewer }
-    # #{ load_pdf args[:preview] || Env.params[:preview_filename]}
-    # }
-    if params[:success] && params[:success][:preview_filename]
-      args[:preview] = card.pdf_preview_url
-    end
-    _render_pdfjs_iframe pdf_url: args[:preview] ||
-                                  Env.params[:preview_filename] || card.pdf_url
-  end
+
 
   view :errors do |args|
     if card.errors.any?
