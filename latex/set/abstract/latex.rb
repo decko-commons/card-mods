@@ -242,23 +242,34 @@ format :html do
   end
 
   view :edit_buttons do
-    args = @args
     button_formgroup do
-      %{
-      #{ _render_typeset_fieldset(args) if @slot_view.to_s.eql?('split') || @args[:split] || @split }
-      #{ #load_pdf_preview if args[:split]
-        }
-      #{ submit_tag 'Submit', :class=>'submit-button btn btn-primary' }
-      #{ button_tag 'Cancel',
-                    :class=>'cancel-button',
-                    :onclick => "window.location.href='#{path(:view=>'open',  :id=>card.id, :layout => PDF_VIEW_LAYOUT)}'", :type=>'button' }
-      }
-      #%[standard_submit_button, standard_cancel_button]
+      [hidden_edit_fields, typeset_button, standard_submit_button,
+       cancel_button]
     end
   end
 
+  def cancel_button
+    button_tag 'Cancel',
+               :class=>'cancel-button',
+               :type=>'button',
+               :onclick => "window.location.href='#{path(:view=>'open', :id=>card.id, :layout => PDF_VIEW_LAYOUT)}'"
+
+  end
+
+  def typeset_button
+    return unless  @slot_view.to_s.eql?('split') || @args[:split] || @split
+    button_tag 'Typeset',
+               id: 'typeset-button',
+               class: 'typeset-button btn btn-primary',
+               value: 'Typeset', name: "typeset-button",
+               type: 'button',
+               disable_with: 'typesetting'
+  end
+
   view :edit_preview do |args|
-    _render_pdf_viewer args
+    wrap do
+      _render_pdf_viewer args
+    end
   end
 
   view :pdf_viewer, cache: :never do |args|
@@ -310,31 +321,6 @@ format :html do
         </div>
       }
     end
-  end
-
-  view :typeset_fieldset do |args|
-    #{ hidden_field_tag :success_typeset, false, :name => "success[typeset]"}
-    %{
-    #{ button_tag 'Typeset', :id=>'typeset-button',
-                             :class=>'typeset-button btn btn-primary',
-                             :value=>'Typeset', :name=>"typeset-button",
-                             :type=>'button' }
-
-    <script>
-       $('#typeset-button').click (function(){
-           $('#success_typeset').val('true');
-           $('#success_view').val('split');
-           $('#success_redirect').val('false');
-           //$('#success_layout').val('#{LATEX_EDIT_LAYOUT}');
-           $('#success_layout').remove();
-           $('#edit_card_#{card.id}').submit();
-           $('#success_redirect').val('true');
-           $('#success_typeset').val('false');
-           $('#success_view').val('open');
-           //$('#success_layout').val('#{PDF_VIEW_LAYOUT}');
-       });
-     </script>
-    }
   end
 
   view :content_formgroup do |args|
