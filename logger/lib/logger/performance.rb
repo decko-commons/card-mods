@@ -91,9 +91,9 @@ class Logger
 #               :fetch => { :category => 'fetch' },
 #               :view  => { :category => 'content'},
 #               # :delete => { :category => 'SQL'},
-#               # :find    => { :category => 'SQL'},
-#               # :update  => { :category => 'SQL'},
-#               # :create  => { :category => 'SQL'},
+#               # :find => { :category => 'SQL'},
+#               # :update => { :category => 'SQL'},
+#               # :create => { :category => 'SQL'},
 #               :where   => { :category => 'SQL'},
 #               :execute => { :category => 'SQL'}
 # #              :take   => { :category => 'Take'}

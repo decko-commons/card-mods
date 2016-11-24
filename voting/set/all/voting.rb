@@ -52,25 +52,28 @@ def update_vote votee, vote_type
 end
 
 format :html do
-  view :titled_with_voting, tags: :comment do |args|
-    wrap args do
+  view :titled_with_voting, tags: :comment do
+    @content_body = true
+    voo.hide :menu
+    wrap do
       [
-        subformat(card.vote_count_card).render_content,
-        _render_header(args.reverse_merge(optional_menu: :hide)),
-        wrap_body(content: true) { _render_core args },
-        optional_render(:comment_box, args)
+        _optional_render_menu,
+        nest(card.vote_count_card, view: :content),
+        _render_header,
+        wrap_body { _render_core },
+        optional_render_comment_box
       ]
     end
   end
 
-  view :header_with_voting do |args|
-    render_haml(args: args) do
+  view :header_with_voting do
+    render_haml do
       <<-HAML
 .header-with-vote
   .header-vote
     = subformat( card.vote_count_card ).render_details
   .header-title
-    = render_header(args)
+    = render_header
     .creator-credit
       = process_content "{{_self | structure:creator credit}}"
 .clear-line
