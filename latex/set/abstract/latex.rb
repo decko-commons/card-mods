@@ -226,13 +226,11 @@ format :html do
     end
   end
 
-
   def hidden_edit_fields
     hidden_tags(
       success: { redirect: true,
                  view: :open,
                  typeset: false,
-                 # layout: PDF_VIEW_LAYOUT,
                  id: '_self' }
     )
   end
@@ -246,14 +244,6 @@ format :html do
       [hidden_edit_fields, typeset_button, standard_submit_button,
        cancel_button]
     end
-  end
-
-  def cancel_button
-    button_tag 'Cancel',
-               :class=>'cancel-button',
-               :type=>'button',
-               :onclick => "window.location.href='#{path(:view=>'open', :id=>card.id, :layout => PDF_VIEW_LAYOUT)}'"
-
   end
 
   def typeset_button
@@ -341,6 +331,7 @@ format :html do
   def default_open_args args
     voo.show :horizontal_menu
   end
+
   view :open_content do |args|
     # refs = Card.fetch card.name + "+references"
     # disc_tagname = Card.fetch(:discussion, :skip_modules=>true).cardname
@@ -351,7 +342,7 @@ format :html do
     %{
       #{ _render_pdf_viewer args }
       <br/>
-      #{field_subformat("+pdf bottom").render_core
+      #{field_subformat("+pdf bottom").render_content
     }
     }
   end
