@@ -316,7 +316,7 @@ describe Card::Set::Right::VoteCount do
   describe "session votes" do
     subject { @vcard.raw_content.to_i }
     before do
-      @topic = get_a_sample_topic
+      @topic = sample_topic
       @vcard = @topic.vote_count_card
       Card::Auth.current_id = Card::AnonymousID
     end
