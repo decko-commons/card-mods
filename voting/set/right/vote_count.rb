@@ -61,13 +61,16 @@ def vote_down insert_before_id=false
 end
 
 def add_vote vote_card, votee_id, insert_before_id=false
+  return unless insert_or_append_vote(vote_card, votee_id, insert_before_id)
+  vote_card.save!
+  update_votecount
+end
+
+def insert_or_append_vote vote_card, votee_id, insert_before_id=false
   if insert_before_id
     vote_card.insert_id_before votee_id, insert_before_id
-    vote_card.save!
-    update_votecount
-  elsif vote_card.add_id votee_id
-    vote_card.save!
-    update_votecount
+  else
+    vote_card.add_id votee_id
   end
 end
 
