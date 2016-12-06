@@ -19,65 +19,63 @@ end
 # it will insert the card to specific position in the pointer card which
 # contains what users voted
 def vote_up insert_before_id=false
-  if Auth.signed_in?
-    Auth.as_bot do
-      case vote_status
-      when :no_vote
-        uv_card = Auth.current.upvotes_card
-        add_vote uv_card, left.id, insert_before_id
-      when :downvoted
-        dv_card = Auth.current.downvotes_card
-        delete_vote dv_card, left.id
-      end
-    end
-  elsif session_vote?
-    if left.downvoted_in_session?
-      Env.session[:down_vote].delete left.id
-    else
-      add_vote_to_session :up_vote, left.id, insert_before_id
-    end
-  end
+  register_vote :up, insert_before_id
 end
 
 def vote_down insert_before_id=false
+  register_vote :down, insert_before_id
+end
+
+def register_vote direction, insert
   if Auth.signed_in?
-    Auth.as_bot do
-      case vote_status
-      when :no_vote
-        dv_card = Auth.current.downvotes_card
-        add_vote dv_card, left.id, insert_before_id
-      when :upvoted
-        uv_card = Auth.current.upvotes_card
-        delete_vote uv_card, left.id
-      end
-    end
+    register_account_vote direction, insert
   elsif session_vote?
-    if left.upvoted_in_session?
-      Env.session[:up_vote].delete left.id
-    else
-      add_vote_to_session :down_vote, left.id, insert_before_id
-    end
+    record_session_vote direction, insert
   end
 end
 
-def add_vote vote_card, votee_id, insert_before_id=false
-  return unless insert_or_append_vote(vote_card, votee_id, insert_before_id)
+def voted_other direction, append=nil
+  other_dir = direction == :up ? :down : :up
+  other_dir = "#{other_dir}#{append}".to_sym if append
+  other_dir
+end
+
+def register_account_vote direction, insert
+  return unless (action = case vote_status
+                          when :no_vote                       then :add
+                          when voted_other(direction, :voted) then :delete
+                          end)
+  Auth.as_bot { send "#{action}_account_vote", direction, insert }
+end
+
+def add_account_vote direction, insert
+  vote_card = Auth.current.send "#{direction}votes_card"
+  return unless update_vote_card_content vote_card, left.id, insert
   vote_card.save!
   update_votecount
 end
 
-def insert_or_append_vote vote_card, votee_id, insert_before_id=false
+def delete_account_vote direction, _insert
+  vote_card = Auth.current.send "#{voted_other(direction)}votes_card"
+  return unless vote_card.drop_id left.id
+  vote_card.save!
+  update_votecount
+end
+
+def record_session_vote direction, insert
+  if left.send voted_other(direction, :voted_in_session?)
+    Env.session[voted_other(direction, :_vote)].delete left.id
+  else
+    add_vote_to_session "#{direction}_vote".to_sym, left.id, insert
+  end
+end
+
+def update_vote_card_content vote_card, votee_id, insert_before_id
   if insert_before_id
     vote_card.insert_id_before votee_id, insert_before_id
   else
     vote_card.add_id votee_id
   end
-end
-
-def delete_vote vote_card, votee_id
-  return unless vote_card.drop_id votee_id
-  vote_card.save!
-  update_votecount
 end
 
 def add_vote_to_session vote_type, votee_id, insert_before_id
@@ -91,6 +89,7 @@ def add_vote_to_session vote_type, votee_id, insert_before_id
   end
 end
 
+# FIXME: inefficient!
 def force_up insert_before_id=false
   vote_up insert_before_id
   vote_up(insert_before_id) if vote_status != :upvoted
@@ -112,13 +111,19 @@ end
 
 def raw_content
   return super if Auth.signed_in? || !session_vote?
-  if Env.session[:up_vote] && Env.session[:up_vote].include?(left.id)
+  if session_votes? :up
     (content.to_i + 1).to_s
-  elsif Env.session[:down_vote] && Env.session[:down_vote].include?(left.id)
+  elsif session_votes? :down
     (content.to_i - 1).to_s
   else
     super
   end
+end
+
+def session_votes? direction
+  key = "#{direction}_vote".to_sym
+  votes = Env.session[key]
+  votes && votes.include?(left.id)
 end
 
 def direct_contribution_count
@@ -127,58 +132,74 @@ end
 
 def update_votecount
   Auth.as_bot do
-    up_count =
-      Card.search(
-        { right_plus: [{ codename: "upvotes" }, { link_to: left.name }],
-          return: "count" },
-        "upvotes linking to #{left.name}"
-      )
-    down_count =
-      Card.search(
-        { right_plus: [{ codename: "downvotes" }, { link_to: left.name }],
-          return: "count" },
-        "downvotes linking to #{left.name}"
-      )
-
-    uvc = left.upvote_count_card
-    uvc.auto_content = true
-    subcards.add uvc.name, content: up_count.to_s
-
-    dvc = left.downvote_count_card
-    dvc.auto_content = true
-    subcards.add dvc.name, content: down_count.to_s
-
-    self.content = (up_count - down_count).to_s
+    count = tally_votes(:up) - tally_votes(:down)
+    self.content = count.to_s
     self.auto_content = true
   end
+end
+
+def tally_votes direction
+  count = count_votes direction
+  count_card = left.send "#{direction}vote_count_card"
+  update_count_card count_card, count
+  count
+end
+
+def update_count_card count_card, count
+  count_card.auto_content = true
+  subcards.add count_card.name, content: count.to_s
+end
+
+def count_votes direction
+  tag_id = Card.const_get "#{direction.to_s.capitalize}votesID"
+  Card.search({ right_plus: [tag_id, { link_to: cardname.left }],
+                return: "count" },
+              "#{direction}votes linking to #{cardname.left}")
 end
 
 def vote_status
   left.vote_status
 end
 
-event :vote, :prepare_to_validate,
-      on: :update,
-      when: proc { |_c| Env.params["vote"] } do
-  if Auth.signed_in? || session_vote?
-    successor_id = Env.params["insert-before"] &&
-                   Env.params["insert-before"].to_i
-    case Env.params["vote"]
-    when "up" then vote_up successor_id
-    when "down" then vote_down successor_id
-    when "force-up" then force_up successor_id
-    when "force-down" then force_down successor_id
-    when "force-neutral" then force_neutral successor_id
-    end
+def can_vote?
+  Auth.signed_in? || session_vote?
+end
 
+def vote_param
+  Env.params["vote"]
+end
+
+event :vote, :prepare_to_validate, on: :update, when: :vote_param do
+  if can_vote?
+    send vote_method_from_params, successor_id_from_params
     abort :success if !Auth.signed_in? && session_vote?
   else
-    path_hash = { action: :update, vote: Env.params["vote"],
-                  success: "*previous" }
-    uri = format.page_path cardname, path_hash
-    Env.save_interrupted_action uri
-    abort success: "REDIRECT: #{Card[:signin].cardname.url_key}"
+    redirect_to_vote_later
   end
+end
+
+def redirect_to_vote_later
+  path_hash = { action: :update, vote: vote_param, success: "*previous" }
+  uri = format.page_path cardname, path_hash
+  Env.save_interrupted_action uri
+  abort success: "REDIRECT: #{Card[:signin].cardname.url_key}"
+end
+
+VOTE_PARAM_TO_METHOD_MAP = {
+  "up"            => :vote_up,
+  "down"          => :vote_down,
+  "force-up"      => :force_up,
+  "force-down"    => :force_down,
+  "force-neutral" => :force_neutral
+}.freeze
+
+def vote_method_from_params
+  VOTE_PARAM_TO_METHOD_MAP[vote_param]
+end
+
+def successor_id_from_params
+  successor_id = Env.params["insert-before"]
+  successor_id && successor_id.to_i
 end
 
 format :html do
@@ -223,19 +244,18 @@ format :html do
     class_up "card-slot", "nodblclick"
     wrap do
       [
-        wrap_with(:div, class: "vote-up") do
-          [
-            vote_up_link(:details),
-            up_details
-          ]
-        end,
+        vote_details(:up),
         _render_core,
-        wrap_with(:div, class: "vote-down") do
-          [
-            vote_down_link(:details),
-            down_details
-          ]
-        end
+        vote_details(:down)
+      ]
+    end
+  end
+
+  def vote_details direction
+    wrap_with(:div, class: "vote-#{direction}") do
+      [
+        send("vote_#{direction}_link", :details),
+        send("#{direction}_details")
       ]
     end
   end
