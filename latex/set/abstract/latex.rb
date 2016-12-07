@@ -96,15 +96,12 @@ format :json do
 
   view :errors do |args|
     card.format(:html)._render_tex_errors(args)
-    #{ errors: card.format(:html)._render_tex_errors(args) }.to_json
   end
 end
 
 format :html do
   LATEX_EDIT_LAYOUT = "latex_split_layout"
   PDF_VIEW_LAYOUT = "new_layout"
-
-  #alias_method :original_wrap, :wrap
 
   def default_latex_new_args args
     args[:hidden] ||= {}
@@ -129,16 +126,6 @@ format :html do
     }
     args
   end
-
-  # def wrap args = {}
-  #   @slot_view = @current_view
-  #   result = original_wrap args do
-  #     yield
-  #   end
-  #   @slot_view = nil
-  #   result
-  #   #"#{result} <script>MathJax.Hub.Queue(['Typeset',MathJax.Hub]);</script>"
-  # end
 
   def form_opts_no_remote url, classes='', other_html={}
     url = path(:action=>url) if Symbol===url
@@ -190,9 +177,9 @@ format :html do
     super()
   end
 
-  view :split do |args|
+  view :split, perms: :update, tags: :unknown_ok, cache: :never do
     @split = true
-    _render_edit # args.merge(split: true)
+    _render_edit
   end
 
   def default_new_args args
@@ -200,7 +187,7 @@ format :html do
     args.merge! :nopdfview => true # disables the pdf.js toolbar
   end
 
-  view :edit do #|args|
+  view :edit, perms: :update, tags: :unknown_ok do
     @args = {}
     default_latex_edit_args @args
     voo.show! :header
@@ -274,7 +261,6 @@ format :html do
                          Env.params[:preview_filename] || card.pdf_url
   end
 
-
   view :preview, cache: :never do |args|
     unless Env.params[:preview_filename]
       card.new_preview_from_original
@@ -283,28 +269,31 @@ format :html do
     _render_open args.merge(:preview => true)
   end
 
-  view :editor do |args|
+  view :editor, cache: :never do
     # At the beginning and at the end misterious newlines \r\n occur and I couldn't get rid of them
     # Switching editor to windows line break helped
     if Env.params[:card]
       card.content = Env.params[:card][:content] || card.content
     end
-    theme = Card.fetch(card.rule_card(:theme).content)
-    theme = theme ? theme.content : "textmate"
-    formid = args[:view] == "new" ? "#new_card" : "#edit_card_#{card.id}"
-    args[:ace_mode] = "latex"
-    <<-HTML
-      #{text_area :content, rows: 5,
+
+    output [
+      text_area(:content, rows: 5,
                             class: "card-content ace-editor-textarea",
-                           "data-ace-mode" => args[:ace_mode]}
-      #{_render_tex_errors(args)}
+                            data: { "ace-mode" => "latex", ace_theme: theme }),
+      _render_tex_errors
+    ]
     HTML
   end
 
-  view :tex_errors, cache: :never do |args|
+  def theme
+    theme = Card.fetch(card.rule_card(:theme).content)
+    theme ? theme.content : "textmate"
+  end
+
+  view :tex_errors, cache: :never do
     return '' if card.errors.empty?
 
-    wrap args do
+    wrap do
       %{  <div class="errors-view"> <h3>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h3> } +
         card.errors.map { |attrib, msg| "<div style='text-align: left;'>#{attrib.to_s.upcase}: #{msg}</div>" } * '' +   %{
       #{ submit_tag 'Submit with errors', :class=>'submit-button btn btn-default', :name=>"ignore_errors", :value=>"Submit with errors" }
@@ -313,7 +302,7 @@ format :html do
     end
   end
 
-  view :content_formgroup do |args|
+  view :content_formgroup do
     if structure = card.rule(:attributes) and @slot_view.to_s.eql? "new"
       edit_form = structure.scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc|
         process_content( inc ).strip
@@ -342,8 +331,7 @@ format :html do
     %{
       #{ _render_pdf_viewer args }
       <br/>
-      #{field_subformat("+pdf bottom").render_content
-    }
+      #{field_subformat("+pdf bottom").render_content}
     }
   end
 
@@ -356,27 +344,25 @@ format :html do
       <h1 class="card-header">
         <div style="float:left;">
           #{ args.delete :toggler }
-    #{ _render_title args }
+          #{ _render_title args }
         </div>
         #{
-    ::Pdfjs.wrap_toolbar do
-      %{
-      #{ edit_button if card.ok?(:update) }
-              <div class="toolbarButtonSpacer"></div>
-              #{ _optional_render :menu, args}
-      }
-    end
-    }
+          ::Pdfjs.wrap_toolbar do
+          %{
+            #{ edit_button if card.ok?(:update) }
+            <div class="toolbarButtonSpacer"></div>
+            #{ _optional_render :menu, args}
+          }
+          end
+        }
       </h1>
     }
   end
 
-
-
-  view :errors do |args|
+  view :errors do
     if card.errors.any?
       error_msg = card.errors.map { |attrib, msg| "<div style='text-align: left;'>#{attrib.to_s.upcase}: #{msg}</div>" } * ''
-      wrap args do
+      wrap do
         <<-HTML
           <div class="errors-view">
             <h2>
@@ -414,36 +400,4 @@ format :html do
   #   end
   # end
 
-  # copy from rich_html.rb to remove edit entry from menu
-  # view :menu, :tags=>:unknown_ok do |args|
-  #   disc_tagname = Card.fetch(:discussion, :skip_modules=>true).cardname
-  #   disc_card = unless card.new_card? or card.junction? && card.cardname.tag_name.key == disc_tagname.key
-  #                 Card.fetch "#{card.name}+#{disc_tagname}", :skip_virtual=>true, :skip_modules=>true, :new=>{}
-  #               end
-  #
-  #   @menu_vars = {
-  #     :self         => card.name,
-  #     :type         => card.type_name,
-  #     :structure    => card.structure && card.template.ok?(:update) && card.template.name,
-  #     :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read ),
-  #     :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n.to_s } },
-  #     :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name } } }
-  #   }
-  #   if card.real?
-  #     @menu_vars.merge!({
-  #                         :edit      => true, # pdf is the replacement for edit
-  #                         :pdf_edit  => card.ok?(:update),
-  #                         :account   => card.account && card.update_account_ok?,
-  #                         :watch     => Account.logged_in? && render_watch(args.merge :no_wrap_comment=>true),
-  #                         :creator   => card.creator.name,
-  #                         :updater   => card.updater.name,
-  #                         :delete    => card.ok?(:delete) && link_to( 'delete', path(:action=>:delete),
-  #                                                                     :class => 'slotter standard-delete', :remote => true, :'data-confirm' => "Are you sure you want to delete #{card.name}?"
-  #                         )
-  #                       })
-  #   end
-  #
-  #   json = html_escape_except_quotes JSON( @menu_vars )
-  #   %{<span class="card-menu-link" data-menu-vars='#{json}'>#{_render_menu_link}</span>}
-  # end
 end
