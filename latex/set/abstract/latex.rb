@@ -282,7 +282,6 @@ format :html do
                             data: { "ace-mode" => "latex", ace_theme: theme }),
       _render_tex_errors
     ]
-    HTML
   end
 
   def theme
