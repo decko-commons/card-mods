@@ -13,10 +13,14 @@ event :new_relic_act_transaction,
 end
 
 event :new_relic_read_transaction,
-      before: :show_page, on: :read do
+      before: :show_page, on: :read, when: :production? do
   ::NewRelic::Agent.set_transaction_name "read-#{type_code}",
                                          category: :controller
   add_custom_card_attributes
+end
+
+def production?
+  Rails.env.production?
 end
 
 event :notify_new_relic, after: :notable_exception_raised do
