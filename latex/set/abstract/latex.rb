@@ -235,19 +235,7 @@ format :html do
   end
 
   def standard_frame slot=true
-    class_up "card-frame", "panel panel-#{panel_state}"
-    wrap(!@no_slot) do
-      [
-        _optional_render_menu,
-        panel do
-          [
-            _optional_render_header,
-            frame_help,
-            wrap_body { yield }
-          ]
-        end
-      ]
-    end
+    super(!@no_slot)
   end
 
   view :edit_buttons do
