@@ -104,13 +104,25 @@ format :html do
   PDF_VIEW_LAYOUT = "new_layout"
 
   def default_latex_new_args args
-    args[:hidden] ||= {}
-    args[:hidden][:success] = {:redirect => true, :view=>'split', :layout =>LATEX_EDIT_LAYOUT}
+    #binding.pry
+    #args[:hidden] ||= {}
+    #args[:hidden][:success] = { :redirect => true, :view=>'split',
+    #                            :layout =>LATEX_EDIT_LAYOUT }
     args[:buttons] = %{
     #{ submit_tag 'Submit', :class=>'submit-button btn btn-primary' }
-    #{ button_tag 'Cancel', :class=>'cancel-button', :onclick => "window.location.href='#{path(:view=>'open',  :id=>card.id, :layout => PDF_VIEW_LAYOUT)}'", :type=>'button' }
+    #{ button_tag 'Cancel',
+                  :class=>'cancel-button',
+                  :onclick => "window.location.href='#{path(:view=>'open',
+                                                            :id=>card.id,
+                                                            :layout => PDF_VIEW_LAYOUT)}'",
+                  :type=>'button' }
     }
     args
+  end
+
+  def new_view_hidden
+    success_tags :redirect => true, :view=>:edit,
+                                    :layout =>LATEX_EDIT_LAYOUT
   end
 
   def default_latex_edit_args args
@@ -121,7 +133,7 @@ format :html do
     #{ _render_typeset_fieldset(args) if @slot_view.to_s.eql? 'split' or args[:split]}
     #{ #load_pdf_preview if args[:split]
       }
-    #{ submit_tag 'Submit', :class=>'submit-button btn btn-primary' }
+    #{ submit_tag 'Submit', :class=>'submit-button btn btn-primary yeah' }
     #{ button_tag 'Cancel', :class=>'cancel-button', :onclick => "window.location.href='#{path(:view=>'open',  :id=>card.id, :layout => PDF_VIEW_LAYOUT)}'", :type=>'button' }
     }
     args
@@ -223,7 +235,19 @@ format :html do
   end
 
   def standard_frame slot=true
-    super(!@no_slot)
+    class_up "card-frame", "panel panel-#{panel_state}"
+    wrap(!@no_slot) do
+      [
+        _optional_render_menu,
+        panel do
+          [
+            _optional_render_header,
+            frame_help,
+            wrap_body { yield }
+          ]
+        end
+      ]
+    end
   end
 
   view :edit_buttons do
@@ -234,7 +258,7 @@ format :html do
   end
 
   def typeset_button
-    return unless  @slot_view.to_s.eql?('split') || @args[:split] || @split
+    return unless @slot_view.to_s.eql?('split') || @args[:split] || @split
     button_tag 'Typeset',
                id: 'typeset-button',
                class: 'typeset-button btn btn-primary',
