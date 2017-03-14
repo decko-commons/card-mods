@@ -85,7 +85,11 @@ def create_default_preview
   Card::Auth.as_bot do
     preview_pdf = Card.fetch "#{name}+preview+pdf",
                              :new => {:type => Card::FileID}
-    preview_pdf.update_attributes(file: pdf_card.file.file )
+    file = File.open(pdf_card.file.file.file)
+    preview_pdf.update_attributes(file: file)
+
+    pdf = Card.fetch "#{name}+pdf", :new => {:type => Card::FileID}
+    pdf.update_attributes(file: file )
   end
 end
 
