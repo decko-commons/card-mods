@@ -147,7 +147,8 @@ end
 
 def update_count_card count_card, count
   count_card.auto_content = true
-  subcards.add count_card.name, content: count.to_s
+  count_card.content = count.to_s
+  subcards.add count_card
 end
 
 def count_votes direction
