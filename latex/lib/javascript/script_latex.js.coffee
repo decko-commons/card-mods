@@ -14,9 +14,16 @@ $(window).ready ->
     $form.submit()
 
     $form.removeAttr('data-slot-success-selector')
-    $(this).removeAttr("data-disable-with")
+    # $(this).removeAttr("data-disable-with")
     $(this).removeAttr("type","submit")
-    $submit_button.attr("data-disable-with", "Submitting")
+    # $submit_button.attr("data-disable-with", "Submitting")
     $form.find('#success_redirect').val('true')
     $form.find('#success_typeset').val('false')
     $form.find('#success_view').val('open')
+
+  $('body').on 'click', '.submit-button', (event) ->
+    $form = $(this).closest('form')
+    buttons = $form.find(':submit').not($(this))
+    buttons.removeAttr('data-disable-with')
+    $(this).attr("data-disable-with","Submitting")
+    buttons.attr('disabled', true)
