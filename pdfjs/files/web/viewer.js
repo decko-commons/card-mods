@@ -8710,7 +8710,8 @@ var PDFViewerApplication = {
 };
 
 var HOSTED_VIEWER_ORIGINS = ['null',
-  'http://mozilla.github.io', 'https://mozilla.github.io'];
+  'http://mozilla.github.io', 'https://mozilla.github.io',
+    'http://wikirate.s3.amazonaws.com'];
 function validateFileURL(file) {
   try {
     var viewerOrigin = new URL(window.location.href).origin || 'null';
