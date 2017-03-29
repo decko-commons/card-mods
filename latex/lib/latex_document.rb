@@ -30,7 +30,7 @@ module LatexDocument
 
   def format_template docclasscard_content, includes
     %{#{docclasscard_content}
-#{includes.map{|inc| "\\include{#{inc}}"}.join('\n')}
+#{includes.map{|inc| "\\include{#{inc}}"}.join("\n")}
 \\dump
     }
   end
