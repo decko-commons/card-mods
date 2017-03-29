@@ -40,4 +40,7 @@ end
 format :html do
   view :editor, mod: Type::PlainText::HtmlFormat
   view :errors, mod: Abstract::Latex::HtmlFormat
+  view :core do
+    ::CodeRay.scan(_render_raw, :latex).div
+  end
 end
