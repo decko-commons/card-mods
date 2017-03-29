@@ -19,8 +19,9 @@ event :typeset_preamble, :validate, :on=>:save do
           c.generate_format
         end
       rescue TexTypesetError, TexConfigError => e
-         errors.add "Latex", "Couldn't update format for #{self.name} with new preamble. #{e.message}"
-         # FIXME: Undo changes
+        errors.add "Latex", "Couldn't update format for #{self.name} with new preamble. #{e.message}"
+        # FIXME: Undo changes
+        return
       end
     end
 

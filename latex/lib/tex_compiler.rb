@@ -65,11 +65,15 @@ class TexCompiler
   def initex
     unless TexCompiler.run_initex TexCompiler.format_home,
                                   @tex_card.format_name
-      raise TexTypesetError, parse_logfile
+      format_log_path = File.join TexCompiler.format_home,
+                                  "#{@tex_card.format_name}.log"
+      @tex_card.update_log_card File.read(format_log_path)
+      raise TexTypesetError, parse_logfile(format_log_path)
     end
   end
 
-  def parse_logfile
-    TexCompiler.parse_logfile @tex_card.log_path, @tex_card.doc_basename, @tex_card.log_cardname
+  def parse_logfile path=@tex_card.log_path
+    return unless File.exist?(path)
+    TexCompiler.parse_logfile path, @tex_card.doc_basename, @tex_card.log_cardname
   end
 end
