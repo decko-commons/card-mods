@@ -1,5 +1,5 @@
 event :new_relic_act_transaction,
-      after: :act do
+      after: :act, when: :production? do
   ::NewRelic::Agent.set_transaction_name "#{@action}-#{type_code}",
                                          category: :controller
   add_custom_card_attributes
@@ -23,11 +23,11 @@ def production?
   Rails.env.production?
 end
 
-event :notify_new_relic, after: :notable_exception_raised do
+event :notify_new_relic, after: :notable_exception_raised, when: :production? do
   ::NewRelic::Agent.notice_error Card::Error.current
 end
 
-event :new_relic_act_start, before: :act do
+event :new_relic_act_start, before: :act, when: :production? do
   @act_start = Time.now
 end
 
