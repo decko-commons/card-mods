@@ -19,8 +19,9 @@ event :typeset_preamble, :validate, :on=>:save do
           c.generate_format
         end
       rescue TexTypesetError, TexConfigError => e
-         errors.add "Latex", "Couldn't update format for #{self.name} with new preamble. #{e.message}"
-         # FIXME: Undo changes
+        errors.add "Latex", "Couldn't update format for #{c.name} with new preamble. #{e.message}"
+        # FIXME: Undo changes
+        return
       end
     end
 
@@ -28,7 +29,7 @@ event :typeset_preamble, :validate, :on=>:save do
       begin
         tex_card.preamble_modified
       rescue TexTypesetError, TexConfigError => e
-        errors.add "Latex", "Couldn't typset #{self.name} with new preamble. #{e.message}"
+        errors.add "Latex", "Couldn't typset #{c.name} with new preamble. #{e.message}"
         # FIXME: Undo changes
       end
     end
@@ -40,4 +41,7 @@ end
 format :html do
   view :editor, mod: Type::PlainText::HtmlFormat
   view :errors, mod: Abstract::Latex::HtmlFormat
+  view :core do
+    ::CodeRay.scan(_render_raw, :latex).div
+  end
 end
