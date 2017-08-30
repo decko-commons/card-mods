@@ -6,7 +6,7 @@ module LatexDocument
 
     def pdf_preview_url filename=nil
       #filename ||= doc_basename
-      #File.join '', 'tex', uuid[0..(Wagn.config.tex_store_level-1)].chars.to_a, "#{filename}.pdf"
+      #File.join '', 'tex', uuid[0..(Decko.config.tex_store_level-1)].chars.to_a, "#{filename}.pdf"
       preview_pdf_card = Card.fetch "#{name}+preview+pdf", :new => {:type_code => 'file'}
       preview_pdf_card.file.url
     end

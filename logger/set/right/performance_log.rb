@@ -1,5 +1,5 @@
 def log_dir
-  dir = File.join File.dirname(Wagn.paths['log'].existent.first), 'performance'
+  dir = File.join File.dirname(Decko.paths['log'].existent.first), 'performance'
   Dir.mkdir dir unless Dir.exists? dir
   dir
 end

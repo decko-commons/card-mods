@@ -27,6 +27,9 @@ event :typeset_documentclass, :validate, :on=>:save do
 end
 
 format :html do
-  view :editor, mod: Type::PlainText::HtmlFormat
+  def editor
+    :text_area
+  end
+
   view :errors, mod: Abstract::Latex::HtmlFormat
 end

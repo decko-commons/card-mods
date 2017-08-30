@@ -2,7 +2,7 @@
 
 class TexCompiler
   class << self
-    def format_home;  Wagn.paths['fmt'].first  end
+    def format_home;  Decko.paths['fmt'].first  end
 
     def run_latex path, tex_filename, format_filename
       Rails.logger.debug("Run latex for #{tex_filename} with format #{format_filename} in #{path}.")
@@ -22,7 +22,7 @@ class TexCompiler
 
     def parse_logfile full_path, name, logname
       Rails.logger.debug("Parse logfile for #{name} in #{full_path}")
-      return `python \"#{Wagn.paths['script'].first}/wagntexparser.py\" '#{full_path}' '#{name}' '#{logname}'`
+      return `python \"#{Decko.paths['script'].first}/wagntexparser.py\" '#{full_path}' '#{name}' '#{logname}'`
     end
 
     def latex_cmd tex_filename, format_filename   # filenames without ending

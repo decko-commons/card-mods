@@ -1,5 +1,5 @@
 def self.check_mails
-  Gmail.new(Wagn.config.gmail_user,Wagn.config.gmail_password) do |gmail|
+  Gmail.new(Decko.config.gmail_user,Decko.config.gmail_password) do |gmail|
     gmail.inbox.emails(:unread).each do |email|
       msg = email.message
       user = Auth.as_bot do

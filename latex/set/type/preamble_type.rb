@@ -39,7 +39,10 @@ event :typeset_preamble, :validate, :on=>:save do
 end
 
 format :html do
-  view :editor, mod: Type::PlainText::HtmlFormat
+  def editor
+    :text_area
+  end
+
   view :errors, mod: Abstract::Latex::HtmlFormat
   view :core do
     ::CodeRay.scan(_render_raw, :latex).div

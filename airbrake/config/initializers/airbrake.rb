@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'airbrake'
 
-filename = File.join Wagn.root, 'config/airbrake.key'
+filename = File.join Decko.root, 'config/airbrake.key'
 if File.exists? filename or File.symlink? filename
   key = File.read( filename ).strip
   Airbrake.configure do |config|

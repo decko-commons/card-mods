@@ -4,7 +4,7 @@ module LatexDocument
     TYPESET_PREFIX = 'ts_'
     def pdf_url
       pdf_card.file.url
-      #File.join '', '/tex', uuid[0..(Wagn.config.tex_store_level-1)].chars.to_a, "#{uuid}.pdf"
+      #File.join '', '/tex', uuid[0..(Decko.config.tex_store_level-1)].chars.to_a, "#{uuid}.pdf"
     end
 
     def home
@@ -57,8 +57,8 @@ module LatexDocument
     private
 
     def path_for_uuid
-      File.join Wagn.paths['tex'].first,
-                uuid[0..(Wagn.config.tex_store_level-1)].chars.to_a
+      File.join Decko.paths['tex'].first,
+                uuid[0..(Decko.config.tex_store_level-1)].chars.to_a
     end
   end
 end
