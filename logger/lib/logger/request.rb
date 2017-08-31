@@ -1,7 +1,6 @@
 require 'csv'
 
 class Logger::Request
-
   def self.path
     path = (Card.paths['request_log'] && Card.paths['request_log'].first) || File.dirname(Card.paths['log'].first)
     filename = "#{Date.today}_#{Rails.env}.csv"
@@ -9,7 +8,8 @@ class Logger::Request
   end
 
   def self.write_log_entry controller
-    return if controller.env["REQUEST_URI"] =~ %r{^/files?/}
+    env = controller.request.env
+    return if env["REQUEST_URI"] =~ %r{^/files?/}
 
     controller.instance_eval do
       log = []
