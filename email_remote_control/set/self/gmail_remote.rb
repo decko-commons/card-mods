@@ -10,7 +10,8 @@ def self.check_mails
       if user
         old_id = Card::Auth.current_id
         Auth.current_id = user.id
-        Card.create :name => msg.subject, :content => msg.text_part.body.raw_source
+        Card.create :name => msg.subject,
+                    :content => msg.text_part.body.raw_source
         Card::Auth.current_id = old_id
         email.delete!
       end
