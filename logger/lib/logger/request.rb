@@ -8,7 +8,7 @@ class Logger::Request
   end
 
   def self.write_log_entry controller
-    env = controller.request.env
+    env = controller.env
     return if env["REQUEST_URI"] =~ %r{^/files?/}
 
     controller.instance_eval do
