@@ -42,9 +42,9 @@ def start_performance_logger
   if Env.params[:performance_log]
     ::Logger::Performance.load_config Env.params[:performance_log]
   end
-  if Env[:controller]
-    method = Env[:controller].env["REQUEST_METHOD"]
-    path   = Env[:controller].env["PATH_INFO"]
+  if (request = Env[:controller]&.request)
+    method = request.env["REQUEST_METHOD"]
+    path   = request.env["PATH_INFO"]
   else
     method = "no request"
     path = "no path"
