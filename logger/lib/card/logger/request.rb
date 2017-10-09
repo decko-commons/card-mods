@@ -1,6 +1,8 @@
 require 'csv'
 
-class Logger::Request
+class Card
+class Logger
+class Request
   def self.path
     path = (Card.paths['request_log'] && Card.paths['request_log'].first) || File.dirname(Card.paths['log'].first)
     filename = "#{Date.today}_#{Rails.env}.csv"
@@ -8,13 +10,13 @@ class Logger::Request
   end
 
   def self.write_log_entry controller
-    env = controller.env
+    env = controller.request.env
     return if env["REQUEST_URI"] =~ %r{^/files?/}
 
     controller.instance_eval do
       log = []
       log << (Card::Env.ajax? ? "YES" : "NO")
-      log << env["REMOTE_ADDR"]
+      log << en["REMOTE_ADDR"]
       log << Card::Auth.current_id
       log << card.name
       log << action_name
@@ -31,5 +33,6 @@ class Logger::Request
       end
     end
   end
-
+end
+end
 end

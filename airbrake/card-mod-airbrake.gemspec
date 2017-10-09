@@ -2,7 +2,7 @@
 # -*- encoding : utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = "decko-mod-airbrake"
+  s.name = "card-mod-airbrake"
   s.version = "1.0"
 
   s.authors = ["Ethan McCutchen", "Philipp Kühl"]

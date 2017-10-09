@@ -1,5 +1,4 @@
 class HtmlFormatter
-
   def initialize performance_logger
     @log = performance_logger.log
     @category_log = performance_logger.category_log

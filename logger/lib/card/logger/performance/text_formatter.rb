@@ -8,14 +8,12 @@ class TextFormatter
     @output ||= "#{details}\n#{category_summary}\n"
   end
 
-
   def details
     @details ||=
       @log.select { |entry| entry.valid }.map do |entry|
         entry.to_s!
       end.join "\n"
   end
-
 
   def category_summary
     @category_summary ||=
@@ -30,5 +28,4 @@ class TextFormatter
         output
       end
   end
-
 end
