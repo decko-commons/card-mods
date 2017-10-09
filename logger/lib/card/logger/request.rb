@@ -16,7 +16,7 @@ class Request
     controller.instance_eval do
       log = []
       log << (Card::Env.ajax? ? "YES" : "NO")
-      log << en["REMOTE_ADDR"]
+      log << env["REMOTE_ADDR"]
       log << Card::Auth.current_id
       log << card.name
       log << action_name
