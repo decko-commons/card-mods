@@ -29,12 +29,12 @@
 # Default values are 'Card', ':all'  and { :title => method name, :message => first argument, :details=> remaining arguments }.
 # For example [:fetch] is equivalent to Card => { :all => { :fetch  => { :message=>1, :details=>1..-1 } }
 
-class Card
+module CardMod
   class Logger
     class Performance
-      require_dependency "card/logger/performance/category_log"
-      require_dependency "card/logger/performance/entry"
-      require_dependency "card/logger/performance/big_brother"
+      require_dependency "card_mod/logger/performance/category_log"
+      require_dependency "card_mod/logger/performance/entry"
+      require_dependency "card_mod/logger/performance/big_brother"
 
       DEFAULT_CLASS = Card
       DEFAULT_METHOD_TYPE = :all
@@ -53,7 +53,7 @@ class Card
       cattr_reader :log, :category_log
 
       @@log = []
-      @@category_log = Logger::Performance::CategoryLog.new
+      @@category_log = CategoryLog.new
       @@context_entries = []
       @@active_entries = []
       @@current_level = 0
@@ -129,7 +129,7 @@ class Card
           @@context_entries = []
           @@active_entries = []
           @@first_entry = new_entry(args)
-          @@category_log = Logger::Performance::CategoryLog.new args[:category]
+          @@category_log = CardMod::Logger::Performance::CategoryLog.new args[:category]
         end
 
         def stop
@@ -223,7 +223,7 @@ class Card
             @@category_log.start args[:category]
           end
 
-          @@log << Logger::Performance::Entry.new(parent, level, args)
+          @@log << CardMod::Logger::Performance::Entry.new(parent, level, args)
           @@current_level += 1
           @@active_entries << @@log.last
 
@@ -254,7 +254,7 @@ class Card
           end
 
           classes.each do |klass, method_types|
-            klass.extend Logger::Performance::BigBrother # add watch methods
+            klass.extend CardMod::Logger::Performance::BigBrother # add watch methods
 
             method_types = hashify_and_verify_keys(method_types, DEFAULT_METHOD_TYPE) do |key|
               [:all, :instance, :singleton].include? key
@@ -269,7 +269,6 @@ class Card
 
           end
         end
-
 
         def hashify_and_verify_keys args, default_key = nil
           if default_key
@@ -316,7 +315,6 @@ class Card
           end
           args
         end
-
       end
     end
   end

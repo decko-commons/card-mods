@@ -1,4 +1,4 @@
-class Card
+module CardMod
   class Logger
     class Performance
       class Entry
