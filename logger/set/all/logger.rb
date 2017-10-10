@@ -105,14 +105,16 @@ class ::Card
   end
 end
 
-module ::ActiveRecord::ConnectionAdapters
-  class AbstractMysqlAdapter
-    unless method_defined? :original_execute
-      alias original_execute execute
-      def execute sql, name=nil
-        Card::Logger.with_logging :execute,
-                              message: "SQL", category: "SQL", details: sql do
-          original_execute sql, name
+module ::ActiveRecord
+  module ConnectionAdapters
+    class AbstractMysqlAdapter
+      unless method_defined? :original_execute
+        alias original_execute execute
+        def execute sql, name=nil
+          ::Card::Logger.with_logging :execute,
+                                    message: "SQL", category: "SQL", details: sql do
+            original_execute sql, name
+          end
         end
       end
     end

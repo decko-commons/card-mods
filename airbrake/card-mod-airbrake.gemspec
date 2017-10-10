@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.files = Dir['config/**/*.rb'] + Dir['set/**/*.rb']
 
   s.required_ruby_version = ">= 2.3.0"
-  s.add_runtime_dependency "airbrake", "~> 6.2"
+  s.add_runtime_dependency "airbrake", "~> 7.0"
   s.metadata = { "card-mod" => "airbrake" }
   s.add_runtime_dependency "card"
 end
