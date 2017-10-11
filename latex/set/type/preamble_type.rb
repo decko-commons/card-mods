@@ -10,7 +10,6 @@ event :typeset_preamble, :validate, :on=>:save do
     end
 
     # Die Formatdateien benutzen include für die Preambles. Deshalb muss die Format-Datei nicht angepasst werden
-    # binding.pry
     tex_cards.uniq( &:format_name ).each do |c|
       begin
         if ::File.exists? c.ini_path

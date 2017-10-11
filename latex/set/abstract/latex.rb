@@ -108,7 +108,6 @@ format :html do
   PDF_VIEW_LAYOUT = "new_layout"
 
   def default_latex_new_args args
-    #binding.pry
     #args[:hidden] ||= {}
     #args[:hidden][:success] = { :redirect => true, :view=>'split',
     #                            :layout =>LATEX_EDIT_LAYOUT }
