@@ -153,9 +153,9 @@ end
 
 def count_votes direction
   tag_id = Card.const_get "#{direction.to_s.capitalize}votesID"
-  Card.search({ right_plus: [tag_id, { link_to: cardname.left }],
+  Card.search({ right_plus: [tag_id, { link_to: name.left }],
                 return: "count" },
-              "#{direction}votes linking to #{cardname.left}")
+              "#{direction}votes linking to #{name.left}")
 end
 
 def vote_status
@@ -183,7 +183,7 @@ def redirect_to_vote_later
   path_hash = { action: :update, vote: vote_param, success: "*previous" }
   uri = format.page_path cardname, path_hash
   Env.save_interrupted_action uri
-  abort success: "REDIRECT: #{Card[:signin].cardname.url_key}"
+  abort success: "REDIRECT: #{Card[:signin].name.url_key}"
 end
 
 VOTE_PARAM_TO_METHOD_MAP = {

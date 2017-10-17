@@ -337,8 +337,8 @@ format :html do
 
   view :open_content do |args|
     # refs = Card.fetch card.name + "+references"
-    # disc_tagname = Card.fetch(:discussion, :skip_modules=>true).cardname
-    # disc_card = unless card.new_card? or card.junction? && card.cardname.tag_name.key == disc_tagname.key
+    # disc_tagname = Card.fetch(:discussion, :skip_modules=>true).name
+    # disc_card = unless card.new_card? or card.junction? && card.name.tag_name.key == disc_tagname.key
     #               Card.fetch "#{card.name}+#{disc_tagname}", :skip_virtual=>true, :skip_modules=>true, :new=>{}
     #             end
 
