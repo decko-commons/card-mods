@@ -109,7 +109,7 @@ def force_neutral insert_before_id=false
   end
 end
 
-def raw_content
+def content
   return super if Auth.signed_in? || !session_vote?
   if session_votes? :up
     (content.to_i + 1).to_s
