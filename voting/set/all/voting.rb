@@ -57,7 +57,7 @@ format :html do
     voo.hide :menu
     wrap do
       [
-        render(:menu, check_permissions: false),
+        _render_menu,
         nest(card.vote_count_card, view: :content),
         render!(:header),
         wrap_body { _render_core },

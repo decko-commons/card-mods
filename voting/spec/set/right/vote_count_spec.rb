@@ -344,7 +344,7 @@ describe Card::Set::Right::VoteCount do
   end
 
   describe "session votes" do
-    subject { @vcard.raw_content.to_i }
+    subject { @vcard.content.to_i }
     before do
       @topic = sample_topic
       @vcard = @topic.vote_count_card
@@ -355,7 +355,7 @@ describe Card::Set::Right::VoteCount do
       context "when voted down" do
         before do
           @vcard.vote_down
-          @vc = @vcard.raw_content.to_i
+          @vc = @vcard.content.to_i
           @vcard.vote_up
         end
         it "increases vote count" do
@@ -365,7 +365,7 @@ describe Card::Set::Right::VoteCount do
 
       context "when not voted" do
         before do
-          @vc = @vcard.raw_content.to_i
+          @vc = @vcard.content.to_i
           @vcard.vote_up
         end
 
@@ -391,7 +391,7 @@ describe Card::Set::Right::VoteCount do
       context "when voted up" do
         before do
           @vcard.vote_up
-          @vc = @vcard.raw_content.to_i
+          @vc = @vcard.content.to_i
           @vcard.vote_down
         end
 
