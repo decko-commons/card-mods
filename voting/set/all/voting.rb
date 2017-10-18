@@ -57,11 +57,11 @@ format :html do
     voo.hide :menu
     wrap do
       [
-        _optional_render_menu,
+        render(:menu, check_permissions: false),
         nest(card.vote_count_card, view: :content),
-        _render_header,
+        render!(:header),
         wrap_body { _render_core },
-        optional_render_comment_box
+        render(:comment_box)
       ]
     end
   end
@@ -73,7 +73,7 @@ format :html do
   .header-vote
     = subformat( card.vote_count_card ).render_details
   .header-title
-    = render_header
+    = render!(:header)
     .creator-credit
       = process_content "{{_self | structure:creator credit}}"
 .clear-line
