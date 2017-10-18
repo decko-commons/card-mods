@@ -57,11 +57,11 @@ format :html do
     voo.hide :menu
     wrap do
       [
-        _optional_render_menu,
+        _render_menu,
         nest(card.vote_count_card, view: :content),
         _render_header,
         wrap_body { _render_core },
-        optional_render_comment_box
+        render_comment_box
       ]
     end
   end

@@ -210,7 +210,7 @@ format :html do
         card.update_votecount
         card.save!
       end
-      render @denied_view
+      render! @denied_view
     else
       super()
     end
@@ -222,7 +222,7 @@ format :html do
     class_up "card-slot", "card-content nodblclick"
     wrap do
       [
-        _optional_render(:menu, args, :hide),
+        _render(:menu, args, :hide),
         wrap_with(:div, class: "vote-up") { vote_up_link(:content) },
         _render_core(args),
         wrap_with(:div, class: "vote-down") { vote_down_link(:content) }

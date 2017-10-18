@@ -365,7 +365,7 @@ format :html do
           %{
             #{ edit_button if card.ok?(:update) }
             <div class="toolbarButtonSpacer"></div>
-            #{ _optional_render :menu, args}
+            #{ _render :menu, args}
           }
           end
         }
