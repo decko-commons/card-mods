@@ -112,9 +112,9 @@ end
 def content
   return super if Auth.signed_in? || !session_vote?
   if session_votes? :up
-    (content.to_i + 1).to_s
+    (standard_content.to_i + 1).to_s
   elsif session_votes? :down
-    (content.to_i - 1).to_s
+    (standard_content.to_i - 1).to_s
   else
     super
   end
