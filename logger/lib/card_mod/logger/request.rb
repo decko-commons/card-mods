@@ -1,6 +1,6 @@
 require 'csv'
 
-class Card
+module CardMod
   class Logger
     class Request
       def self.path
