@@ -6,7 +6,7 @@ event :new_relic_act_transaction,
   ::NewRelic::Agent.add_custom_attributes(
     act:  {
       time: "#{(Time.now - @act_start) * 1000} ms",
-      actions: ActManager.act&.actions&.map(&:card).compact.map(&:name)
+      actions: action_names_for_new_relic
     }
   )
 end
@@ -45,16 +45,20 @@ end
 ::Card::Set::Event::IntegrateWithDelayJob.after_perform do |job|
   ActManager.contextualize_delayed_event *job.arguments[0..3] do
     card = job.arguments[1]
-    actions = ActManager.act&.actions.map(&:card).compact.map(&:name)
     ::NewRelic::Agent.add_custom_attributes(
       event: job.queue_name,
       card: {
         name: card.name,
         type: card.type_code
       },
-      act: { actions: actions },
+      act: { actions: card.action_names_for_new_relic },
     )
   end
+end
+
+def action_names_for_new_relic
+  return unless (act = ActManager.act)
+  act.actions.map(&:card).compact.map &:name
 end
 
 # test new relic custom metrics
