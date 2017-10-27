@@ -6,7 +6,7 @@ event :new_relic_act_transaction,
   ::NewRelic::Agent.add_custom_attributes(
     act:  {
       time: "#{(Time.now - @act_start) * 1000} ms",
-      actions: ActManager.act&.actions.map(&:card).compact.map(&:name)
+      actions: ActManager.act&.actions&.map(&:card).compact.map(&:name)
     }
   )
 end
