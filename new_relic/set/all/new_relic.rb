@@ -57,8 +57,8 @@ end
 end
 
 def action_names_for_new_relic
-  return unless (act = ActManager.act)
-  act.actions.map(&:card).compact.map &:name
+  return unless (actions = ActManager.act&.actions)
+  actions.map(&:card).compact.map &:name
 end
 
 # test new relic custom metrics
