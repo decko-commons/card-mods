@@ -305,7 +305,7 @@ format :html do
   end
 
   def up_details
-    render_haml up_count: card.left.upvote_count do
+    haml up_count: card.left.upvote_count do
       %(
 %span.vote-details
   <i class="fa fa-users"></i>
@@ -317,7 +317,7 @@ format :html do
   end
 
   def down_details
-    render_haml down_count: card.left.downvote_count do
+    haml down_count: card.left.downvote_count do
       %(
 %span.vote-details
   <i class="fa fa-users"></i>

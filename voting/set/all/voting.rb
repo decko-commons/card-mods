@@ -67,7 +67,7 @@ format :html do
   end
 
   view :header_with_voting do
-    render_haml do
+    haml do
       <<-HAML
 .header-with-vote
   .header-vote
