@@ -7,7 +7,7 @@ ActiveSupport.on_load :card do
 
     module Set
       module Event
-        def define_final_method event, method_name, &method
+        def define_simple_method event, method_name, &method
           class_eval do
             include ::NewRelic::Agent::MethodTracer
             define_method method_name, &method
