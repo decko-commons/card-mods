@@ -285,6 +285,7 @@ format :html do
     html_class += " slotter disabled-vote-link vote-button"
     button_tag({ disabled: true,
                  class: html_class, type: "button",
+                 situation: "outline-secondary",
                  title: message }.merge(extra)) do
       "<i class=\"fa fa-chevron-#{up_or_down} \"></i>"
     end
@@ -293,6 +294,7 @@ format :html do
   def vote_link text, title, up_or_down, view, extra={}
     button_tag({ href: vote_path(up_or_down, view),
                  class: "slotter vote-link vote-button", type: "button",
+                 situation: "outline-secondary",
                  title: title, remote: true, method: "post" }.merge(extra)) do
       text
     end
