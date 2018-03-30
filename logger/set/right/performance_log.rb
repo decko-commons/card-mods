@@ -55,7 +55,7 @@ end
 
 
 format :html do
-  view :core do |args|
+  view :core do
     wagn_data =
       card.item_names.map do |item|
         path = card.log_path item

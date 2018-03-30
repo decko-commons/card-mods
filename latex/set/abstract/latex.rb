@@ -94,12 +94,12 @@ def create_default_preview
 end
 
 format :json do
-  view :preview_path do |args|
+  view :preview_path do
     { src: "assets/web/viewer.html?file=#{card.pdf_preview_url}" }.to_json
   end
 
-  view :errors do |args|
-    card.format(:html)._render_tex_errors(args)
+  view :errors do
+    card.format(:html)._render_tex_errors
   end
 end
 
@@ -124,8 +124,7 @@ format :html do
   end
 
   def new_view_hidden
-    success_tags :redirect => true, :view=>:edit,
-                                    :layout =>LATEX_EDIT_LAYOUT
+    success_tags redirect: true, view: :edit, layout: LATEX_EDIT_LAYOUT
   end
 
   def default_latex_edit_args args
@@ -157,7 +156,7 @@ format :html do
       else
         card.pdf_url
       end
-    _render_pdfjs_iframe pdf_url: pdf_url
+    pdfjs_iframe pdf_url: pdf_url
     # if preview
     #   "<script>PDFView.open('#{card.pdf_preview_url Env.params[:preview_filename]}', 1);</script>" #unless  card.content.empty?
     #   #"<script>PDFView.open('#{card.pdf_preview_pdf_card.attach.url}', 1);</script>"
@@ -186,7 +185,7 @@ format :html do
     end
   end
 
-  view :header do #|args|
+  view :header do
     voo.hide! :optional_toggle
     voo.show! :optional_title_link unless @slot_view == :open
     super()
@@ -258,31 +257,34 @@ format :html do
                disable_with: 'typesetting'
   end
 
-  view :edit_preview do |args|
+  view :edit_preview do
     wrap do
-      _render_pdf_viewer args
+      _render_pdf_viewer
     end
   end
 
-  view :pdf_viewer, cache: :never do |args|
+  view :pdf_viewer, cache: :never do
     # %{
     # #{ ::Pdfjs.viewer }
     # #{ load_pdf args[:preview] || Env.params[:preview_filename]}
     # }
+    pdf_url = nil
     if params[:success] && params[:success][:preview_filename]
-      args[:preview] = card.pdf_preview_url
+      pdf_url = card.pdf_preview_url
     end
-    _render_pdfjs_iframe pdf_url: args[:preview] ||
-                         Env.params[:preview_filename] || card.pdf_url
+    pdf_url ||= Env.params[:preview_filename] || card.pdf_url
+    pdfjs_iframe pdf_url: pdf_url
+
   end
 
-  view :preview, cache: :never do |args|
-    unless Env.params[:preview_filename]
-      card.new_preview_from_original
-      Env.params[:preview_filename] = card.doc_basename
-    end
-    _render_open args.merge(:preview => true)
-  end
+  # FIXME: refactor without preview args
+  # view :preview, cache: :never do
+  #   unless Env.params[:preview_filename]
+  #     card.new_preview_from_original
+  #     Env.params[:preview_filename] = card.doc_basename
+  #   end
+  #   _render_open args.merge(:preview => true)
+  # end
 
   view :editor, cache: :never do
     # At the beginning and at the end misterious newlines \r\n occur and I couldn't get rid of them
@@ -331,11 +333,11 @@ format :html do
     }
   end
 
-  def default_open_args args
+  def default_open_args _args
     voo.show :horizontal_menu
   end
 
-  view :open_content do |args|
+  view :open_content do
     # refs = Card.fetch card.name + "+references"
     # disc_tagname = Card.fetch(:discussion, :skip_modules=>true).name
     # disc_card = unless card.new_card? or card.junction? && card.name.tag_name.key == disc_tagname.key
@@ -343,29 +345,28 @@ format :html do
     #             end
 
     %{
-      #{ _render_pdf_viewer args }
+      #{_render_pdf_viewer}
       <br/>
       #{field_subformat("+pdf bottom").render_content}
     }
   end
 
-  view :closed_content do |args|
+  view :closed_content do
     ''
   end
 
-  view :pdf_toolbar do |args|
+  view :pdf_toolbar do
     %{
       <h1 class="card-header">
         <div style="float:left;">
-          #{ args.delete :toggler }
-          #{ _render_title args }
+          #{_render_title}
         </div>
         #{
           ::Pdfjs.wrap_toolbar do
           %{
             #{ edit_button if card.ok?(:update) }
             <div class="toolbarButtonSpacer"></div>
-            #{ _render :menu, args}
+            #{_render :menu}
           }
           end
         }
@@ -392,26 +393,10 @@ format :html do
     end
   end
 
-  view :redirect_split, cache: :never do |args|
+  view :redirect_split, cache: :never do
     %{
       <script> window.location = "/~#{card.id}?view=split&layout=#{LATEX_EDIT_LAYOUT}"; </script>
     }
   end
-  # view :show do |args|
-  #   @main_view = args[:view] || args[:home_view]
-  #
-  #   if @main_view.to_s.eql? 'split' or (args[:view].to_s.eql? "errors" and args[:home_view].to_s.eql? 'split')
-  #     args[:layout] = LATEX_EDIT_LAYOUT
-  #     args[:split] = true
-  #   else
-  #     args[:layout] = PDF_VIEW_LAYOUT
-  #   end
-  #   if ajax_call? #and not @main_view.eql? 'edit'
-  #     view = @main_view || :open
-  #     self.render(view, args)
-  #   else
-  #     self.render_layout args
-  #   end
-  # end
 
 end

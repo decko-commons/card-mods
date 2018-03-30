@@ -1,5 +1,5 @@
 format :html do
-  view :core do |args|
+  view :core do
     Maruku.new(card.content).to_html
   end
 
