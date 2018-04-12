@@ -293,7 +293,7 @@ format :html do
 
     output [
       text_area(:content, rows: 5,
-                            class: "card-content ace-editor-textarea",
+                            class: "d0-card-content ace-editor-textarea",
                             data: { "ace-mode" => "latex", ace_theme: theme }),
       _render_tex_errors
     ]
@@ -310,7 +310,7 @@ format :html do
     wrap do
       %{  <div class="errors-view"> <h3>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h3> } +
         card.errors.map { |attrib, msg| "<div style='text-align: left;'>#{attrib.to_s.upcase}: #{msg}</div>" } * '' +   %{
-      #{ submit_tag 'Submit with errors', :class=>'submit-button btn btn-default', :name=>"ignore_errors", :value=>"Submit with errors" }
+      #{ submit_tag 'Submit with errors', :class=>'submit-button btn btn-outline-secondary', :name=>"ignore_errors", :value=>"Submit with errors" }
         </div>
       }
     end
@@ -384,7 +384,7 @@ format :html do
             </h2>
             #{error_msg}
             #{ submit_tag 'Submit with errors',
-                          :class=>'submit-button btn btn-default',
+                          :class=>'submit-button btn btn-outline-secondary',
                           :name=>"ignore_errors", :value=>"Submit with errors" }
           </div>
         HTML
