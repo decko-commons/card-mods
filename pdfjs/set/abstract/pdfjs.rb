@@ -9,7 +9,8 @@ format :html do
     args[:viewer_path] << "?file=#{args[:pdf_url]}" if args[:pdf_url]
   end
 
-  view :pdfjs_iframe, cache: :never do |args|
+  def pdfjs_iframe args
+    default_pdfjs_iframe_args args
     <<-HTML
       <iframe style="width: 100%"
               id="source-preview-iframe" class="pdfjs-iframe"
@@ -22,7 +23,7 @@ format :html do
     HTML
   end
 
-  view :pdfjs_viewer do |args|
+  view :pdfjs_viewer do
     # TODO: show pdfjs viewer directly without iframe
     # Pdfjs.viewer
   end

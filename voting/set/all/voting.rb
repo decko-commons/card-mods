@@ -16,18 +16,24 @@ end
 
 def vote_status
   if Auth.signed_in?
-    if Auth.current.upvotes_card.include_item? vote_key
-      :upvoted
-    elsif Auth.current.downvotes_card.include_item? vote_key
-      :downvoted
-    else
-      :no_vote
-    end
+    signed_in_vote_status
   elsif try(:session_vote?)
     session_vote_status
   else
     :no_vote
   end
+end
+
+def signed_in_vote_status
+  [:up, :down].each do |dir|
+    return "#{dir}voted".to_sym if voted? Auth.current, dir
+  end
+  :no_vote
+end
+
+def voted? user_card, direction
+  vote_pointer = user_card.send "#{direction}votes_card"
+  vote_pointer.all_raw_items.include? "[[#{vote_key}]]"
 end
 
 def session_vote_status
