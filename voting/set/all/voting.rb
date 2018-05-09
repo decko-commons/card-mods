@@ -33,7 +33,7 @@ end
 
 def voted? user_card, direction
   vote_pointer = user_card.send "#{direction}votes_card"
-  vote_pointer.all_raw_items.include? "[[#{vote_key}]]"
+  vote_pointer.all_raw_item_strings.include? "[[#{vote_key}]]"
 end
 
 def session_vote_status
