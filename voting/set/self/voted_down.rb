@@ -1,4 +1,4 @@
-include Card::FollowOption
+include Abstract::FollowOption
 
 restrictive_follow_opts :position=>3
 
