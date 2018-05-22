@@ -71,7 +71,9 @@ ensure
 end
 
 def typesetting_preview?
-  Env.params[:success].is_a?(Hash) && Env.params[:success][:typeset] == "true"
+  (Env.params[:success].is_a?(Hash) ||
+    Env.params[:success].is_a?(ActionController::Parameters)) &&
+    Env.params[:success][:typeset] == "true"
 end
 
 def create_default_subcards
