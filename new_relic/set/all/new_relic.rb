@@ -57,7 +57,7 @@ end
 end
 
 def action_names_for_new_relic
-  return unless (actions = ActManager.act&.actions)
+  return unless (actions = ActManager.act&.actions(false))
   actions.map(&:card).compact.map &:name
 end
 
