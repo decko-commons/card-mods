@@ -1,11 +1,13 @@
 require_dependency "card_mod/logger"
 
 class Card
-  class Query
-    alias original_run run
-    def run
-      CardMod::Logger.with_logging :search, message: @statement, details: sql do
-        original_run
+  module Query
+    class CardQuery
+      alias_method :original_run, :run
+      def run
+        CardMod::Logger.with_logging :search, message: @statement, details: sql do
+          original_run
+        end
       end
     end
   end
