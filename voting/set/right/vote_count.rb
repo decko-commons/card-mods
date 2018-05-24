@@ -291,11 +291,10 @@ format :html do
   end
 
   def vote_link text, title, up_or_down, view, extra={}
-    button_tag({ href: vote_path(up_or_down, view),
-                 class: "slotter vote-link vote-button", type: "button",
-                 title: title, remote: true, method: "post" }.merge(extra)) do
-      text
-    end
+    link_to text, { path: vote_path(up_or_down, view),
+                    class: "slotter vote-link vote-button",
+                    title: title, remote: true, method: "post"
+                  }.merge(extra)
   end
 
   def vote_path up_or_down=nil, view="content"
