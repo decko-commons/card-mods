@@ -293,7 +293,7 @@ format :html do
   def vote_link text, title, up_or_down, view, extra={}
     link_to text, { path: vote_path(up_or_down, view),
                     class: "slotter vote-link vote-button",
-                    title: title, remote: true, method: "post"
+                    title: title, remote: true, method: "post", rel: "nofollow"
                   }.merge(extra)
   end
 
