@@ -6,6 +6,11 @@ def drop_id id
   drop_item vote_key(id)
 end
 
+# override standard pointer method to avoid conversion to name
+def clean_item_name item, _context
+  strip_item item
+end
+
 def insert_id_before new_id, successor_id
   drop_id new_id
   if (index = item_names.index vote_key(successor_id))
