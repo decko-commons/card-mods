@@ -9,8 +9,9 @@ ActiveSupport.on_load :card do
       module Event
         def define_simple_method event, method_name, &method
           class_eval do
+            include ::NewRelic::Agent::MethodTracer
             define_method method_name, &method
-            Card.add_method_tracer method_name, "event/#{event}"
+            add_method_tracer method_name, "event/#{event}"
           end
         end
       end
@@ -19,26 +20,30 @@ ActiveSupport.on_load :card do
     class Format
       module Render
         include ::NewRelic::Agent::MethodTracer
-        add_method_tracer :render!, "Format/render"
+        add_method_tracer :render!, "format/render"
       end
     end
 
     class Content
       class Parser
-        include ::NewRelic::Agent::MethodTracer
-        add_method_tracer :parse, "Content/parse"
+        class << self
+          include ::NewRelic::Agent::MethodTracer
+          add_method_tracer :parse, "content/parse"
+        end
       end
     end
 
     module Query
-      include ::NewRelic::Agent::MethodTracer
-      add_method_tracer :new, "Query/new"
+      class << self
+        include ::NewRelic::Agent::MethodTracer
+        add_method_tracer :new, "query/new"
+      end
     end
 
     class View
       include ::NewRelic::Agent::MethodTracer
-      add_method_tracer :initialize, "View/initialize"
-      add_method_tracer :process, "View/process"
+      add_method_tracer :initialize, "view/initialize"
+      add_method_tracer :process, "view/process"
     end
   end
 end

@@ -4,10 +4,8 @@ event :new_relic_act_transaction,
                                          category: :controller
   add_custom_card_attributes
   ::NewRelic::Agent.add_custom_attributes(
-    act:  {
-      time: "#{(Time.now - @act_start) * 1000} ms",
-      actions: action_names_for_new_relic
-    }
+    act:  { time: "#{(Time.now - @act_start) * 1000} ms",
+            actions: action_names_for_new_relic }
   )
 end
 
@@ -32,14 +30,8 @@ end
 
 def add_custom_card_attributes
   ::NewRelic::Agent.add_custom_attributes(
-    card: {
-      type: type_code,
-      name: name
-    },
-    user: {
-      roles: all_roles.join(", ")
-    },
-    params: Env.params
+    card: { type: type_code, name: name },
+    user: { roles: all_roles.join(", ") }
   )
 end
 
@@ -49,10 +41,7 @@ end
     card = job.arguments[1]
     ::NewRelic::Agent.add_custom_attributes(
       event: job.queue_name,
-      card: {
-        name: card.name,
-        type: card.type_code
-      },
+      card: { name: card.name, type: card.type_code },
       act: { actions: card.action_names_for_new_relic },
     )
   end
