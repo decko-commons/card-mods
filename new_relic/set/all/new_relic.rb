@@ -43,13 +43,6 @@ def add_custom_card_attributes
   )
 end
 
-format do
-  include ::NewRelic::Agent::MethodTracer
-  def render!
-
-  end
-end
-
 
 ::Card::Set::Event::IntegrateWithDelayJob.after_perform do |job|
   ActManager.contextualize_delayed_event *job.arguments[0..3] do
