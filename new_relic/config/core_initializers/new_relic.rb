@@ -20,7 +20,8 @@ ActiveSupport.on_load :card do
     class Format
       module Render
         include ::NewRelic::Agent::MethodTracer
-        add_method_tracer :render!, "Custom/Format/render"
+        add_method_tracer :render!, "Custom/Format/render!"
+        add_method_tracer :final_render, "Custom/Format/final_render"
       end
     end
 
