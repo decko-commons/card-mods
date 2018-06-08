@@ -11,7 +11,7 @@ ActiveSupport.on_load :card do
           class_eval do
             include ::NewRelic::Agent::MethodTracer
             define_method method_name, &method
-            add_method_tracer method_name, "event/#{event}"
+            add_method_tracer method_name, "Custom/Event/#{event}"
           end
         end
       end
@@ -20,7 +20,7 @@ ActiveSupport.on_load :card do
     class Format
       module Render
         include ::NewRelic::Agent::MethodTracer
-        add_method_tracer :render!, "format/render"
+        add_method_tracer :render!, "Custom/Format/render"
       end
     end
 
@@ -28,7 +28,7 @@ ActiveSupport.on_load :card do
       class Parser
         class << self
           include ::NewRelic::Agent::MethodTracer
-          add_method_tracer :parse, "content/parse"
+          add_method_tracer :parse, "Custom/Content/parse"
         end
       end
     end
@@ -36,14 +36,14 @@ ActiveSupport.on_load :card do
     module Query
       class << self
         include ::NewRelic::Agent::MethodTracer
-        add_method_tracer :new, "query/new"
+        add_method_tracer :new, "Custom/Query/new"
       end
     end
 
     class View
       include ::NewRelic::Agent::MethodTracer
-      add_method_tracer :initialize, "view/initialize"
-      add_method_tracer :process, "view/process"
+      add_method_tracer :initialize, "Custom/View/initialize"
+      add_method_tracer :process, "Custom/View/process"
     end
   end
 end
