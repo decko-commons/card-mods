@@ -181,7 +181,7 @@ end
 
 def redirect_to_vote_later
   path_hash = { action: :update, vote: vote_param, success: "*previous" }
-  uri = format.page_path name, path_hash
+  uri = format.path path_hash
   Env.save_interrupted_action uri
   abort success: "REDIRECT: #{Card[:signin].name.url_key}"
 end

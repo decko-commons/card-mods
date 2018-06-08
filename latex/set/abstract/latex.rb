@@ -109,7 +109,7 @@ format :html do
   LATEX_EDIT_LAYOUT = "latex_split_layout"
   PDF_VIEW_LAYOUT = "new_layout"
 
-  def default_latex_new_args args
+  before :latex_new do
     #args[:hidden] ||= {}
     #args[:hidden][:success] = { :redirect => true, :view=>'split',
     #                            :layout =>LATEX_EDIT_LAYOUT }
@@ -129,7 +129,7 @@ format :html do
     success_tags redirect: true, view: :edit, layout: LATEX_EDIT_LAYOUT
   end
 
-  def default_latex_edit_args args
+  before :latex_edit do
     args[:optional_help] = :show
     #args[:hidden] ||= {}
     #args[:hidden][:success] = {:redirect=>true,:view => 'open', :layout=>PDF_VIEW_LAYOUT, :id=>'_self'}
@@ -198,7 +198,7 @@ format :html do
     _render_edit
   end
 
-  def default_new_args args
+  before :new do
     args = default_latex_new_args args
     args.merge! :nopdfview => true # disables the pdf.js toolbar
   end
@@ -335,7 +335,7 @@ format :html do
     }
   end
 
-  def default_open_args _args
+  before :open do
     voo.show :horizontal_menu
   end
 
