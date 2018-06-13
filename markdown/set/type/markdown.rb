@@ -3,5 +3,11 @@ format :html do
     Maruku.new(card.content).to_html
   end
 
-  view :editor, :mod=>Type::Html::HtmlFormat
+  def editor
+    :ace_editor
+  end
+
+  def ace_mode
+    :markdown
+  end
 end
