@@ -6,12 +6,12 @@ ActiveSupport.on_load :card do
     include ::NewRelic::Agent::MethodTracer
 
     module Set
-      module Event
-        def define_simple_method event, method_name, &method
-          class_eval do
+      class Event
+        def define_simple_method
+          @set_module.class_exec(self) do |event|
             include ::NewRelic::Agent::MethodTracer
-            define_method method_name, &method
-            add_method_tracer method_name, "Custom/Event/#{event}"
+            define_method event.simple_method_name, &event.block
+            add_method_tracer event.simple_method_name, "Custom/Event/#{event.name}"
           end
         end
       end
