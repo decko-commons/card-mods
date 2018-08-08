@@ -1,4 +1,4 @@
 mods
 ====
 
-Wagn mods
+mods for Decko cards
