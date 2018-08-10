@@ -1,6 +1,7 @@
 The `csv_import` mod provides a way to import data from csv files.
-You can either build a web interface or write scripts/use the console to import data.
+You can use it to either build a web interface or to write scripts/use the console to import data.
 
+Install the mod in your deck by adding `gem "card-mod-csv_import"` to your deck's Gemfile.
 The first step is to describe the expected format with a CSVRow class and define what to do with the data in the `import` method.
 
 Let's assume we want to import a csv file with animals that looks like this:
@@ -44,12 +45,13 @@ end
 
 You can use this now to import a csv file in the console with
 ```ruby
-csv_file = CSVFile.new(path_to_csv_file, AnimalCSV, col_sep: ",", headers: true)
-ScriptImportManager.new(csv_file, user: "Zookeeper", error_policy: :report).import
+csv_file = CSVFile.new path_to_csv_file, AnimalCSV, col_sep: ",", headers: true
+sim = ScriptImportManager.new csv_file, user: "Zookeeper", error_policy: :reports
+sim.import
 ```
 In this case all imported cards will be created with the Zookeeper's account. 
 
-If you want users to be able to import csv files then a few more steps are necessary to build the web/card interface.
+If you want users to be able to import csv files on the website then a few more steps are necessary to build the web/card interface.
 
 The general approach is that you create a new cardtype, e.g. "animal import" which inherits from the cardtype "file".
 To import a new csv file you create a new "animal import" card, e.g. "south african animals" and attach a csv file to that card.  
