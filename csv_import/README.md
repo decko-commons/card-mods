@@ -22,14 +22,6 @@ class AnimalCSV < CSVRow
   @columns = [:animal, :legs, :dangerous]
   @required = [:animal]
 
-  def import
-    import_card name: animal, type: :basic,
-                subfields: {
-                  "legs" => legs,
-                  "fondle" => { type: :toggle, content: !dangerous }
-                }
-  end
-
   # don't accept negative number of legs
   def validate_legs value
     value.to_i >= 0
@@ -38,6 +30,14 @@ class AnimalCSV < CSVRow
   # normalize "dangerous" value to boolean
   def normalize_dangerous value
     value != "no"
+  end
+  
+  def import
+    import_card name: animal, type: :basic,
+                subfields: {
+                  "legs" => legs,
+                  "fondle" => { type: :toggle, content: !dangerous }
+                }
   end
 end
 ```
@@ -63,9 +63,9 @@ To build that you have to
     ```
    and add to the `up` method in the migration file:
    ```
-    ensure_card "animal import", type: :cardtype
+    ensure_card "animal import", type: :cardtype, codename: "animal_import"
    ```
-2. create a set file `type/animal_import.rb` 
+2. create a set file for that new cardtype `type/animal_import.rb` (the codename has to be the file name)
     ```
     bundle exec decko generate card:set animal_mod type animal_import
     ```
