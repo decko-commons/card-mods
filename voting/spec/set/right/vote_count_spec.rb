@@ -1,13 +1,13 @@
 describe Card::Set::Right::VoteCount do
   before do
     Card::Auth.current_id = Card["Joe Admin"].id
-    @claim = create_claim "another voting claim"
-    @card = @claim.vote_count_card
+    @topic = create_topic "another voting topic"
+    @card = @topic.vote_count_card
     Card::Auth.current_id = Card["Joe User"].id
   end
 
   it "default vote count is 1" do
-    expect(@claim.vote_count.to_i).to eq 1
+    expect(@topic.vote_count.to_i).to eq 1
   end
 
   describe "#vote_status" do
@@ -46,10 +46,10 @@ describe Card::Set::Right::VoteCount do
         Card::Auth.as_bot do
           @card.vote_down
           @card.save!
-          @uvc = @claim.upvote_count.to_i
-          @dvc = @claim.downvote_count.to_i
-          @vc = @claim.vote_count.to_i
-          @card = @claim.vote_count_card
+          @uvc = @topic.upvote_count.to_i
+          @dvc = @topic.downvote_count.to_i
+          @vc = @topic.vote_count.to_i
+          @card = @topic.vote_count_card
           @card.vote_up
           @card.save!
         end
@@ -57,18 +57,18 @@ describe Card::Set::Right::VoteCount do
 
       it "decreases downvote count" do
         Card::Auth.as_bot do
-          expect(@claim.downvote_count.to_i).to eq(@dvc - 1)
+          expect(@topic.downvote_count.to_i).to eq(@dvc - 1)
         end
       end
 
       it "doesn't change upvote count" do
         Card::Auth.as_bot do
-          expect(@claim.upvote_count.to_i).to eq(@uvc)
+          expect(@topic.upvote_count.to_i).to eq(@uvc)
         end
       end
 
       it "increases vote count" do
-        expect(@claim.vote_count.to_i).to eq(@vc + 1)
+        expect(@topic.vote_count.to_i).to eq(@vc + 1)
       end
     end
 
@@ -82,36 +82,36 @@ describe Card::Set::Right::VoteCount do
           @card.vote_up
           @card.save!
 
-          @claim1 = create_claim "another voting claim1"
-          @card1 = @claim1.vote_count_card
+          @topic1 = create_topic "another voting topic1"
+          @card1 = @topic1.vote_count_card
         end
 
         Card::Auth.current_id = Card["Joe Admin"].id
         Card::Auth.as_bot do
-          @claim2 = create_claim "another voting claim2"
-          @card2 = @claim2.vote_count_card
+          @topic2 = create_topic "another voting topic2"
+          @card2 = @topic2.vote_count_card
         end
 
         Card::Auth.current_id = Card["Joe User"].id
         Card::Auth.as_bot do
-          @card2.vote_up @claim1.id
+          @card2.vote_up @topic1.id
           @card2.save!
         end
       end
 
-      it "shows the new voted claim to middle of the list" do
+      it "shows the new voted topic to middle of the list" do
         vote_item_names = @uv_card.refresh(true).item_names
-        expect(vote_item_names[@initial_vote_count + 0]).to eq("~#{@claim.id}")
-        expect(vote_item_names[@initial_vote_count + 1]).to eq("~#{@claim2.id}")
-        expect(vote_item_names[@initial_vote_count + 2]).to eq("~#{@claim1.id}")
+        expect(vote_item_names[@initial_vote_count + 0]).to eq("~#{@topic.id}")
+        expect(vote_item_names[@initial_vote_count + 1]).to eq("~#{@topic2.id}")
+        expect(vote_item_names[@initial_vote_count + 2]).to eq("~#{@topic1.id}")
       end
     end
 
     context "when not voted" do
       before do
         Card::Auth.as_bot do
-          @uvc = @claim.upvote_count.to_i
-          @vc = @claim.vote_count.to_i
+          @uvc = @topic.upvote_count.to_i
+          @vc = @topic.vote_count.to_i
           @card.vote_up
           @card.save!
         end
@@ -119,21 +119,21 @@ describe Card::Set::Right::VoteCount do
 
       it "increases upvote count" do
         Card::Auth.as_bot do
-          expect(@claim.upvote_count.to_i).to eq(@uvc + 1)
+          expect(@topic.upvote_count.to_i).to eq(@uvc + 1)
         end
       end
 
       it "increases vote count" do
-        expect(@claim.vote_count.to_i).to eq(@vc + 1)
+        expect(@topic.vote_count.to_i).to eq(@vc + 1)
       end
 
       it "increases upvote count only once" do
         Card::Auth.as_bot do
-          card = @claim.vote_count_card
+          card = @topic.vote_count_card
           card.vote_up
           card.save!
         end
-        expect(@claim.upvote_count.to_i).to eq(@uvc + 1)
+        expect(@topic.upvote_count.to_i).to eq(@uvc + 1)
       end
     end
   end
@@ -145,14 +145,14 @@ describe Card::Set::Right::VoteCount do
           @card.vote_up
           @card.save!
         end
-        uvc = @claim.upvote_count.to_i
-        vc = @claim.vote_count.to_i
+        uvc = @topic.upvote_count.to_i
+        vc = @topic.vote_count.to_i
         Card::Auth.as_bot do
           @card.force_neutral
           @card.save!
         end
-        expect(@claim.upvote_count.to_i).to eq(uvc - 1)
-        expect(@claim.vote_count.to_i).to eq(vc - 1)
+        expect(@topic.upvote_count.to_i).to eq(uvc - 1)
+        expect(@topic.vote_count.to_i).to eq(vc - 1)
       end
     end
 
@@ -162,14 +162,14 @@ describe Card::Set::Right::VoteCount do
           @card.vote_down
           @card.save!
         end
-        uvc = @claim.downvote_count.to_i
-        vc = @claim.vote_count.to_i
+        uvc = @topic.downvote_count.to_i
+        vc = @topic.vote_count.to_i
         Card::Auth.as_bot do
           @card.force_neutral
           @card.save!
         end
-        expect(@claim.downvote_count.to_i).to eq(uvc - 1)
-        expect(@claim.vote_count.to_i).to eq(vc + 1)
+        expect(@topic.downvote_count.to_i).to eq(uvc - 1)
+        expect(@topic.vote_count.to_i).to eq(vc + 1)
       end
     end
   end
@@ -180,10 +180,10 @@ describe Card::Set::Right::VoteCount do
         Card::Auth.as_bot do
           @card.vote_up
           @card.save!
-          @uvc = @claim.upvote_count.to_i
-          @dvc = @claim.downvote_count.to_i
-          @vc = @claim.vote_count.to_i
-          @card = @claim.vote_count_card
+          @uvc = @topic.upvote_count.to_i
+          @dvc = @topic.downvote_count.to_i
+          @vc = @topic.vote_count.to_i
+          @card = @topic.vote_count_card
           @card.vote_down
           @card.save!
         end
@@ -191,26 +191,26 @@ describe Card::Set::Right::VoteCount do
 
       it "decreases upvote count" do
         Card::Auth.as_bot do
-          expect(@claim.upvote_count.to_i).to eq(@uvc - 1)
+          expect(@topic.upvote_count.to_i).to eq(@uvc - 1)
         end
       end
 
       it "doesn't change downvote count" do
         Card::Auth.as_bot do
-          expect(@claim.downvote_count.to_i).to eq(@dvc)
+          expect(@topic.downvote_count.to_i).to eq(@dvc)
         end
       end
 
       it "decreases vote count" do
-        expect(@claim.vote_count.to_i).to eq(@vc - 1)
+        expect(@topic.vote_count.to_i).to eq(@vc - 1)
       end
     end
 
     context "when not voted" do
       before do
         Card::Auth.as_bot do
-          @dvc = @claim.downvote_count.to_i
-          @vc = @claim.vote_count.to_i
+          @dvc = @topic.downvote_count.to_i
+          @vc = @topic.vote_count.to_i
           @card.vote_down
           @card.save!
         end
@@ -218,34 +218,34 @@ describe Card::Set::Right::VoteCount do
 
       it "increases downvote count" do
         Card::Auth.as_bot do
-          expect(@claim.downvote_count.to_i).to eq(@dvc + 1)
+          expect(@topic.downvote_count.to_i).to eq(@dvc + 1)
         end
       end
 
       it "decreases vote count" do
-        expect(@claim.vote_count.to_i).to eq(@vc - 1)
+        expect(@topic.vote_count.to_i).to eq(@vc - 1)
       end
 
       it "increases downvote count only once" do
         Card::Auth.as_bot do
-          card = @claim.vote_count_card
+          card = @topic.vote_count_card
           card.vote_down
           card.save!
         end
-        expect(@claim.downvote_count.to_i).to eq(@dvc + 1)
+        expect(@topic.downvote_count.to_i).to eq(@dvc + 1)
       end
     end
   end
 
   describe "event vote" do
     before do
-      @vc = @claim.vote_count.to_i
+      @vc = @topic.vote_count.to_i
     end
 
     context "signed in or anonymous with session_vote enabled" do
       def trigger_vote direction
         Card::Env.params["vote"] = direction.to_s
-        @claim.vote_count_card.update_attributes! nil
+        @topic.vote_count_card.update_attributes! nil
       end
 
       def vote_items direction
@@ -254,38 +254,38 @@ describe Card::Set::Right::VoteCount do
 
       it "votes up" do
         trigger_vote :up
-        expect(vote_items(:up).include?("~#{@claim.id}")).to be true
-        expect(@claim.vote_count.to_i).to eq(@vc + 1)
+        expect(vote_items(:up).include?("~#{@topic.id}")).to be true
+        expect(@topic.vote_count.to_i).to eq(@vc + 1)
       end
 
       it "votes down" do
         trigger_vote :down
-        expect(vote_items(:down).include?("~#{@claim.id}")).to be true
-        expect(@claim.vote_count.to_i).to eq(@vc - 1)
+        expect(vote_items(:down).include?("~#{@topic.id}")).to be true
+        expect(@topic.vote_count.to_i).to eq(@vc - 1)
       end
 
       it "votes force-up" do
         trigger_vote :down
-        vc = @claim.vote_count.to_i
+        vc = @topic.vote_count.to_i
         trigger_vote "force-up"
-        expect(vote_items(:up).include?("~#{@claim.id}")).to be true
-        expect(@claim.vote_count.to_i).to eq(vc + 2)
+        expect(vote_items(:up).include?("~#{@topic.id}")).to be true
+        expect(@topic.vote_count.to_i).to eq(vc + 2)
       end
 
       it "votes force-down" do
         trigger_vote :up
-        vc = @claim.vote_count.to_i
+        vc = @topic.vote_count.to_i
         trigger_vote "force-down"
-        expect(vote_items(:down).include?("~#{@claim.id}")).to be true
-        expect(@claim.vote_count.to_i).to eq(vc - 2)
+        expect(vote_items(:down).include?("~#{@topic.id}")).to be true
+        expect(@topic.vote_count.to_i).to eq(vc - 2)
       end
 
       it "votes force-neutral" do
-        @claim.vote_count_card.vote_up
-        vc = @claim.vote_count.to_i
+        @topic.vote_count_card.vote_up
+        vc = @topic.vote_count.to_i
         Card::Env.params["vote"] = "force-neutral"
-        @claim.vote_count_card.update_attributes! nil
-        expect(@claim.vote_count.to_i).to eq(vc - 1)
+        @topic.vote_count_card.update_attributes! nil
+        expect(@topic.vote_count.to_i).to eq(vc - 1)
       end
     end
   end

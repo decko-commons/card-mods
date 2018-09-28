@@ -264,7 +264,7 @@ format :html do
   def vote_up_link success_view
     case card.left.vote_status
     when :upvoted
-      disabled_vote_link :up, "You have already upvoted this claim."
+      disabled_vote_link :up, "You have already upvoted this."
     else
       vote_link '<i class="fa fa-chevron-up"></i>', "Vote up", :up, success_view
     end
@@ -273,7 +273,7 @@ format :html do
   def vote_down_link success_view
     case card.left.vote_status
     when :downvoted
-      disabled_vote_link :down, "You have already downvoted this claim."
+      disabled_vote_link :down, "You have already downvoted this."
     else
       vote_link '<i class="fa fa-chevron-down"></i>', "Vote down", :down,
                 success_view

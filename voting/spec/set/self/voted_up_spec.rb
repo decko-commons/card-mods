@@ -3,16 +3,15 @@
 describe Card::Set::Self::VotedUp do 
   before do
     Card::Auth.current_id = Card['Joe Admin'].id
-    @claim = create_claim "another voting claim"
-    @card = @claim.vote_count_card
+    @topic = create_topic "another voting topic"
+    @card = @topic.vote_count_card
     Card['Joe User'].follow '*all', '*voted up'
     Card::Auth.current_id = Card['Joe User'].id
   end
   
-  
   describe "follow upvoted card" do
     subject { 
-      @claim.follower_names
+      @topic.follower_names
     }
     context "when not voted" do
       it { is_expected.not_to include("Joe User")}
