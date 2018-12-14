@@ -245,7 +245,7 @@ describe Card::Set::Right::VoteCount do
     context "signed in or anonymous with session_vote enabled" do
       def trigger_vote direction
         Card::Env.params["vote"] = direction.to_s
-        @topic.vote_count_card.update_attributes! nil
+        @topic.vote_count_card.update! nil
       end
 
       def vote_items direction
@@ -284,7 +284,7 @@ describe Card::Set::Right::VoteCount do
         @topic.vote_count_card.vote_up
         vc = @topic.vote_count.to_i
         Card::Env.params["vote"] = "force-neutral"
-        @topic.vote_count_card.update_attributes! nil
+        @topic.vote_count_card.update! nil
         expect(@topic.vote_count.to_i).to eq(vc - 1)
       end
     end

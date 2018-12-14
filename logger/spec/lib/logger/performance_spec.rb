@@ -115,7 +115,7 @@ total: [\d.]+ms\n/
 #         log_method []
 #         expect(Rails.logger).to receive(:wagn).with(/test/).once
 #         with_logging  do
-#           Card::Auth.as_bot { Card.fetch('c1').update_attributes!(:content=>'c1') }
+#           Card::Auth.as_bot { Card.fetch('c1').update!(:content=>'c1') }
 #           Card.search :name=>'all'
 #           Card[:all].format.render_raw
 #         end
@@ -138,7 +138,7 @@ total: [\d.]+ms\n/
       it 'logs events if enabled' do
         log_method [:event]
         expect_logger_to_receive([/process: c1.+    \|--\([\d.]+ms\) event:/m] ) do
-          Card::Auth.as_bot { Card.fetch('c1').update_attributes!(:content=>'c1') }
+          Card::Auth.as_bot { Card.fetch('c1').update!(:content=>'c1') }
         end
       end
     end

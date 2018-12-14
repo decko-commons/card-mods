@@ -10,7 +10,7 @@ class ActImportManager < ImportManager
     handle_conflict args[:name] do |existing_card|
       subcard =
         if existing_card
-          existing_card.tap { |card| card.update_attributes args }
+          existing_card.tap { |card| card.update args }
         else
           Card.create args
         end
@@ -26,7 +26,7 @@ class ActImportManager < ImportManager
 
   def log_status
     super
-    @act_card&.import_status_card&.update_attributes content: @import_status.to_json
+    @act_card&.import_status_card&.update content: @import_status.to_json
   end
 
   private

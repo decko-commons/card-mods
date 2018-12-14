@@ -25,7 +25,7 @@ def step key
 end
 
 def save_status
-  update_attributes content: status.to_json
+  update content: status.to_json
 end
 
 STATUS_HEADER = {

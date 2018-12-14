@@ -80,8 +80,8 @@ module CardMod
 #           Card => {
 #             :instance => {
 #               :rule_card => { :category => 'rule' }
-#               # :'update_attributes!' => { :category => 'SQL'},
-#               # :update_attributes    => { :category => 'SQL'},
+#               # :'update!' => { :category => 'SQL'},
+#               # :update    => { :category => 'SQL'},
 #               # :save      => { :category => 'SQL'},
 #               # :'save!'   => { :category => 'SQL'},
 #               # :delete    => { :category => 'SQL'},

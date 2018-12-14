@@ -12,7 +12,7 @@ end
 
 def mark_as_imported row_index
   imported_rows_indices << row_index
-  update_attributes content: imported_row_indices.join(",")
+  update content: imported_row_indices.join(",")
 end
 
 def imported_row_indices
