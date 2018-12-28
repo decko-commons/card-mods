@@ -1,6 +1,8 @@
+require 'maruku'
+
 format :html do
   view :core do
-    Maruku.new(card.content).to_html
+    ::Maruku.new(card.content).to_html
   end
 
   def editor
