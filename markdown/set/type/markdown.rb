@@ -1,6 +1,8 @@
+require 'kramdown'
+
 format :html do
   view :core do
-    Maruku.new(card.content).to_html
+    Kramdown::Document.new(card.content).to_html
   end
 
   def editor

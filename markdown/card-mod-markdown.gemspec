@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = "card-mod-markdown"
-  s.version = "0.1"
+  s.version = "0.2"
 
   s.authors = ["Ethan McCutchen", "Philipp Kühl"]
   s.email = ["info@decko.org"]
@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 2.3.0"
   s.metadata = { "card-mod" => "markdown" }
 
-  %w[card maruku].each do |n|
+  %w[card kramdown].each do |n|
     s.add_runtime_dependency n
   end
 end
