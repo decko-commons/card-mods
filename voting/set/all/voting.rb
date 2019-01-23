@@ -16,7 +16,7 @@ end
 
 def vote_status
   if Auth.signed_in?
-    Auth.current&.respond_to?(:upvotes_card) ? :signed_in_vote_status : :no_vote
+    Auth.current&.respond_to?(:upvotes_card) ? signed_in_vote_status : :no_vote
   elsif try(:session_vote?)
     session_vote_status
   else
