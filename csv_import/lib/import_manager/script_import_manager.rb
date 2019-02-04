@@ -1,4 +1,4 @@
-class ImportError < Card::UserError
+class ImportError < Card::Error::UserError
 end
 
 # {ImportManager} for scripts. Main difference is you don't have an act card and
