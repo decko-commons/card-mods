@@ -79,7 +79,7 @@ format :html do
   end
 
   def import_link
-    link_to_view :import, "Import ...", rel: "nofollow", remote: false
+    link_to "Import ...", path: { view: :import }, rel: "nofollow"
   end
 
   def last_import_status
