@@ -51,7 +51,7 @@ format :html do
   end
 
   def wrap_classes slot
-    class_up "card-slot", "_refresh-timer", true if auto_refresh?
+    class_up "card-slot", "_refresh-timer" if auto_refresh?
     super
   end
 
