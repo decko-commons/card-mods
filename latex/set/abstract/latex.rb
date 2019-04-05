@@ -125,8 +125,8 @@ format :html do
     args
   end
 
-  def new_view_hidden
-    success_tags redirect: true, view: :edit, layout: LATEX_EDIT_LAYOUT
+  def new_view_success
+    { redirect: true, view: :edit, layout: LATEX_EDIT_LAYOUT }
   end
 
   before :latex_edit do
