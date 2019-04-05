@@ -60,8 +60,8 @@ format :html do
     "expected csv format: #{rows.join ' | '}"
   end
 
-  def new_view_hidden
-    hidden_tags success: { id: "_self", soft_redirect: false, redirect: true, view: :import }
+  def new_view_success
+    { id: "_self", soft_redirect: false, redirect: true, view: :import }
   end
 
   view :core do
