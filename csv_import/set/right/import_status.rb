@@ -100,8 +100,7 @@ format :html do
     progress_bar(*sections)
   end
 
-  view :compact, cache: :never, template: :haml do
-  end
+  view :compact, cache: :never, template: :haml
 
   def report
     [:failed, :skipped, :overridden, :imported].map do |key|
