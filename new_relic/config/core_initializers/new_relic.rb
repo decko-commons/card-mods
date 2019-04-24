@@ -3,9 +3,8 @@ ActiveSupport.on_load :card do
   require 'new_relic/agent/method_tracer'
 
   class Card
-    include ::NewRelic::Agent::MethodTracer
-
     class << self
+      include ::NewRelic::Agent::MethodTracer
       add_method_tracer :fetch, "Custom/fetch"
     end
 
@@ -29,7 +28,10 @@ ActiveSupport.on_load :card do
       end
 
       module AbstractFormat
-        include ::NewRelic::Agent::MethodTracer
+        class << self
+          include ::NewRelic::Agent::MethodTracer
+        end
+
         def define_standard_view_method view, &block
           super
           view_method = Card::Set::Format.view_method_name view
