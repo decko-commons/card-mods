@@ -58,7 +58,7 @@ def update_vote votee, vote_type
 end
 
 format :html do
-  view :titled_with_voting, tags: :comment do
+  view :titled_with_voting do
     @content_body = true
     voo.hide :menu
     wrap do
