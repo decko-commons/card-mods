@@ -22,7 +22,7 @@ ActiveSupport.on_load :card do
           true_method_name = "true_#{traced_method_name}"
           define_method true_method_name, &block
           define_method(traced_method_name) { send true_method_name }
-          add_method_tracer tracer_method_name, "Custom/Format/#{view}"
+          add_method_tracer traced_method_name, "Custom/Format/#{view}"
         end
       end
     end
