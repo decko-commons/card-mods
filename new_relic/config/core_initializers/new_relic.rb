@@ -18,9 +18,11 @@ ActiveSupport.on_load :card do
         include ::NewRelic::Agent::MethodTracer
         def define_standard_view_method view, &block
           views[self][view] = block
-          view_method_name = Card::Set::Format.view_method_name(view)
-          define_method view_method_name, &block
-          add_method_tracer view_method_name, "Custom/View/#{view}"
+          traced_method_name = Card::Set::Format.view_method_name(view)
+          true_method_name = "true_#{traced_method_name}"
+          define_method true_method_name, &block
+          define_method(traced_method_name) { send true_method_name }
+          add_method_tracer tracer_method_name, "Custom/Format/#{view}"
         end
       end
     end
