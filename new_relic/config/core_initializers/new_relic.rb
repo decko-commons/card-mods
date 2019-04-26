@@ -22,11 +22,6 @@ ActiveSupport.on_load :card do
           add_method_tracer view_method, "Custom/View/#{view}"
         end
       end
-
-      module All::Fetch::ClassMethods
-        include ::NewRelic::Agent::MethodTracer
-        add_method_tracer :fetch, "Custom/fetch"
-      end
     end
 
     class Format
