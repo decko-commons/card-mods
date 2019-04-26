@@ -3,11 +3,6 @@ ActiveSupport.on_load :card do
   require 'new_relic/agent/method_tracer'
 
   class Card
-    class << self
-      include ::NewRelic::Agent::MethodTracer
-      add_method_tracer :fetch, "Custom/fetch"
-    end
-
     module Set
       class Event
         def define_simple_method
@@ -18,6 +13,20 @@ ActiveSupport.on_load :card do
           end
         end
       end
+
+      module Format::AbstractFormat::ViewDefinition
+        include ::NewRelic::Agent::MethodTracer
+        def define_standard_view_method view, &block
+          views[self][view] = block
+          define_method Card::Set::Format.view_method_name(view), &block
+          add_method_tracer view_method, "Custom/View/#{view}"
+        end
+      end
+
+      module All::Fetch::ClassMethods
+        include ::NewRelic::Agent::MethodTracer
+        add_method_tracer :fetch, "Custom/fetch"
+      end
     end
 
     class Format
@@ -25,18 +34,6 @@ ActiveSupport.on_load :card do
         include ::NewRelic::Agent::MethodTracer
         add_method_tracer :render!, "Custom/Format/render!"
         add_method_tracer :final_render, "Custom/Format/final_render"
-      end
-
-      module AbstractFormat
-        class << self
-          include ::NewRelic::Agent::MethodTracer
-        end
-
-        def define_standard_view_method view, &block
-          super
-          view_method = Card::Set::Format.view_method_name view
-          add_method_tracer view_method, "Custom/View/#{view}"
-        end
       end
     end
 
