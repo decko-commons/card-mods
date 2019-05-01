@@ -14,15 +14,22 @@ ActiveSupport.on_load :card do
         end
       end
 
-      module Format::AbstractFormat::ViewDefinition
-        include ::NewRelic::Agent::MethodTracer
-        def define_standard_view_method view, &block
-          views[self][view] = block
-          traced_method_name = Card::Set::Format.view_method_name(view)
-          true_method_name = "true_#{traced_method_name}"
-          define_method true_method_name, &block
-          define_method(traced_method_name) { send true_method_name }
-          add_method_tracer traced_method_name, "Custom/Format/#{view}"
+      module Format
+        module AbstractFormat::ViewDefinition
+          include ::NewRelic::Agent::MethodTracer
+          def define_standard_view_method view, &block
+            views[self][view] = block
+            traced_method_name = Card::Set::Format.view_method_name(view)
+            true_method_name = "true_#{traced_method_name}"
+            define_method true_method_name, &block
+            define_method(traced_method_name) { send true_method_name }
+            add_method_tracer traced_method_name, "Custom/View/#{view}"
+          end
+        end
+
+        module HamlPaths
+          include ::NewRelic::Agent::MethodTracer
+          add_method_tracer :haml_to_html, "Custom/Format/haml_to_html"
         end
       end
     end
@@ -53,8 +60,8 @@ ActiveSupport.on_load :card do
 
     class View
       include ::NewRelic::Agent::MethodTracer
-      add_method_tracer :initialize, "Custom/View/initialize"
-      add_method_tracer :process, "Custom/View/process"
+      add_method_tracer :initialize, "Custom/Voo/initialize"
+      add_method_tracer :process, "Custom/Voo/process"
     end
   end
 end
