@@ -57,7 +57,7 @@ format :html do
 
   def help_text
     rows = card.csv_row_class.columns.map { |s| s.to_s.humanize }
-    "expected csv format: #{rows.join ' | '}"
+    "expected csv row format: #{rows.join ', '}"
   end
 
   def new_success
