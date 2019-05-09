@@ -199,8 +199,7 @@ def vote_method_from_params
 end
 
 def successor_id_from_params
-  successor_id = Env.params["insert-before"]
-  successor_id && successor_id.to_i
+  Env.params["insert-before"]&.to_i
 end
 
 format :html do
@@ -210,7 +209,7 @@ format :html do
         card.update_votecount
         card.save!
       end
-      render! @denied_view
+      render! voo.requested_view
     else
       super()
     end
