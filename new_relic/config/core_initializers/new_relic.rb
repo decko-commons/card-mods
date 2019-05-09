@@ -15,17 +15,17 @@ ActiveSupport.on_load :card do
       end
 
       module Format
-        module AbstractFormat::ViewDefinition
-          include ::NewRelic::Agent::MethodTracer
-          def define_standard_view_method view, &block
-            views[self][view] = block
-            traced_method_name = Card::Set::Format.view_method_name(view)
-            true_method_name = "true_#{traced_method_name}"
-            define_method true_method_name, &block
-            define_method(traced_method_name) { send true_method_name }
-            add_method_tracer traced_method_name, "Custom/View/#{view}"
-          end
-        end
+        # module AbstractFormat::ViewDefinition
+        #   include ::NewRelic::Agent::MethodTracer
+        #   def define_standard_view_method view, &block
+        #     views[self][view] = block
+        #     traced_method_name = Card::Set::Format.view_method_name(view)
+        #     true_method_name = "true_#{traced_method_name}"
+        #     define_method true_method_name, &block
+        #     define_method(traced_method_name) { send true_method_name }
+        #     add_method_tracer traced_method_name, "Custom/View/#{view}"
+        #   end
+        # end
 
         module HamlPaths
           include ::NewRelic::Agent::MethodTracer
@@ -37,18 +37,19 @@ ActiveSupport.on_load :card do
     class Format
       module Render
         include ::NewRelic::Agent::MethodTracer
-        add_method_tracer :render!, "Custom/Format/render!"
+        # add_method_tracer :render!, "Custom/Format/render!"
         add_method_tracer :final_render, "Custom/Format/final_render"
+        # add_method_tracer :stub_render, "Custom/Format/stub_render"
       end
     end
 
     class Content
-      class Parser
-        class << self
-          include ::NewRelic::Agent::MethodTracer
-          add_method_tracer :parse, "Custom/Content/parse"
-        end
-      end
+      # class Parser
+      #   class << self
+      #     include ::NewRelic::Agent::MethodTracer
+      #     add_method_tracer :parse, "Custom/Content/parse"
+      #   end
+      # end
     end
 
     module Query
@@ -60,8 +61,9 @@ ActiveSupport.on_load :card do
 
     class View
       include ::NewRelic::Agent::MethodTracer
-      add_method_tracer :initialize, "Custom/Voo/initialize"
+      # add_method_tracer :initialize, "Custom/Voo/initialize"
       add_method_tracer :process, "Custom/Voo/process"
+      # add_method_tracer :fetch, "Custom/Voo/fetch"
     end
   end
 end
