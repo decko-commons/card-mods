@@ -2,7 +2,9 @@ require 'kramdown'
 
 format :html do
   view :core do
-    Kramdown::Document.new(card.content).to_html
+    safe_process_content do |content|
+      Kramdown::Document.new(content).to_html
+    end
   end
 
   def editor
