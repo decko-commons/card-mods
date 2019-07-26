@@ -26,7 +26,15 @@ class ActImportManager < ImportManager
 
   def log_status
     super
-    @act_card&.import_status_card&.update content: @import_status.to_json
+
+    return unless status_card = @act_card&.import_status_card
+    status_card.update! content: @import_status.to_json
+    status_card.expire
+
+    # TODO: this is an ugly solution.
+    # We can't use subcards, because it's used in integrate with delay
+    # but since it can get updated multiple times within one delayed event,
+    # errors result if the card is not expired.
   end
 
   private
