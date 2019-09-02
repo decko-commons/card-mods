@@ -203,7 +203,7 @@ def successor_id_from_params
 end
 
 format :html do
-  view :missing do
+  view :unknown do
     if card.new_card? && (l = card.left) && l.respond_to?(:vote_count)
       Auth.as_bot do
         card.update_votecount
@@ -215,7 +215,7 @@ format :html do
     end
   end
 
-  view :new, :missing
+  view :new, :unknown
 
   view :content do
     class_up "card-slot", "card-content nodblclick"
