@@ -7,7 +7,7 @@ format :html do
     end
   end
 
-  def editor
+  def input_type
     :ace_editor
   end
 
