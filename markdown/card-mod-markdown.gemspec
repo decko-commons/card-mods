@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = "card-mod-markdown"
-  s.version = "0.3"
+  s.version = "0.4"
 
   s.authors = ["Ethan McCutchen", "Philipp Kühl"]
   s.email = ["info@decko.org"]
