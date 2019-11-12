@@ -11,6 +11,10 @@ def votee
   cardname.left
 end
 
+def history?
+  false
+end
+
 # The voted card ids will be stored in a pointer card. insert_before_id is used
 # to add the id in front of another id.
 # it may just affect the showing order of the the votes only.
@@ -124,10 +128,6 @@ def session_votes? direction
   key = "#{direction}_vote".to_sym
   votes = Env.session[key]
   votes && votes.include?(left.id)
-end
-
-def direct_contribution_count
-  left.upvote_count.to_i + left.downvote_count.to_i
 end
 
 def update_votecount
