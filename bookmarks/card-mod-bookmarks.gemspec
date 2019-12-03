@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = "card-mod-bookmarks"
-  s.version = "1.0"
+  s.version = "0.1"
 
   s.authors = ["Ethan McCutchen", "Philipp Kühl"]
   s.email = ["info@decko.org"]

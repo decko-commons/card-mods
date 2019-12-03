@@ -1,1 +1,1 @@
-card_accessor :bookmarked, type: :number, default: "0"
+card_accessor :bookmarkers, type: :number, default: "0"
