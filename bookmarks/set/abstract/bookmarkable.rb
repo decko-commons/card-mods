@@ -7,14 +7,15 @@ event :toggle_bookmark, :validate, on: :save, trigger: :required do
 end
 
 def can_bookmark?
-  Auth.signed_in? && Auth.current.type_id == UserID
+  Auth.signed_in? && Auth.current.respond_to?(:bookmarks_card)
 end
 
 def current_bookmark_list
-  @current_bookmark_list ||= Auth.current.bookmarks_card
+  @current_bookmark_list |= Auth.current.bookmarks_card
 end
 
 def currently_bookmarked?
+  return false unless can_bookmark?
   current_bookmark_list.item_names.include? name
 end
 
