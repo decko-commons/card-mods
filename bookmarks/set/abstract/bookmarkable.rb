@@ -11,7 +11,7 @@ def can_bookmark?
 end
 
 def current_bookmark_list
-  @current_bookmark_list |= Auth.current.bookmarks_card
+  @current_bookmark_list ||= Auth.current.bookmarks_card
 end
 
 def currently_bookmarked?
