@@ -1,21 +1,13 @@
 card_accessor :bookmarkers, type: :number
 
 event :toggle_bookmark, :validate, on: :save, trigger: :required do
-  abort :failure, "only signed-in users can bookmark" unless can_bookmark?
+  abort :failure, "only signed-in users can bookmark" unless Auth.can_bookmark?
   toggle_bookmarks_item
   add_subcard current_bookmark_list
 end
 
-def can_bookmark?
-  Auth.signed_in? && Auth.current.respond_to?(:bookmarks_card)
-end
-
-def current_bookmark_list
-  @current_bookmark_list ||= Auth.current.bookmarks_card
-end
-
 def currently_bookmarked?
-  return false unless can_bookmark?
+  return false unless Auth.can_bookmark?
   current_bookmark_list.item_names.include? name
 end
 
@@ -34,5 +26,11 @@ format :html do
         ]
       end
     end
+  end
+end
+
+module ::Card::Auth
+  def self.can_bookmark?
+    signed_in? && current.respond_to?(:bookmarks_card)
   end
 end
