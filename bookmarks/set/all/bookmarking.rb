@@ -1,9 +1,8 @@
 def current_bookmarks
-  @current_bookmarks ||=
-    current_bookmark_list.item_cards.each_with_object({}) do |item, hash|
-      hash[item.type_id] ||= []
-      hash[item.type_id] << item.id
-    end
+  current_bookmark_list.item_cards.each_with_object({}) do |item, hash|
+    hash[item.type_id] ||= []
+    hash[item.type_id] << item.id
+  end
 end
 
 def current_bookmark_list
