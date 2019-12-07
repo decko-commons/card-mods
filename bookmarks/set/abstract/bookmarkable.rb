@@ -7,8 +7,9 @@ event :toggle_bookmark, :validate, on: :save, trigger: :required do
 end
 
 def currently_bookmarked?
-  return false unless Auth.can_bookmark?
-  current_bookmark_list.item_names.include? name
+  return false unless real? && Auth.can_bookmark?
+
+  current_bookmarks.values.flatten.include? id
 end
 
 def toggle_bookmarks_item
