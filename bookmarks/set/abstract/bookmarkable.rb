@@ -3,6 +3,7 @@ card_accessor :bookmarkers, type: :number
 event :toggle_bookmark, :validate, on: :save, trigger: :required do
   abort :failure, "only signed-in users can bookmark" unless Bookmark.ok?
   toggle_bookmarks_item
+  Bookmark.current
   add_subcard Bookmark.current_list_card
 end
 
