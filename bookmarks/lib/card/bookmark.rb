@@ -2,8 +2,7 @@ class Card
   module Bookmark
     class << self
       def ok?
-        return @ok unless @ok.nil?
-        @ok = Auth.signed_in? && Auth.current.respond_to?(:bookmarks_card)
+        Auth.signed_in? && Auth.current.respond_to?(:bookmarks_card)
       end
 
       # @return Hash key is type_id, value is list of ids
@@ -21,7 +20,9 @@ class Card
       end
 
       def current_ids
-        @current_ids ||= (ok? ? current_list_card.item_ids : [])
+        cache.fetch "BM-current_ids" do # MOVE to session?
+          ok? ? current_list_card.item_ids : []
+        end
       end
 
       def bookmark_list
@@ -32,8 +33,12 @@ class Card
         if current_ids.empty?
           bookmarked ? [] : nil
         else
-          [(bookmarked ? :in : "not in")] + current_ids
+          [(bookmarked ? "in" : "not in")] + current_ids
         end
+      end
+
+      def cache
+        Card.cache.soft
       end
     end
   end
