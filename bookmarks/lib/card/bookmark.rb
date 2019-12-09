@@ -57,7 +57,7 @@ class Card
       def sort rel, join_field, sort_order
         rel.joins(
           "LEFT JOIN counts cts " \
-          "ON #{join_field} = cts.left_id AND cts.right_id = #{BookmarkersID}"
+          "ON #{join_field} = cts.left_id AND cts.right_id = #{Card::BookmarkersID}"
         ).order "cts.value #{sort_order}"
       end
     end
