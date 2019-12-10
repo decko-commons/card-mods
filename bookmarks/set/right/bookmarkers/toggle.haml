@@ -1,3 +1,5 @@
 .bookmark-toggle._stop_propagation{ class: bookmark_status_class }
   = fa_icon "bookmark", class: "submitter"
-  = modal_link count, class: "bookmark-count"
+  %span.bookmark-count
+    = count
+  // = modal_link count, class: "bookmark-count"
