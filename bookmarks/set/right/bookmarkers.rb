@@ -3,7 +3,7 @@ def active?
 end
 
 format :html do
-  view :toggle, template: :haml
+  view :toggle, cache: :never, template: :haml
 
   def bookmark_status_class
     card.active? ? "active-bookmark" : "inactive-bookmark"
