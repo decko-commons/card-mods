@@ -29,4 +29,14 @@ format :html do
       end
     end
   end
+
+  view :title_with_bookmark, template: :haml
+
+  view :box_top do
+    render :title_with_bookmark
+  end
+
+  view :bar_left do
+    render :title_with_bookmark
+  end
 end
