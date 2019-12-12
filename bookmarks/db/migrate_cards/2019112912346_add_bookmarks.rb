@@ -26,7 +26,7 @@ class AddBookmarks < Card::Migration
                                    update_referers: true
     end
 
-    Card.search refer_to: { right_id: Card::VotedDownID } do |vd_ref|
+    Card.search refer_to: Card::VotedDownID do |vd_ref|
       vd_ref.drop_item! :voted_down
     end
   end
