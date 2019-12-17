@@ -11,7 +11,7 @@ class AddBookmarks < Card::Migration
 
       vote_card.item_cards.each do |markee|
         next unless (marker_search = markee.try(:bookmarkers_card))
-        marker_search.cached_count
+        marker_search.update_cached_count
       end
     end
     if Card::Codename.id :voted_up
