@@ -1,4 +1,4 @@
-include Abstract::IdPointer
+include_set Abstract::IdPointer
 
 def history?
   false
