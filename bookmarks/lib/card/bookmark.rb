@@ -5,7 +5,7 @@ class Card
       CURRENT_BOOKMARKS_KEY = "BM-current_bookmarks".freeze
 
       def ok?
-        Auth.signed_in? && Auth.current.respond_to?(:bookmarks_card)
+        Auth.current.respond_to?(:bookmarks_card)
       end
 
       # @return Hash key is type_id, value is list of ids

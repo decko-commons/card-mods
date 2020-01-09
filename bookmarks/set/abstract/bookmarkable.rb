@@ -2,10 +2,10 @@ require 'card/bookmark'
 
 card_accessor :bookmarkers, type: :number
 
-event :toggle_bookmark, :validate, on: :save, trigger: :required do
-  abort :failure, "only signed-in users can bookmark" unless Bookmark.ok?
+event :toggle_bookmark, :prepare_to_validate, on: :save, trigger: :required do
   toggle_bookmarks_item
-  add_subcard Bookmark.current_list_card
+  Bookmark.current_list_card.save!
+  abort :success unless Auth.signed_in?
 end
 
 def currently_bookmarked?
@@ -21,7 +21,7 @@ end
 format :html do
   view :bookmark do
     wrap do
-      card_form :update, success: { view: :bookmark } do
+      card_form :update, recaptcha: :off, success: { view: :bookmark } do
         [
           hidden_tags(card: { trigger: :toggle_bookmark }),
           field_nest(:bookmarkers, view: :toggle)
