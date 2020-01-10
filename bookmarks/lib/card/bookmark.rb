@@ -16,6 +16,7 @@ class Card
       end
 
       # @param list_card [Card] +bookmarks card for (eg) user
+      # @return [Hash]. keys are type_ids, values are list of bookmarked card ids
       def bookmark_hash_for_list_card list_card
         list_card.item_cards.each_with_object({}) do |item, hash|
           hash[item.type_id] ||= []
