@@ -1,0 +1,6 @@
+event :save_session_bookmarks, :integrate, on: :create do
+  session_bookmark_card = Card[:anonymous].bookmarks_card
+  return if session_bookmark_card.item_names.blank?
+
+  left.add_subfield :bookmarks, type: :pointer, content: session_bookmark_card.content
+end
