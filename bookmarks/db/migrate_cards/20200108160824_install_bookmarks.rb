@@ -4,6 +4,5 @@ class InstallBookmarks < Card::Migration
   def up
     ensure_code_card "Bookmarks"
     ensure_code_card "Bookmarkers"
-    ensure_card Card::Name[:anonymous, :bookmarks], type_code: :session
   end
 end
