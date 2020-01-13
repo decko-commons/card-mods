@@ -12,7 +12,7 @@ RSpec.describe Card::Set::Right::Account do
     end
 
     before do
-      Card::Auth.current_id = Card::AnonymousID
+      Card::Auth.signin Card::AnonymousID
       bm = Card::Bookmark.current_list_card
       bm.add_item "A"
     end

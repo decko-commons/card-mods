@@ -12,7 +12,7 @@ RSpec.describe Card::Set::Abstract::Bookmarkable do
     end
 
     it "should work for anonymous users (in session)" do
-      Card::Auth.current_id = Card::AnonymousID
+      Card::Auth.signin Card::AnonymousID
       expect(toggled_bookmark).to eq(card_subject.name)
     end
   end

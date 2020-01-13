@@ -1,9 +1,9 @@
 describe Card::Set::Right::VoteCount do
   before do
-    Card::Auth.current_id = Card["Joe Admin"].id
+    Card::Auth.signin "Joe Admin"
     @topic = create_topic "another voting topic"
     @card = @topic.vote_count_card
-    Card::Auth.current_id = Card["Joe User"].id
+    Card::Auth.signin "Joe User"
   end
 
   it "default vote count is 1" do
@@ -33,7 +33,7 @@ describe Card::Set::Right::VoteCount do
 
     context "when not signed in" do
       subject do
-        Card::Auth.current_id = Card::AnonymousID
+        Card::Auth.signin Card::AnonymousID
         @card.vote_status
       end
       it { is_expected.to eq(:no_vote) }
@@ -77,7 +77,7 @@ describe Card::Set::Right::VoteCount do
         @uv_card = Card::Auth.current.upvotes_card
         @initial_vote_count = @uv_card.item_names.count
 
-        Card::Auth.current_id = Card["Joe User"].id
+        Card::Auth.signin "Joe User"
         Card::Auth.as_bot do
           @card.vote_up
           @card.save!
@@ -86,13 +86,13 @@ describe Card::Set::Right::VoteCount do
           @card1 = @topic1.vote_count_card
         end
 
-        Card::Auth.current_id = Card["Joe Admin"].id
+        Card::Auth.signin "Joe Admin"
         Card::Auth.as_bot do
           @topic2 = create_topic "another voting topic2"
           @card2 = @topic2.vote_count_card
         end
 
-        Card::Auth.current_id = Card["Joe User"].id
+        Card::Auth.signin "Joe User"
         Card::Auth.as_bot do
           @card2.vote_up @topic1.id
           @card2.save!
@@ -348,7 +348,7 @@ describe Card::Set::Right::VoteCount do
     before do
       @topic = sample_topic
       @vcard = @topic.vote_count_card
-      Card::Auth.current_id = Card::AnonymousID
+      Card::Auth.signin Card::AnonymousID
     end
 
     describe "#vote_up" do
@@ -379,7 +379,7 @@ describe Card::Set::Right::VoteCount do
         end
 
         it "gets saved after signin" do
-          Card::Auth.current_id = Card.fetch_id "Joe Admin"
+          Card::Auth.signin "Joe Admin"
           @vcard.save_session_votes
           @vcard = @topic.vote_count_card
           expect(@vcard.content.to_i).to eq(@vc + 1)
@@ -416,7 +416,7 @@ describe Card::Set::Right::VoteCount do
         end
 
         it "gets saved after signin" do
-          Card::Auth.current_id = Card.fetch_id "Joe Admin"
+          Card::Auth.signin "Joe Admin"
           @vcard.save_session_votes
           @vcard = @topic.vote_count_card
           expect(@vcard.content.to_i).to eq(@vc - 1)

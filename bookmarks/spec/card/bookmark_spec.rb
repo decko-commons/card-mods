@@ -1,17 +1,17 @@
 RSpec.describe Card::Bookmark do
   describe "#ok?" do
     it "is true for joe user" do
-      Card::Auth.current_id = "joe user".to_name.card_id
+      Card::Auth.signin "joe user"
       expect(Card::Bookmark.ok?).to be_truthy
     end
 
     it "is true for anonymous user" do
-      Card::Auth.current_id = Card::AnonymousID
+      Card::Auth.signin Card::AnonymousID
       expect(Card::Bookmark.ok?).to be_truthy
     end
 
     it "is not true for bot" do
-      Card::Auth.current_id = Card::WagnBotID
+      Card::Auth.signin Card::WagnBotID
       expect(Card::Bookmark.ok?).to be_falsey
     end
   end
@@ -28,7 +28,7 @@ RSpec.describe Card::Bookmark do
     end
 
     it "is a session for anonymous" do
-      Card::Auth.current_id = Card::AnonymousID
+      Card::Auth.signin Card::AnonymousID
       expect(list_card.type_code).to eq(:session)
     end
   end

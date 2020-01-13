@@ -2,11 +2,11 @@
 
 describe Card::Set::Self::VotedUp do 
   before do
-    Card::Auth.current_id = Card['Joe Admin'].id
+    Card::Auth.signin "Joe Admin"
     @topic = create_topic "another voting topic"
     @card = @topic.vote_count_card
     Card['Joe User'].follow '*all', '*voted up'
-    Card::Auth.current_id = Card['Joe User'].id
+    Card::Auth.signin "Joe User"
   end
   
   describe "follow upvoted card" do
