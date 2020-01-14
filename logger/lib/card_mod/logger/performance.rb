@@ -197,7 +197,7 @@ module CardMod
         def print_log
           if @output == :card && @output_card
             html_log = HtmlFormatter.new(self).output
-            card = @output_card.fetch trait: :performance_log,
+            card = @output_card.fetch :performance_log,
                                       new: { :type_id => Card::PointerID }
             card.add_log_entry @@log.first.message, html_log
           elsif @output == :html
