@@ -19,7 +19,7 @@ RSpec.describe Card::Set::Right::Account do
 
     it "should copy and save bookmarks from session" do
       user = Card.create! dummy_account_args
-      expect(user.bookmarks_card.item_names.first).to eq("A")
+      expect(user.bookmarks_card.first_name).to eq("A")
     end
   end
 end
