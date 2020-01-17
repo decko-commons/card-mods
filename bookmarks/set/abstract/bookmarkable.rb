@@ -4,8 +4,13 @@ card_accessor :bookmarkers, type: :number
 
 event :toggle_bookmark, :prepare_to_validate, on: :save, trigger: :required do
   toggle_bookmarks_item
-  Bookmark.current_list_card.save!
-  abort :success unless Auth.signed_in?
+  list = Bookmark.current_list_card
+  if Auth.signed_in?
+    list.save!
+  else
+    list.store_in_session
+    abort :triumph
+  end
 end
 
 def currently_bookmarked?
