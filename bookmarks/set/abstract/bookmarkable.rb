@@ -8,6 +8,7 @@ event :toggle_bookmark, :prepare_to_validate, on: :save, trigger: :required do
   if Auth.signed_in?
     list.save!
   else
+    # when using save!, session card was getting saved to db
     list.store_in_session
     abort :triumph
   end
