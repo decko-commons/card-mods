@@ -21,6 +21,6 @@ format :csv do
   end
 
   def all_users
-    Card.search({ type_id: UserID }, 'all users')
+    Card.search({ type_id: Card::UserID }, 'all users')
   end
 end

@@ -5,7 +5,7 @@ require_dependency "card_mod/logger/performance"
 # so that it's possible to log any method.
 # With this approach we can only log methods of mods that get loaded before
 # this mod.
-if Card.config.performance_logger
+if Cardio.config.performance_logger
   CardMod::Logger::Performance.load_config Card.config.performance_logger
 end
 
