@@ -20,7 +20,7 @@ class ImportManager
       @import_status || init_import_status
     end
 
-    # used by {CSVRow} objects
+    # used by {CsvRow} objects
     def report_error msg
       import_status[:errors][@current_row.row_index] ||= []
       import_status[:errors][@current_row.row_index] << msg

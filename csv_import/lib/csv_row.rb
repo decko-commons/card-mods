@@ -1,6 +1,6 @@
-# Inherit from CSVRow to describe and process a csv row.
-# CSVFile creates an instance of CSVRow for every row and calls #execute_import on it
-class CSVRow
+# Inherit from CsvRow to describe and process a csv row.
+# CsvFile creates an instance of CsvRow for every row and calls #execute_import on it
+class CsvRow
   include ::Card::Model::SaveHelper
   include Normalizer
 

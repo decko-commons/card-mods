@@ -1,11 +1,11 @@
-# CSVFile loads csv data from a given path or file handle and provides methods
+# CsvFile loads csv data from a given path or file handle and provides methods
 # to iterate over the data.
-class CSVFile
+class CsvFile
   # @param headers [true, false, :detect] (false) if true the import raises an error
   #    if the csv file has no or wrong headers
   def initialize path_or_file, row_class, col_sep: ",", encoding: "utf-8", headers: false
     raise ArgumentError, "no row class given" unless row_class.is_a?(Class)
-    raise ArgumentError, "#{row_class} must inherit from CSVRow" unless row_class < CSVRow
+    raise ArgumentError, "#{row_class} must inherit from CsvRow" unless row_class < CsvRow
     @row_class = row_class
     @col_sep = col_sep
     @encoding = encoding
@@ -14,7 +14,7 @@ class CSVFile
     initialize_column_map headers
   end
 
-  # yields the rows of the csv file as CSVRow objects
+  # yields the rows of the csv file as CsvRow objects
   def each_row import_manager, rows=nil & block
     each_row_hash rows do |row_hash, index|
       yield @row_class.new(row_hash, index, import_manager)

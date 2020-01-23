@@ -1,8 +1,8 @@
 #! no set module
 
 # An ImportRow object generates the html for a row in the import table.
-# It needs a format with `column_keys` and a {CSVRow} object.
-# For each value in column_keys in generates a cell. It takes the content from the CSVRow
+# It needs a format with `column_keys` and a {CsvRow} object.
+# For each value in column_keys in generates a cell. It takes the content from the CsvRow
 # object if it has data for that key.
 # Otherwise it expects a `<missing_key>_field` method to produce the cell content.
 class TableRow
@@ -11,7 +11,7 @@ class TableRow
   delegate :row_index, :status, to: :csv_row
   delegate :corrections_input_name, to: :format
 
-  # @param csv_row [CSVRow] a CSVRow object
+  # @param csv_row [CsvRow] a CsvRow object
   # @param format the format of an import file. It has to respond to `column_keys`.
   #        It is also used to generate form elements.
   def initialize csv_row, format

@@ -9,7 +9,7 @@ end
 
 def csv_file
   # maybe we have to use file.read ?
-  CSVFile.new file, csv_row_class, headers: :detect
+  CsvFile.new file, csv_row_class, headers: :detect
 end
 
 def clean_html?
@@ -39,7 +39,7 @@ def validate_file_card file_card
 end
 
 def validate_csv file_card
-  CSVFile.new file_card.attachment, csv_row_class, headers: :detect
+  CsvFile.new file_card.attachment, csv_row_class, headers: :detect
 rescue CSV::MalformedCSVError => e
   abort :failure, "malformed csv: #{e.message}"
 end
