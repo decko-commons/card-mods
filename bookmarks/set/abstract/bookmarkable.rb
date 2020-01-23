@@ -4,7 +4,7 @@ card_accessor :bookmarkers, type: :number
 
 event :toggle_bookmark, :prepare_to_validate, on: :save, trigger: :required do
   toggle_bookmarks_item
-  list = Bookmark.current_list_card
+  list = Card::Bookmark.current_list_card
   if Auth.signed_in?
     list.save!
   else
@@ -15,13 +15,13 @@ event :toggle_bookmark, :prepare_to_validate, on: :save, trigger: :required do
 end
 
 def currently_bookmarked?
-  Bookmark.current_ids.include? id
+  Card::Bookmark.current_ids.include? id
 end
 
 def toggle_bookmarks_item
   action = currently_bookmarked? ? :drop : :add
-  Bookmark.current_list_card.send "#{action}_item", name
-  Bookmark.clear
+  Card::Bookmark.current_list_card.send "#{action}_item", name
+  Card::Bookmark.clear
 end
 
 format :html do
