@@ -1,6 +1,6 @@
 class ImportManager
   class Status < Hash
-    require_dependency "import_manager/status/counts"
+    require "import_manager/status/counts"
 
     # @param initial_status [Hash, Integer, String] a hash, a hash as json string or just
     #   the total number of imports

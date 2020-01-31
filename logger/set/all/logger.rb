@@ -1,5 +1,5 @@
-require_dependency "card_mod/logger"
-require_dependency "card_mod/logger/performance"
+require "card_mod/logger"
+require "card_mod/logger/performance"
 
 # Not the pefect place. Ideally this should happen after loader.rb#load_mods
 # so that it's possible to log any method.

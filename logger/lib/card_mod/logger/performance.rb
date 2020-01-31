@@ -32,9 +32,9 @@
 module CardMod
   class Logger
     class Performance
-      require_dependency "card_mod/logger/performance/category_log"
-      require_dependency "card_mod/logger/performance/entry"
-      require_dependency "card_mod/logger/performance/big_brother"
+      require "card_mod/logger/performance/category_log"
+      require "card_mod/logger/performance/entry"
+      require "card_mod/logger/performance/big_brother"
 
       DEFAULT_CLASS = Card
       DEFAULT_METHOD_TYPE = :all

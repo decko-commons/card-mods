@@ -1,4 +1,4 @@
-require_dependency "card_mod/logger"
+require "card_mod/logger"
 
 class Card
   module Query

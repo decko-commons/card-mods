@@ -1,7 +1,7 @@
 # ImportManager coordinates the import of a CsvFile. It defines the conflict and error
 # policy. It collects all errors and provides extra data like corrections for row fields.
 class ImportManager
-  require_dependency "import_manager/status"
+  require "import_manager/status"
   include StatusLog
   include Conflicts
 
