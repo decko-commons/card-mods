@@ -53,7 +53,8 @@ class CsvFile
   end
 
   def read_csv_from_file_handle file
-    CSV.parse to_utf_8(file.read), csv_options
+    # CSV.parse to_utf_8(file.read), csv_options
+    CSV.parse file.read, csv_options
   end
 
   def rescue_encoding_error
