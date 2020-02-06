@@ -47,9 +47,10 @@ class CsvFile
 
   def read_csv_from_path path
     raise StandardError, "file does not exist: #{path}" unless File.exist? path
-    rescue_encoding_error do
+    # rescue_encoding_error do
+    binding.pry
       CSV.read path, csv_options
-    end
+    # end
   end
 
   def read_csv_from_file_handle file
@@ -81,7 +82,7 @@ class CsvFile
    end
 
   def csv_options
-    { col_sep: @col_sep, encoding: @encoding }
+    { col_sep: @col_sep } #, encoding: @encoding }
   end
 
   def with_encoding encoding
