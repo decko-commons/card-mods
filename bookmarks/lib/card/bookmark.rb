@@ -40,9 +40,9 @@ class Card
 
       def id_restriction bookmarked=true
         if current_ids.empty?
-          bookmarked ? [] : nil
+          yield [] if bookmarked
         else
-          [(bookmarked ? "in" : "not in")] + current_ids
+          yield([(bookmarked ? "in" : "not in")] + current_ids)
         end
       end
 
