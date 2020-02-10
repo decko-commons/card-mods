@@ -40,8 +40,8 @@ end
 
 def validate_csv file_card
   CsvFile.new file_card.attachment, csv_row_class, headers: :detect
-# rescue CSV::MalformedCSVError => e
-#  abort :failure, "malformed csv: #{e.message}"
+rescue CSV::MalformedCSVError => e
+  abort :failure, "malformed csv: #{e.message}"
 end
 
 format :html do
