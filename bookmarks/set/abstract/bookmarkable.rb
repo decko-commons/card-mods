@@ -1,5 +1,3 @@
-require 'card/bookmark'
-
 card_accessor :bookmarkers, type: :number
 
 event :toggle_bookmark, :prepare_to_validate, on: :save, trigger: :required do
