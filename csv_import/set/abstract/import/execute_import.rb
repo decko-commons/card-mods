@@ -11,8 +11,8 @@ event :prepare_import, :prepare_to_store, on: :update, when: :data_import? do
 end
 
 def import_manager
-  @import_mananger =
-    ::ActImportManager.new self, csv_file, conflict_strategy, extra_data
+  @import_manager ||=
+    ActImportManager.new self, csv_file, conflict_strategy, extra_data
 end
 
 def conflict_strategy
