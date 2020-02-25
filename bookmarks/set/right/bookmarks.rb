@@ -1,3 +1,4 @@
+include_set Type::Pointer
 include_set Abstract::IdPointer
 
 def history?
