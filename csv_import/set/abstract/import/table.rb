@@ -28,7 +28,7 @@ format :html do
   delegate :already_imported?, to: :card
 
   def row_buckets
-    row_buckets = {
+    {
       invalid: [],
       valid: [],
       imported: []

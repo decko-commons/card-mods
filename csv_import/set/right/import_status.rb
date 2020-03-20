@@ -1,3 +1,7 @@
+
+
+
+
 def followable?
   false
 end
@@ -93,7 +97,7 @@ format :html do
     end + wrap_with(:p, undo_button) + wrap_with(:p, report)
   end
 
-  view :progress_bar, cache: :never do
+  view :progress_bar, cache: :never, unknown: true do
     sections = %i[imported skipped overridden failed].map do |type|
       progress_section type
     end.compact

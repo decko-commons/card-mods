@@ -22,7 +22,7 @@ class ImportManager
 
     # used by {CsvRow} objects
     def report_error msg
-      import_status[:errors][@current_row.row_index] ||= []
+      import_status[:errors][@currecnt_row.row_index] ||= []
       import_status[:errors][@current_row.row_index] << msg
     end
 

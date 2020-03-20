@@ -1,3 +1,5 @@
+include_set Abstract::TwoColumnLayout
+
 card_accessor :import_status
 card_accessor :imported_rows
 
@@ -64,26 +66,37 @@ format :html do
     { id: "_self", soft_redirect: false, redirect: true, view: :import }
   end
 
-  view :core do
-    output [
-      download_link,
-      import_link,
-      last_import_status
-    ]
+  view :data do
+    "Mappings..."
+  end
+
+  # view :rich_header do
+  #   binding.pry
+  #   haml :rich_header
+  # end
+
+  def header_text
+    download_link
   end
 
   def download_link
     handle_source do |source|
-      %(<a href="#{source}" rel="nofollow">Download "#{_render_title}"</a><br />)
+      %(<a href="#{source}" rel="nofollow">Download File</a><br />)
     end.html_safe
   end
 
-  def import_link
-    link_to "Import ...", path: { view: :import }, rel: "nofollow"
+  view :bar_right do
+    field_nest :import_status, view: :progress_bar
   end
 
-  def last_import_status
-    return unless card.import_status.present?
-    link_to_card card.import_status_card, "Status of last import"
-  end
+  # def import_link
+  #   link_to "Import ...", path: { view: :import }, rel: "nofollow"
+  # end
+
+  # def last_import_status
+  #   return unless card.import_status.present?
+  #   link_to_card card.import_status_card, "Status of last import"
+  # end
+
+
 end
