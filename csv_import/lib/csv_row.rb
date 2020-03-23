@@ -17,7 +17,7 @@ class CsvRow
   @validate = {}
 
   class << self
-    attr_reader :columns, :required
+    attr_reader :columns, :required, :map_columns
 
     def normalize key
       @normalize && @normalize[key]

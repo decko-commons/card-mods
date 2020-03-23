@@ -1,5 +1,3 @@
-include_set Abstract::TwoColumnLayout
-
 card_accessor :import_status
 card_accessor :imported_rows
 
@@ -11,7 +9,7 @@ end
 
 def csv_file
   # maybe we have to use file.read ?
-  CsvFile.new file, csv_row_class, headers: :detect
+  @csv_file ||= CsvFile.new file, csv_row_class, headers: :detect
 end
 
 def clean_html?
@@ -66,37 +64,18 @@ format :html do
     { id: "_self", soft_redirect: false, redirect: true, view: :import }
   end
 
-  view :data do
-    "Mappings..."
-  end
-
-  # view :rich_header do
-  #   binding.pry
-  #   haml :rich_header
-  # end
-
-  def header_text
-    download_link
-  end
-
   def download_link
     handle_source do |source|
       %(<a href="#{source}" rel="nofollow">Download File</a><br />)
     end.html_safe
   end
 
-  view :bar_right do
-    field_nest :import_status, view: :progress_bar
+  def import_link
+    link_to "Import ...", path: { view: :import }, rel: "nofollow"
   end
 
-  # def import_link
-  #   link_to "Import ...", path: { view: :import }, rel: "nofollow"
-  # end
-
-  # def last_import_status
-  #   return unless card.import_status.present?
-  #   link_to_card card.import_status_card, "Status of last import"
-  # end
-
-
+  def last_import_status
+    return unless card.import_status.present?
+    link_to_card card.import_status_card, "Status of last import"
+  end
 end

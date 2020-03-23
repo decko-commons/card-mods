@@ -1,7 +1,4 @@
 
-
-
-
 def followable?
   false
 end
