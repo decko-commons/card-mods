@@ -1,4 +1,27 @@
 
+STATUS_GROUPS = {
+  ready: :ready,
+  not_ready: :not_ready,
+  failed: :failure,
+  imported: :success,
+  overridden: :success,
+  skipped: :success
+}
+
+STATUS_HEADER = {
+  failed: "Failed",
+  imported: "Successfully created",
+  overridden: "Overridden",
+  skipped: "Skipped existing"
+}.freeze
+
+STATUS_CONTEXT = {
+  failed: :danger,
+  imported: :success,
+  overridden: :warning,
+  skipped: :info
+}.freeze
+
 def followable?
   false
 end
@@ -29,19 +52,6 @@ def save_status
   update content: status.to_json
 end
 
-STATUS_HEADER = {
-  failed: "Failed",
-  imported: "Successfully created",
-  overridden: "Overridden",
-  skipped: "Skipped existing"
-}.freeze
-
-STATUS_CONTEXT = {
-  failed: :danger,
-  imported: :success,
-  overridden: :warning,
-  skipped: :info
-}.freeze
 
 format :html do
   delegate :status, :import_counts, to: :card
@@ -110,55 +120,5 @@ format :html do
     end.compact.join
   end
 
-  def generate_report_alert type
-    alert STATUS_CONTEXT[type], false, false, href: "##{type}" do
-      with_header STATUS_HEADER[type], level: 5 do
-        list = []
-        status[type].each do |index, name|
-          list << report_line(index, name, type)
-        end
-        list_group list
-      end
-    end
-  end
 
-  def report_line index, name, type
-    label, status_key =
-      type == :failed ? [name, :errors] : [link_to_card(name), :reports]
-
-    text = "##{index + 1}: #{label}"
-    if status[status_key][index].present?
-      text += " - " if name.present?
-      text += status[status_key][index].join("; ")
-    end
-    text
-  end
-
-  def progress_section type
-    return if count(type).zero?
-    html_class = "bg-#{STATUS_CONTEXT[type]}"
-    html_class << " progress-bar-striped progress-bar-animated" if importing?
-    { value: percentage(type), label: "#{count(type)} #{type}", class: html_class }
-  end
-
-  def undo_button
-    return if importing?
-    return "" unless status[:act_id] && (act = Card::Act.find(status[:act_id]))
-    wrap_with :div, class: "d-flex flex-row-reverse" do
-      card.left.format(:html)
-          .revert_actions_link "Undo",
-                               { revert_to: :previous,
-                                 revert_actions: act.actions.map(&:id) },
-                               class: "btn btn-danger",
-                               "data-confirm": undo_confirm_message
-    end
-  end
-
-  def undo_confirm_message
-    text = "Do you really want to remove the imported #{item_label :imported}"
-    if count(:overridden).positive?
-      text += " and restore the overridden " + item_label(:overridden)
-    end
-    text << "?"
-  end
 end

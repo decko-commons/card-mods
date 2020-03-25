@@ -60,7 +60,7 @@ def stop_performance_logger
 end
 
 def performance_log?
-  Env.params[:performance_log] || Card.config.performance_logger
+  Card::Env.params[:performance_log] || Card.config.performance_logger
 end
 
 

@@ -9,9 +9,9 @@ class CsvFile
     @row_class = row_class
     @col_sep = col_sep
     @encoding = encoding
+    @headers = headers
 
     read_csv path_or_file
-    initialize_column_map headers
   end
 
   # yields the rows of the csv file as CsvRow objects
@@ -105,21 +105,21 @@ class CsvFile
     end
   end
 
-  def map_headers
-    @col_map = {}
-    headers = @rows.shift.map { |h| h.to_name.key.to_sym }
-    @row_class.columns.each do |key|
-      @col_map[key] = headers.index key
-      raise StandardError, "column #{key} is missing" unless @col_map[key]
-    end
-  end
-
-  def header_row?
-    return unless first_row = @rows.first.map { |h| h.to_name.key.to_sym }
-    @row_class.columns.all? do |item|
-      first_row.include? item
-    end
-  end
+  # def map_headers
+  #   @col_map = {}
+  #   headers = @rows.shift.map { |h| h.to_name.key.to_sym }
+  #   @row_class.columns.each do |key|
+  #     @col_map[key] = headers.index key
+  #     raise StandardError, "column #{key} is missing" unless @col_map[key]
+  #   end
+  # end
+#
+  # def header_row?
+  #   return unless first_row = @rows.first.map { |h| h.to_name.key.to_sym }
+  #   @row_class.columns.all? do |item|
+  #     first_row.include? item
+  #   end
+  # end
 
   def row_to_hash row
     @col_map.each_with_object({}) do |(k, v), h|
@@ -128,11 +128,11 @@ class CsvFile
     end
   end
 
-  def initialize_column_map header_line
-    if (header_line == :detect && header_row?) || header_line == true
-      map_headers
-    else
-      @col_map = @row_class.columns.zip((0..@row_class.columns.size)).to_h
-    end
-  end
+  # def initialize_column_map header_line
+  #   if (header_line == :detect && header_row?) || header_line == true
+  #     map_headers
+  #   else
+  #     @col_map = @row_class.columns.zip((0..@row_class.columns.size)).to_h
+  #   end
+  # end
 end
