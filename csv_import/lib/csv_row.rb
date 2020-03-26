@@ -4,8 +4,7 @@ class CsvRow
   include ::Card::Model::SaveHelper
   include Normalizer
 
-  @columns = []
-  @required = [] # array of required fields or :all
+  @columns = {}
 
   # Use column names as keys and method names as values to define normalization
   # and validation methods.
@@ -17,7 +16,15 @@ class CsvRow
   @validate = {}
 
   class << self
-    attr_reader :columns, :required, :map_columns
+    attr_reader :columns
+
+    def column_keys
+      @column_keys = columns.keys
+    end
+
+    def required
+      @required ||= columns.keys.select { |key| !columns[key][:optional] }
+    end
 
     def normalize key
       @normalize && @normalize[key]
@@ -31,15 +38,27 @@ class CsvRow
   attr_reader :errors, :row_index, :import_manager
   attr_accessor :status, :name
 
-  delegate :add_card, :import_card, :override?, :pick_up_card_errors, to: :import_manager
+  delegate :corrections, :override?, to: :import_manager
 
   def initialize row, index, import_manager=nil
     @row = row
     @import_manager = import_manager || ImportManager.new(nil)
-    @extra_data = @import_manager.extra_data(index)
+    # @extra_data = @import_manager.extra_data(index)
     @abort_on_error = true
     @row_index = index # 0-based, not counting the header line
+    @errors = []
+    @cardid = nil
     merge_corrections
+  end
+
+  def import_status
+    @import_manager.status
+  end
+
+  def log_status
+    item = { status: status, id: @cardid }
+    item[:errors] = @errors if @errors.present?
+    import_status.update_item row_index, item
   end
 
   def original_row
@@ -53,19 +72,16 @@ class CsvRow
   end
 
   def merge_corrections
-    @corrections = @extra_data[:corrections]
-    @corrections = {} unless @corrections.is_a? Hash
-    @before_corrected = {}
-    @corrections.each do |k, v|
-      next unless v.present?
-      @before_corrected[k] = @row[k]
-      @row[k] = v
+    corrections.each do |column, hash|
+      next unless hash.present? && (old_val = @row[column]) && (new_val = hash[old_val])
+      @before_corrected[column] = old_val
+      @row[column] = new_val
     end
   end
 
   def execute_import
-    @import_manager.handle_import(self) do
-      prepare_import
+    handle_import do
+      validate
       ImportLog.debug "start import"
       import
     end
@@ -75,10 +91,34 @@ class CsvRow
     raise e
   end
 
-  def prepare_import
+  def handle_import
+    status = catch(:skip_row) { yield }
+    self.status = specify_success_status status
+    log_status
+      # run_hook status
+  end
+
+  # used by csv rows to add additional cards
+  def add_card args
+    pick_up_card_errors do
+      Card.create args
+    end
+  end
+
+  def validate!
+    handle_import do
+      validate
+      @errors.present? ? :not_ready : :ready
+    end
+  end
+
+  def validate
     collect_errors { check_required_fields }
     normalize
-    collect_errors { validate }
+    collect_errors { validate_fields }
+    if (args = try :card_args)
+      @cardid = Card.fetch_id args[:name]
+    end
   end
 
   def check_required_fields
@@ -90,7 +130,7 @@ class CsvRow
   def collect_errors
     @abort_on_error = false
     yield
-    skip :failed if errors?
+    skip :failed if @errors.present?
   ensure
     @abort_on_error = true
   end
@@ -99,25 +139,17 @@ class CsvRow
     throw :skip_row, status
   end
 
-  def errors?
-    @import_manager.errors? self
-  end
-
-  def errors
-    @import_manager.errors self
-  end
-
   def error msg
-    @import_manager.report_error msg
+    @errors << msg
     skip :failed if @abort_on_error
   end
 
   def required
-    self.class.required == :all ? columns : self.class.required
+    self.class.required
   end
 
   def columns
-    self.class.columns
+    self.class.columns_keys
   end
 
   def normalize
@@ -126,7 +158,7 @@ class CsvRow
     end
   end
 
-  def validate
+  def validate_fields
     @row.each do |k, v|
       validate_field k, v
     end
@@ -163,5 +195,51 @@ class CsvRow
 
   def respond_to_missing? method_name, _include_private=false
     @row.keys.include? method_name
+  end
+
+  # def report key, msg
+  #   msg = "#{msg} duplicate in this file" if key == :duplicate_in_file
+  #   import_status[:reports][@current_row.row_index] ||= []
+  #   import_status[:reports][@current_row.row_index] << msg
+  # end
+
+  # def import_status
+  #   @import_status || init_import_status
+  # end
+
+  # def report_error msg
+  #   import_status.update_item
+  #   import_status[:errors][@current_row.row_index] << msg
+  # end
+
+  # def errors_by_row_index
+  #   @import_status[:errors].each do |index, msgs|
+  #     yield index, msgs
+  #   end
+  # end
+
+  def pick_up_card_errors card=nil
+    card = yield if block_given?
+    if card
+      card.errors.each do |error_key, msg|
+        report_error "#{card.name} (#{error_key}): #{msg}"
+      end
+      card.errors.clear
+    end
+    card
+  end
+
+  def error_list
+    @import_status[:errors].each_with_object([]) do |(index, errors), list|
+      next if errors.empty?
+      list << "##{index + 1}: #{errors.join('; ')}"
+    end
+  end
+
+  private
+
+  def specify_success_status status
+    return status if status.in? %i[failed ready not_ready]
+    @status == :overridden ? :overridden : :imported
   end
 end

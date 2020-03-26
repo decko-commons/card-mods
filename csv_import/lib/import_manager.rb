@@ -4,15 +4,18 @@ class ImportManager
   include StatusLog
   include Conflicts
 
-  attr_reader :conflict_strategy
+  attr_reader :conflict_strategy, :corrections, :status
 
-  def initialize csv_file, conflict_strategy=:skip, extra_data={}
+  def initialize csv_file, conflict_strategy=:skip, corrections={}, status={}
     @csv_file = csv_file
     @conflict_strategy = conflict_strategy
-    @extra_data = integerfy_keys(extra_data || {})
-
-    @extra_data[:all] ||= {}
+    # @extra_data = integerfy_keys(extra_data || {})
+#
+    # @extra_data[:all] ||= {}
     # init_import_status
+
+    @corrections = corrections
+    @status = ImportManager::Status.new status
     @imported_keys = ::Set.new
   end
 
@@ -21,30 +24,15 @@ class ImportManager
   end
 
   def import_rows row_indices
-    row_count = row_indices ? row_indices.size : @csv_file&.row_count
-    init_import_status row_count
+    # row_count = row_indices ? row_indices.size : @csv_file&.row_count
+    # init_import_status row_count
     @csv_file.each_row self, row_indices, &:execute_import
   end
 
-  def extra_data index
-    (@extra_data[:all] || {}).deep_merge(@extra_data[index] || {})
-  end
+  # def extra_data index
+  #   (@extra_data[:all] || {}).deep_merge(@extra_data[index] || {})
+  # end
 
-  def handle_import row
-    @current_row = row
-    status = catch(:skip_row) { yield }
-    status = specify_success_status status
-    @current_row.status = status
-    log_status
-    run_hook status
-  end
-
-  # used by csv rows to add additional cards
-  def add_card args
-    pick_up_card_errors do
-      Card.create args
-    end
-  end
 
   def add_extra_data index, data
     @extra_data[index].deep_merge! data

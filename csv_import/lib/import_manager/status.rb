@@ -1,48 +1,64 @@
+
+
+# {
+#   act_ids: array,
+#   items: [[status, cardid, message_hash],...]
+#   counts: { status: count }
+# }
+
+
 class ImportManager
   class Status < Hash
-    # @param initial_status [Hash, Integer, String] a hash, a hash as json string or just
-    #   the total number of imports
-    def initialize status
-      hash = normalize_init_args status
-      counts = hash.delete(:counts)
-      replace hash
-      self[:counts] = Counts.new counts
-      init_missing_values
+    STATUS_OPTIONS = %i[failed not_ready ready imported overridden]
+    STATUS_INDEX = 0
+    ID_INDEX = 1
+
+    def initialize hash={}
+      replace hash.reverse_merge(act_ids: [], items: [], counts: {})
+      normalize
     end
 
-    def init_missing_values
-      self[:errors] ||= Hash.new { |h, k| h[k] = [] }
-      self[:reports] ||= Hash.new { |h, k| h[k] = [] }
-      %i[imported skipped overridden failed].each do |n|
-        self[n] ||= {}
+    def normalize
+      symbolize_keys!
+      self[:counts].symbolize_keys!
+      self[:items].each do |array|
+        array[STATUS_INDEX] = array[STATUS_INDEX].to_sym
       end
     end
 
-    def normalize_init_args status
-      sym_hash = case status
-                 when Integer
-                   { counts: { total: status } }
-                 when String
-                   JSON.parse status
-                 when Hash
-                   status
-                 else
-                   {}
-                 end
-      unstringify_keys sym_hash
-    rescue JSON::ParserError => _e
-      {}
+    def update_item num, update_hash
+      num = num.to_i
+      hash = item_hash(num).merge update_hash
+      array = [hash.delete(:status), hash.delete(:id)]
+      array << hash if hash.present?
+      self[:items][num] = array
     end
 
-    def unstringify_keys hash
-      hash.deep_symbolize_keys!
-      hash.keys.each do |k|
-        next if k == :counts || !hash[k].is_a?(Hash)
-        hash[k] = hash[k].each_with_object({}) do |(key, value), options|
-          options[(Integer(key.to_s) rescue key)] = value
-        end
-      end
-      hash
+    def item_hash num
+      return {} unless (array = self[num])
+      hash = array[2] || {}
+      hash.merge status: array[STATUS_INDEX], id: array[ID_INDEX]
     end
+
+    def items
+      self[:items]
+    end
+
+    def recount
+      self[:counts] = { total: items.size }
+      STATUS_OPTIONS.each do |option|
+        self[:counts][option] = items.select { |i| i.first == option }.size
+      end
+    end
+
+    def count key
+      self[:counts][key]
+    end
+
+    def percentage key
+      return 0 if count(:total) == 0 || count(key).nil?
+      (count(key) / count(:total).to_f * 100).floor(2)
+    end
+
   end
 end

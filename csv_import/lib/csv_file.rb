@@ -122,8 +122,8 @@ class CsvFile
   # end
 
   def row_to_hash row
-    @col_map.each_with_object({}) do |(k, v), h|
-      h[k] = row[v]
+    @row_class.column_keys.each_with_object({}).with_index do |(k, h), i|
+      h[k] = row[i]
       h[k] &&= h[k].strip
     end
   end

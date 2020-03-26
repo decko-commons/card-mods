@@ -1,8 +1,9 @@
 class ImportError < Card::Error::UserError
 end
 
-# {ImportManager} for scripts. Main difference is you don't have an act card and
-# you can choose a error policy. For example throw  an exception on the first error or
+# {ImportManager} for importing via scripts.
+# Main difference is you don't have an act card and
+# you can choose a error policy. For example throw an exception on the first error or
 # collect all errors and report in the console at the end.
 # You can also specify a user who does the imports.
 # Unlike the other ImportManagers the ScriptImportManager import doesn't support

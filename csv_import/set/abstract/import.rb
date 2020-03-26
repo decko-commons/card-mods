@@ -25,9 +25,10 @@ event :validate_import_format_on_create, :validate,
   validate_file_card upload_cache_card
 end
 
-event :validate_import_format, :validate,
-      on: :update, when: :save_preliminary_upload? do
-  validate_file_card self
+event :disallow_content_update, :validate, on: :update, changed: :content do
+  errors.add :permission_denied,
+             "updates to import files are not allowed; " \
+             "please create a new import file"
 end
 
 def validate_file_card file_card
@@ -36,6 +37,12 @@ def validate_file_card file_card
   elsif csv_only?
     abort :failure, "file must be CSV but was '#{file_card.attachment.content_type}'"
   end
+end
+
+event :generate_import_status, :finalize, on: :create do
+  stat = import_status_card
+  stat.generate!
+  add_subcard stat
 end
 
 def validate_csv file_card
@@ -60,22 +67,9 @@ format :html do
     "expected csv row format: #{rows.join ', '}"
   end
 
-  def new_success
-    { id: "_self", soft_redirect: false, redirect: true, view: :import }
-  end
-
   def download_link
     handle_source do |source|
       %(<a href="#{source}" rel="nofollow">Download File</a><br />)
     end.html_safe
-  end
-
-  def import_link
-    link_to "Import ...", path: { view: :import }, rel: "nofollow"
-  end
-
-  def last_import_status
-    return unless card.import_status.present?
-    link_to_card card.import_status_card, "Status of last import"
   end
 end
