@@ -1,0 +1,12 @@
+%table.wikirate-table.import-table.import-status-table
+  %thead
+    %tr
+      - columns.each do |column|
+        %th
+          = column_title column
+  %tbody
+    - each_row_with_status status do |hash, index|
+      %tr
+        - each_cell columns, hash, index do |value, klass|
+          %td{ class: klass }
+            = value

@@ -34,6 +34,16 @@ class CsvFile
     @rows.size
   end
 
+  def row_hash index
+    row_to_hash @rows[index]
+  end
+
+  def selected_rows rows
+    rows.each do |index|
+      yield row_hash(index), index
+    end
+  end
+
   private
 
   def read_csv path_or_file
@@ -99,11 +109,6 @@ class CsvFile
     end
   end
 
-  def selected_rows rows
-    rows.each do |index|
-      yield row_to_hash(@rows[index]), index
-    end
-  end
 
   # def map_headers
   #   @col_map = {}

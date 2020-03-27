@@ -33,6 +33,18 @@ class ImportManager
   #   (@extra_data[:all] || {}).deep_merge(@extra_data[index] || {})
   # end
 
+  def validate row_indices=nil
+    @abort_on_error = false
+    validate_rows row_indices
+    status.recount
+  end
+
+  def validate_rows row_indices
+    #row_count = row_indices ? row_indices.size : @csv_file.row_count
+    @csv_file.each_row self, row_indices do |csv_row|
+      csv_row.validate!
+    end
+  end
 
   def add_extra_data index, data
     @extra_data[index].deep_merge! data

@@ -35,7 +35,7 @@ class ImportManager
     end
 
     def item_hash num
-      return {} unless (array = self[num])
+      return {} unless (array = self[:items][num])
       hash = array[2] || {}
       hash.merge status: array[STATUS_INDEX], id: array[ID_INDEX]
     end
@@ -45,10 +45,18 @@ class ImportManager
     end
 
     def recount
-      self[:counts] = { total: items.size }
+      counts = { total: items.size }
       STATUS_OPTIONS.each do |option|
-        self[:counts][option] = items.select { |i| i.first == option }.size
+        counts[option] = items.select { |i| i.first == option }.size
       end
+      counts[:success] = counts[:imported] + counts[:overridden]
+      self[:counts] = counts
+    end
+
+    def status_indeces status
+      items.map.with_index do |item, index|
+        index if item.first == status
+      end.compact
     end
 
     def count key
