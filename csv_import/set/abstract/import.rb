@@ -1,5 +1,7 @@
 card_accessor :import_status
 card_accessor :imported_rows
+card_accessor :import_map, type: :json
+
 
 delegate :mark_as_imported, :already_imported?, to: :imported_rows_card
 
@@ -43,6 +45,14 @@ event :generate_import_status, :finalize, on: :create do
   stat = import_status_card
   stat.generate!
   add_subcard stat
+end
+
+event :generate_import_map, :validate, on: :create do
+  map = import_map_card
+  return unless map.mapped_columns.present?
+
+  map.generate!
+  add_subcard map
 end
 
 def validate_csv file_card

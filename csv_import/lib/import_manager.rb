@@ -6,7 +6,7 @@ class ImportManager
 
   attr_reader :conflict_strategy, :corrections, :status
 
-  def initialize csv_file, conflict_strategy=:skip, corrections={}, status={}
+  def initialize csv_file, conflict_strategy: :skip, corrections: {}, status: {}
     @csv_file = csv_file
     @conflict_strategy = conflict_strategy
     # @extra_data = integerfy_keys(extra_data || {})

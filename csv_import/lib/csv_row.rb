@@ -26,6 +26,10 @@ class CsvRow
       @required ||= columns.keys.select { |key| !columns[key][:optional] }
     end
 
+    def mapped
+      @mapped ||= columns.keys.select { |key| columns[key][:map] }
+    end
+
     def normalize key
       @normalize && @normalize[key]
     end
@@ -39,6 +43,7 @@ class CsvRow
   attr_accessor :status, :name
 
   delegate :corrections, :override?, to: :import_manager
+  delegate :required, :mapped, to: :class
 
   def initialize row, index, import_manager=nil
     @row = row
@@ -48,7 +53,7 @@ class CsvRow
     @row_index = index # 0-based, not counting the header line
     @errors = []
     @cardid = nil
-    merge_corrections
+    @before_corrected = {}
   end
 
   def import_status
@@ -73,9 +78,11 @@ class CsvRow
 
   def merge_corrections
     corrections.each do |column, hash|
-      next unless hash.present? && (old_val = @row[column]) && (new_val = hash[old_val])
-      @before_corrected[column] = old_val
-      @row[column] = new_val
+      next unless hash.present?
+      skip :not_ready unless (old = @row[column]) && (new = hash[old])
+      next if old == new
+      @before_corrected[column] = old
+      @row[column] = new
     end
   end
 
@@ -114,6 +121,7 @@ class CsvRow
 
   def validate
     collect_errors { check_required_fields }
+    merge_corrections
     normalize
     collect_errors { validate_fields }
     if (args = try :card_args)
@@ -196,27 +204,6 @@ class CsvRow
   def respond_to_missing? method_name, _include_private=false
     @row.keys.include? method_name
   end
-
-  # def report key, msg
-  #   msg = "#{msg} duplicate in this file" if key == :duplicate_in_file
-  #   import_status[:reports][@current_row.row_index] ||= []
-  #   import_status[:reports][@current_row.row_index] << msg
-  # end
-
-  # def import_status
-  #   @import_status || init_import_status
-  # end
-
-  # def report_error msg
-  #   import_status.update_item
-  #   import_status[:errors][@current_row.row_index] << msg
-  # end
-
-  # def errors_by_row_index
-  #   @import_status[:errors].each do |index, msgs|
-  #     yield index, msgs
-  #   end
-  # end
 
   def pick_up_card_errors card=nil
     card = yield if block_given?

@@ -5,7 +5,7 @@ include_set Abstract::Tabs
 # key = status group
 # value = [context, label]
 STATUS_GROUPS = {
-  not_ready: [:context, "Not Ready"],
+  not_ready: [:warning, "Not Ready"],
   ready: [:info, "Ready"],
   failed: [:danger, "Failure"],
   success: [:success, "Success"]
@@ -114,9 +114,9 @@ format :html do
     end
   end
 
-  def table_columns(status)
-    columns = %i[row exists]
-
+  def table_columns status
+    columns = [:row]
+    columns << :exists unless status == :not_ready
     columns << :errors if status == :failed
     columns += csv_row_class.column_keys
     columns
