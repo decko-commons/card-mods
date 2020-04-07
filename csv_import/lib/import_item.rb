@@ -1,8 +1,9 @@
-# Inherit from CsvRow to describe and process a csv row.
-# CsvFile creates an instance of CsvRow for every row and calls #execute_import on it
-class CsvRow
+# Inherit from ImportItem to describe and process a csv row.
+# CsvFile creates an instance of ImportItem for every row and calls #execute_import on it
+class ImportItem
   include ::Card::Model::SaveHelper
   include Normalizer
+  include Validation
 
   @columns = {}
 
@@ -42,13 +43,12 @@ class CsvRow
   attr_reader :errors, :row_index, :import_manager
   attr_accessor :status, :name
 
-  delegate :corrections, :override?, to: :import_manager
+  delegate :override?, to: :import_manager
   delegate :required, :mapped, to: :class
 
   def initialize row, index, import_manager=nil
     @row = row
-    @import_manager = import_manager || ImportManager.new(nil)
-    # @extra_data = @import_manager.extra_data(index)
+    @import_manager = import_manager
     @abort_on_error = true
     @row_index = index # 0-based, not counting the header line
     @errors = []
@@ -57,10 +57,16 @@ class CsvRow
   end
 
   def import_status
-    @import_manager.status
+    import_manager&.status
+  end
+
+  def corrections
+    import_manager&.corrections || []
   end
 
   def log_status
+    return unless import_status
+
     item = { status: status, id: @cardid }
     item[:errors] = @errors if @errors.present?
     import_status.update_item row_index, item
@@ -76,15 +82,7 @@ class CsvRow
     label
   end
 
-  def merge_corrections
-    corrections.each do |column, hash|
-      next unless hash.present?
-      skip :not_ready unless (old = @row[column]) && (new = hash[old])
-      next if old == new
-      @before_corrected[column] = old
-      @row[column] = new
-    end
-  end
+
 
   def execute_import
     handle_import do
@@ -105,46 +103,27 @@ class CsvRow
       # run_hook status
   end
 
-  # used by csv rows to add additional cards
-  def add_card args
-    pick_up_card_errors do
-      Card.create args
-    end
+  def import
+    import_card card_args
   end
 
-  def validate!
-    handle_import do
-      validate
-      @errors.present? ? :not_ready : :ready
-    end
+  # add the final import card
+  def import_card card_args
+    self.name = card_args[:name]
+    card = Card.fetch self.name, new: card_args
+    card.save
   end
 
-  def validate
-    collect_errors { check_required_fields }
-    merge_corrections
-    normalize
-    collect_errors { validate_fields }
-    if (args = try :card_args)
-      @cardid = Card.fetch_id args[:name]
-    end
-  end
-
-  def check_required_fields
-    required.each do |key|
-      error "value for #{key} missing" unless @row[key].present?
-    end
-  end
-
-  def collect_errors
-    @abort_on_error = false
-    yield
-    skip :failed if @errors.present?
-  ensure
-    @abort_on_error = true
+  def card_args
+    {}
   end
 
   def skip status=:skipped
-    throw :skip_row, status
+    if import_manager
+      throw :skip_row, status
+    else
+      raise Card::Error, "Import Error: #{@errors.join("\n")}" # (for testing)
+    end
   end
 
   def error msg
@@ -158,35 +137,6 @@ class CsvRow
 
   def columns
     self.class.columns_keys
-  end
-
-  def normalize
-    @row.each do |k, v|
-      normalize_field k, v
-    end
-  end
-
-  def validate_fields
-    @row.each do |k, v|
-      validate_field k, v
-    end
-  end
-
-  def normalize_field field, value
-    return unless (method_name = method_name(field, :normalize))
-    @row[field] = send method_name, value
-  end
-
-  def validate_field field, value
-    return unless (method_name = method_name(field, :validate))
-    return if send method_name, value
-    error "row #{@row_index + 1}: invalid value for #{field}: #{value}"
-  end
-
-  # @param type [:normalize, :validate]
-  def method_name field, type
-    method_name = "#{type}_#{field}".to_sym
-    respond_to?(method_name) ? method_name : self.class.send(type, field)
   end
 
   def [] key
@@ -217,7 +167,7 @@ class CsvRow
   end
 
   def error_list
-    @import_status[:errors].each_with_object([]) do |(index, errors), list|
+    import_status[:errors].each_with_object([]) do |(index, errors), list|
       next if errors.empty?
       list << "##{index + 1}: #{errors.join('; ')}"
     end

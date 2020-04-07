@@ -1,4 +1,4 @@
-class CsvRow
+class ImportItem
   # common methods to be used to normalize values
   module Normalizer
     def comma_list_to_pointer str, comma=","

@@ -49,13 +49,6 @@ class ImportManager
     @extra_data[index].deep_merge! data
   end
 
-  # add the final import card
-  def import_card card_args
-    @current_row.name = card_args[:name]
-    check_for_duplicates card_args[:name]
-    add_card card_args
-  end
-
   def errors? row=nil
     row ? errors(row).present? : errors.present?
   end
