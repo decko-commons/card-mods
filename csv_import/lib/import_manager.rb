@@ -1,7 +1,6 @@
 # ImportManager coordinates the import of a CsvFile. It defines the conflict and error
 # policy. It collects all errors and provides extra data like corrections for row fields.
 class ImportManager
-  include StatusLog
   include Conflicts
 
   attr_reader :conflict_strategy, :corrections, :status
@@ -55,6 +54,14 @@ class ImportManager
     @current_row.name = card_args[:name]
     check_for_duplicates card_args[:name]
     add_card card_args
+  end
+
+  def errors? row=nil
+    row ? errors(row).present? : errors.present?
+  end
+
+  def errors row=nil
+    row ? status.item_errors(row) : status.errors
   end
 
   private

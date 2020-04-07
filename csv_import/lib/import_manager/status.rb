@@ -12,6 +12,7 @@ class ImportManager
     STATUS_OPTIONS = %i[failed not_ready ready imported overridden]
     STATUS_INDEX = 0
     ID_INDEX = 1
+    EXTRAS_INDEX = 2
 
     def initialize hash={}
       replace hash.reverse_merge(act_ids: [], items: [], counts: {})
@@ -42,6 +43,16 @@ class ImportManager
 
     def items
       self[:items]
+    end
+
+    def item_errors num
+      item_hash(num)&.dig :errors
+    end
+
+    def errors
+      (0..items.length).map do |num|
+        item_errors num
+      end.flatten.compact
     end
 
     def recount

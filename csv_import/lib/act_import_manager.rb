@@ -1,9 +1,9 @@
 # ActImportManager puts all creates and update actions that are part of the import
 # under one act of a import card
 class ActImportManager < ImportManager
-  def initialize act_card, csv_file, conflict_strategy=:skip, extra_row_data={}
-    @act_card = act_card
-    super(csv_file, conflict_strategy, extra_row_data)
+  def initialize *args
+    @act_card = args.shift
+    super *args
   end
 
   def add_card args
