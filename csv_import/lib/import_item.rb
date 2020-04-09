@@ -7,17 +7,6 @@ class ImportItem
   include Normalizer
   include Validation
 
-  @columns = {}
-
-  # Use column names as keys and method names as values to define normalization
-  # and validation methods.
-  # The normalization methods get the original field value as
-  # argument. The validation methods get the normalized value as argument.
-  # The return value of normalize methods replaces the field value.
-  # If a validate method returns false then the import fails.
-  @normalize = {}
-  @validate = {}
-
   attr_reader :errors, :row_index, :import_manager
   attr_accessor :status, :name
 
