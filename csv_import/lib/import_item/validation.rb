@@ -1,5 +1,5 @@
 class ImportItem
-  # common methods to be used to normalize values
+  # validation of import fields
   module Validation
 
     def validate!
@@ -13,7 +13,7 @@ class ImportItem
       collect_errors { check_required_fields }
       normalize
       collect_errors { validate_fields }
-      if (name = card_args[:name])
+      if (name = import_hash[:name])
         @cardid = Card.fetch_id name
       end
     end
@@ -36,15 +36,36 @@ class ImportItem
     end
 
     def normalize_field field, value
-      return unless (method_name = method_name(field, :normalize))
-      @row[field] = send method_name, value
+      field_action :normalize, field, value do |result|
+        @row_field = result
+      end
     end
 
     def validate_field field, value
-      return unless (method_name = method_name(field, :validate))
-      return if send method_name, value
-      error "row #{@row_index + 1}: invalid value for #{field}: #{value}"
+      valid =
+        if method_name field, :validate
+          field_action :validate, field, value
+        else
+          default_validation field, value
+        end
+      validation_error field, value unless valid
     end
+
+    def validation_error field, value
+      error "invalid #{field}: #{value}"
+    end
+
+    def field_action action, field, value
+      return unless (method_name = method_name(field, action))
+      yield send(method_name, value)
+    end
+
+    def default_validation field, value
+      return true unless mapped.include? field
+
+      Card[value]&.type_code == field
+    end
+
 
     # @param type [:normalize, :validate]
     def method_name field, type

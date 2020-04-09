@@ -1,5 +1,5 @@
 format :html do
-  delegate :status, :csv_file, :csv_row_class, :corrections, to: :card
+  delegate :status, :csv_file, :import_item_class, :corrections, to: :card
   delegate :percentage, :count, to: :status
 
   def tab_list
@@ -64,7 +64,7 @@ format :html do
     columns = [:row]
     columns << :exists unless status == :not_ready
     columns << :errors if status == :failed
-    columns += csv_row_class.column_keys
+    columns += import_item_class.column_keys
     columns
   end
 

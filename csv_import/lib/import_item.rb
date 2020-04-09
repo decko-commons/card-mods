@@ -2,6 +2,8 @@
 # CsvFile creates an instance of ImportItem for every row and calls #execute_import on it
 class ImportItem
   include ::Card::Model::SaveHelper
+
+  extend Columns
   include Normalizer
   include Validation
 
@@ -16,37 +18,12 @@ class ImportItem
   @normalize = {}
   @validate = {}
 
-  class << self
-    attr_reader :columns
-
-    def column_keys
-      @column_keys = columns.keys
-    end
-
-    def required
-      @required ||= columns.keys.select { |key| !columns[key][:optional] }
-    end
-
-    def mapped
-      @mapped ||= columns.keys.select { |key| columns[key][:map] }
-    end
-
-    def normalize key
-      @normalize && @normalize[key]
-    end
-
-    def validate key
-      @validate && @validate[key]
-    end
-  end
-
   attr_reader :errors, :row_index, :import_manager
   attr_accessor :status, :name
 
   delegate :override?, to: :import_manager
-  delegate :required, :mapped, to: :class
 
-  def initialize row, index, import_manager=nil
+  def initialize row, index=0, import_manager=nil
     @row = row
     @import_manager = import_manager
     @abort_on_error = true
@@ -56,12 +33,12 @@ class ImportItem
     @before_corrected = {}
   end
 
-  def import_status
-    import_manager&.status
+  def import_hash
+    # FIXME: make reasonable default!
   end
 
-  def corrections
-    import_manager&.corrections || []
+  def import_status
+    import_manager&.status
   end
 
   def log_status
@@ -70,6 +47,10 @@ class ImportItem
     item = { status: status, id: @cardid }
     item[:errors] = @errors if @errors.present?
     import_status.update_item row_index, item
+  end
+
+  def corrections
+    import_manager&.corrections || []
   end
 
   def original_row
@@ -81,8 +62,6 @@ class ImportItem
     label += ": #{@name}" if @name
     label
   end
-
-
 
   def execute_import
     handle_import do
@@ -104,39 +83,30 @@ class ImportItem
   end
 
   def import
-    import_card card_args
+    import_card import_hash
   end
 
   # add the final import card
   def import_card card_args
-    self.name = card_args[:name]
-    card = Card.fetch self.name, new: card_args
-    card.save
-  end
-
-  def card_args
-    {}
+    pick_up_card_errors do
+      self.name = card_args[:name]
+      card = Card.fetch self.name, new: card_args
+      card.save
+      card
+    end
   end
 
   def skip status=:skipped
-    if import_manager
-      throw :skip_row, status
-    else
-      raise Card::Error, "Import Error: #{@errors.join("\n")}" # (for testing)
-    end
+    #if import_manager
+    throw :skip_row, status
+      # else
+    #  raise Card::Error, "Import Error: #{@errors.join("\n")}" # (for testing)
+    #  end
   end
 
   def error msg
     @errors << msg
     skip :failed if @abort_on_error
-  end
-
-  def required
-    self.class.required
-  end
-
-  def columns
-    self.class.columns_keys
   end
 
   def [] key
@@ -159,7 +129,7 @@ class ImportItem
     card = yield if block_given?
     if card
       card.errors.each do |error_key, msg|
-        report_error "#{card.name} (#{error_key}): #{msg}"
+        error "#{card.name} (#{error_key}): #{msg}"
       end
       card.errors.clear
     end

@@ -2,7 +2,6 @@ card_accessor :import_status
 card_accessor :imported_rows
 card_accessor :import_map, type: :json
 
-
 delegate :mark_as_imported, :already_imported?, to: :imported_rows_card
 
 def import_file?
@@ -11,7 +10,7 @@ end
 
 def csv_file
   # maybe we have to use file.read ?
-  @csv_file ||= CsvFile.new attachment, csv_row_class, headers: :true
+  @csv_file ||= CsvFile.new attachment, import_item_class, headers: :true
 end
 
 def clean_html?
@@ -21,6 +20,7 @@ end
 def csv_only? # for override
   true
 end
+
 
 event :validate_import_format_on_create, :validate,
       on: :create, when: :save_preliminary_upload? do
@@ -56,7 +56,7 @@ event :generate_import_map, :validate, on: :create do
 end
 
 def validate_csv file_card
-  CsvFile.new file_card.attachment, csv_row_class, headers: :true
+  CsvFile.new file_card.attachment, import_item_class, headers: :true
 rescue CSV::MalformedCSVError => e
   abort :failure, "malformed csv: #{e.message}"
 end
@@ -73,7 +73,7 @@ format :html do
   end
 
   def help_text
-    rows = card.csv_row_class.columns.map { |s| s.to_s.humanize }
+    rows = card.import_item_class.columns.map { |s| s.to_s.humanize }
     "expected csv row format: #{rows.join ', '}"
   end
 
