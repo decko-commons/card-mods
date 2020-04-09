@@ -21,7 +21,6 @@ def csv_only? # for override
   true
 end
 
-
 event :validate_import_format_on_create, :validate,
       on: :create, when: :save_preliminary_upload? do
   validate_file_card upload_cache_card

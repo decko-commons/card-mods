@@ -17,7 +17,6 @@ def status
   @status ||= ImportManager::Status.new content_hash
 end
 
-
 def followable?
   false
 end
@@ -28,11 +27,6 @@ end
 
 def content_hash
   JSON.parse content
-end
-
-def step key
-  import_counts.step key
-  save_status
 end
 
 def save_status

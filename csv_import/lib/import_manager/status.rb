@@ -2,7 +2,7 @@
 
 # {
 #   act_ids: array,
-#   items: [[status, cardid, message_hash],...]
+#   items: [[status, cardid, message_hash],[...],...
 #   counts: { status: count }
 # }
 
@@ -78,6 +78,5 @@ class ImportManager
       return 0 if count(:total) == 0 || count(key).nil?
       (count(key) / count(:total).to_f * 100).floor(2)
     end
-
   end
 end
