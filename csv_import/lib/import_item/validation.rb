@@ -1,7 +1,6 @@
 class ImportItem
   # validation of import fields
   module Validation
-
     def validate!
       handle_import do
         validate
@@ -18,14 +17,12 @@ class ImportItem
       end
     end
 
-
     def normalize
       merge_corrections
       @row.each do |k, v|
         normalize_field k, v
       end
     end
-
 
     private
 
@@ -51,44 +48,35 @@ class ImportItem
       validation_error field, value unless valid
     end
 
-    def validation_error field, value
-      error "invalid #{field}: #{value}"
-    end
-
-    def field_action action, field, value
-      return unless (method_name = method_name(field, action))
-      yield send(method_name, value)
-    end
-
-    def default_validation field, value
-      return true unless mapped.include? field
-
-      Card[value]&.type_code == field
-    end
-
-
-    # @param type [:normalize, :validate]
-    def method_name field, type
-      method_name = "#{type}_#{field}".to_sym
-      respond_to?(method_name) ? method_name : self.class.send(type, field)
-    end
-
-    def merge_corrections
-      corrections.each do |column, hash|
-        next unless hash.present?
-        skip :not_ready unless (old = @row[column]) && (new = hash[old])
-        next if old == new
-        @before_corrected[column] = old
-        @row[column] = new
-      end
-    end
-
     def check_required_fields
       required.each do |key|
         error "value for #{key} missing" unless @row[key].present?
       end
     end
 
+    def default_validation field, value
+      return true unless mapped_column_keys.include? field
+
+      Card[value]&.type_code == field
+    end
+
+    private
+
+    def validation_error field, value
+      error "invalid #{field}: #{value}"
+    end
+
+    def field_action action, field, value
+      return unless (method_name = method_name(field, action))
+      result = send method_name, value
+      block_given? ? yield(result) : result
+    end
+
+    # @param type [:normalize, :validate]
+    def method_name field, type
+      method_name = "#{type}_#{field}".to_sym
+      respond_to?(method_name) ? method_name : self.class.send(type, field)
+    end
 
     def collect_errors
       @abort_on_error = false

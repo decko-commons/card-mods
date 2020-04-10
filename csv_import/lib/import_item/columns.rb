@@ -15,14 +15,14 @@ class ImportItem
     end
 
     def column_keys
-      @column_keys = column_hash.keys
+      @column_keys ||= column_hash.keys
     end
 
     def required
       @required ||= column_keys.select { |key| !column_hash[key][:optional] }
     end
 
-    def mapped
+    def mapped_column_keys
       @mapped ||= column_keys.select { |key| column_hash[key][:map] }
     end
 
@@ -34,18 +34,26 @@ class ImportItem
       @validate && @validate[key]
     end
 
+    def map key
+      @map && @map[key]
+    end
+
+    def map_type column
+      column_hash[column][:type] || column
+    end
+
     def normalize_column_hash
-      raise Card::UserError, "@columns configuration missing" unless @columns
+      raise Card::Error, "@columns configuration missing" unless @columns
       case @columns
       when Hash
         @columns
       when Array
-        @columns.each_with_object({}) do |col, hash|
-          hash[col] = nil
-        end
+        @columns.each_with_object({}) { |col, hash| hash[col] = {} }
+      else
+        raise Card::Error, "@column configuration must be Hash or Array"
       end
     end
   end
 
-  delegate :required, :column_hash, :mapped, to: :class
+  delegate :required, :column_hash, :mapped_column_keys, :map_type, :column_keys, to: :class
 end

@@ -5,13 +5,12 @@ class ImportManager
 
   attr_reader :conflict_strategy, :corrections, :status
 
-  def initialize csv_file, conflict_strategy: :skip, corrections: {}, status: {}
+  def initialize csv_file, conflict_strategy: :skip, corrections: {}, status: {}, extra_data:{}
     @csv_file = csv_file
     @conflict_strategy = conflict_strategy
-    # @extra_data = integerfy_keys(extra_data || {})
-#
-    # @extra_data[:all] ||= {}
-    # init_import_status
+
+    @extra_data = integerfy_keys(extra_data || {})
+    @extra_data[:all] ||= {}
 
     @corrections = corrections
     @status = ImportManager::Status.new status
@@ -28,9 +27,9 @@ class ImportManager
     @csv_file.each_row self, row_indices, &:execute_import
   end
 
-  # def extra_data index
-  #   (@extra_data[:all] || {}).deep_merge(@extra_data[index] || {})
-  # end
+  def extra_data index
+    (@extra_data[:all] || {}).deep_merge(@extra_data[index] || {})
+  end
 
   def validate row_indices=nil
     @abort_on_error = false

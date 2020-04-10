@@ -6,6 +6,7 @@ class ImportItem
   extend Columns
   include Normalizer
   include Validation
+  include Mapping
 
   attr_reader :errors, :row_index, :import_manager
   attr_accessor :status, :name
@@ -24,6 +25,7 @@ class ImportItem
 
   def import_hash
     # FIXME: make reasonable default!
+    {}
   end
 
   def import_status

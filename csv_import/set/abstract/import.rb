@@ -40,18 +40,18 @@ def validate_file_card file_card
   end
 end
 
-event :generate_import_status, :finalize, on: :create do
+
+event :generate_import_map, :finalize, on: :create do
+  return unless import_item_class.mapped_column_keys.present?
+  map = import_map_card
+  map.generate!
+  add_subcard map
+end
+
+event :generate_import_status, :finalize, after: :generate_import_map, on: :create do
   stat = import_status_card
   stat.generate!
   add_subcard stat
-end
-
-event :generate_import_map, :validate, on: :create do
-  map = import_map_card
-  return unless map.mapped_columns.present?
-
-  map.generate!
-  add_subcard map
 end
 
 def validate_csv file_card

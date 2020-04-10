@@ -40,7 +40,7 @@ def generate!
 end
 
 def corrections
-  @corrections ||= left.import_map_card.content_hash
+  @corrections ||= left.import_map_card.map
 end
 
 def import_manager

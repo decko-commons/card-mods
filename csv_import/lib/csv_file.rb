@@ -15,7 +15,7 @@ class CsvFile
   end
 
   # yields the rows of the csv file as ImportItem objects
-  def each_row import_manager, rows=nil & block
+  def each_row import_manager=nil, rows=nil
     each_row_hash rows do |row_hash, index|
       yield @row_class.new(row_hash, index, import_manager)
     end
