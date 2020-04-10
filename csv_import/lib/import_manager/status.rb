@@ -33,6 +33,7 @@ class ImportManager
       array = [hash.delete(:status), hash.delete(:id)]
       array << hash if hash.present?
       self[:items][num] = array
+      recount
     end
 
     def item_hash num

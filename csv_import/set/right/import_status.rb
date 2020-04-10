@@ -11,7 +11,7 @@ STATUS_GROUPS = {
   success: [:success, "Success"]
 }.freeze
 
-delegate :csv_file, :import_item_class, to: :left
+delegate :csv_file, :import_item_class, :corrections, to: :left
 
 def status
   @status ||= ImportManager::Status.new content_hash
@@ -29,18 +29,14 @@ def content_hash
   content.present? ? JSON.parse(content) : {}
 end
 
-def save_status
-  update content: status.to_json
+def save_status status=nil
+  update content: (status || self.status).to_json
 end
 
 def generate!
   im = import_manager
   im.validate
   self.content = im.status.to_json
-end
-
-def corrections
-  @corrections ||= left.import_map_card.map
 end
 
 def import_manager

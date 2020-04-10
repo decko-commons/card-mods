@@ -5,16 +5,17 @@ class ImportManager
 
   attr_reader :conflict_strategy, :corrections, :status
 
-  def initialize csv_file, conflict_strategy: :skip, corrections: {}, status: {}, extra_data:{}
+  def initialize csv_file, conflict_strategy: :skip, corrections: {}, status: {}
     @csv_file = csv_file
     @conflict_strategy = conflict_strategy
 
-    @extra_data = integerfy_keys(extra_data || {})
-    @extra_data[:all] ||= {}
-
     @corrections = corrections
-    @status = ImportManager::Status.new status
+    @status = init_status status
     @imported_keys = ::Set.new
+  end
+
+  def init_status status
+    status.is_a?(Status) ? status : Status.new(status)
   end
 
   def import row_indices=nil
@@ -22,19 +23,15 @@ class ImportManager
   end
 
   def import_rows row_indices
-    # row_count = row_indices ? row_indices.size : @csv_file&.row_count
-    # init_import_status row_count
-    @csv_file.each_row self, row_indices, &:execute_import
-  end
-
-  def extra_data index
-    (@extra_data[:all] || {}).deep_merge(@extra_data[index] || {})
+    @csv_file.each_row self, row_indices do |row|
+      row.execute_import
+      yield row if block_given?
+    end
   end
 
   def validate row_indices=nil
     @abort_on_error = false
     validate_rows row_indices
-    status.recount
   end
 
   def validate_rows row_indices
@@ -44,28 +41,11 @@ class ImportManager
     end
   end
 
-  def add_extra_data index, data
-    @extra_data[index].deep_merge! data
-  end
-
   def errors? row=nil
     row ? errors(row).present? : errors.present?
   end
 
   def errors row=nil
     row ? status.item_errors(row) : status.errors
-  end
-
-  private
-
-  # methods like row_imported, row_failed, etc. can be used to add additional logic
-  def run_hook status
-    row_finished @current_row if respond_to? :row_finished
-    hook_name = "row_#{status}".to_sym
-    send hook_name, @current_row if respond_to? hook_name
-  end
-
-  def integerfy_keys hash
-    hash.transform_keys { |key| key == :all ? :all : key.to_s.to_i }
   end
 end

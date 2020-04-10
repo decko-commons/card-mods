@@ -65,4 +65,8 @@ format :html do
   end
 
   view :compact, cache: :never, template: :haml
+
+  private
+
+
 end

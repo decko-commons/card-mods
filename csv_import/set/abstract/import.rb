@@ -40,7 +40,6 @@ def validate_file_card file_card
   end
 end
 
-
 event :generate_import_map, :finalize, on: :create do
   return unless import_item_class.mapped_column_keys.present?
   map = import_map_card
@@ -72,7 +71,7 @@ format :html do
   end
 
   def help_text
-    rows = card.import_item_class.columns.map { |s| s.to_s.humanize }
+    rows = card.import_item_class.column_keys.map { |s| s.to_s.humanize }
     "expected csv row format: #{rows.join ', '}"
   end
 

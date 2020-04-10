@@ -1,41 +1,34 @@
 event :import_csv, :integrate_with_delay, on: :update, when: :data_import? do
-  import_manager.import_rows selected_row_indices
+  import! row_indeces_from_params
 end
 
-event :flag_as_import, :prepare_to_validate, on: :update, when: :data_import? do
-  @empty_ok = true
-end
+# event :allow_empty_import, :prepare_to_validate, on: :update, when: :data_import? do
+#   @empty_ok = true
+# end
 
-event :prepare_import, :prepare_to_store, on: :update, when: :data_import? do
-  import_status_card.reset selected_row_count
+def import! row_indeces
+  import_manager.import_rows row_indeces do |_row|
+    import_status_card.save_status status
+  end
 end
 
 def import_manager
-  @import_manager ||=
-    ActImportManager.new self, csv_file, conflict_strategy, extra_data
+  @import_manager ||= ActImportManager.new self, csv_file,
+                                           conflict_strategy: conflict_strategy,
+                                           status: status,
+                                           corrections: corrections
 end
 
 def conflict_strategy
   Env.params[:conflict_strategy]&.to_sym || :skip
 end
 
-def extra_data
-  @extra_data ||= normalize_extra_data
+def corrections
+  import_map_card.map
 end
 
-def normalize_extra_data
-  fetch_hash_from_params(:extra_data).deep_symbolize_keys
-end
-
-def fetch_hash_from_params key
-  case Env.params[key]
-  when Hash
-    Env.params[key]
-  when ActionController::Parameters
-    Env.params[key].to_unsafe_h
-  else
-    {}
-  end
+def status
+  @status ||= import_status_card.status
 end
 
 def data_import?
@@ -46,14 +39,22 @@ def silent_change?
   data_import? || super
 end
 
-def selected_row_count
-  selected_row_indices.size
-end
-
-def selected_row_indices
-  @selected_row_indices ||=
+def row_indeces_from_params
+  @row_indeces_from_params ||=
     fetch_hash_from_params(:import_rows).each_with_object([]) do |(index, value), a|
       next unless [true, "true"].include?(value)
       a << index.to_i
     end
+end
+
+# TODO: need more reusable approach
+def fetch_hash_from_params key
+  case Env.params[key]
+  when Hash
+    Env.params[key]
+  when ActionController::Parameters
+    Env.params[key].to_unsafe_h
+  else
+    {}
+  end
 end
