@@ -44,7 +44,7 @@ end
 event :generate_import_map, :finalize, on: :create do
   return unless import_item_class.mapped_column_keys.present?
   map = import_map_card
-  map.generate!
+  map.auto_map!
   add_subcard map
 end
 

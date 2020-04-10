@@ -1,8 +1,9 @@
 class ImportItem
   module Mapping
+    # return id for column value if it exists
     def map_field field
       value = self[field]
-      if method_name field, :validate
+      if method_name field, :map
         field_action :map, field, value
       else
         default_mapping field, value
@@ -10,10 +11,8 @@ class ImportItem
     end
 
     def default_mapping field, value
-      card = Card[value]
-      return unless card&.type_code&.in? Array.wrap(map_type(field))
-
-      card.id
+      status = catch(:skip_row) { validate_field field, value }
+      status == :failed ? nil : Card.fetch_id(value)
     end
 
     def merge_corrections

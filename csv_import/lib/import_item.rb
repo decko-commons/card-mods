@@ -13,10 +13,10 @@ class ImportItem
 
   delegate :override?, to: :import_manager
 
-  def initialize row, index=0, import_manager=nil
+  def initialize row, index=0, import_manager=nil, abort_on_error: true
     @row = row
     @import_manager = import_manager
-    @abort_on_error = true
+    @abort_on_error = abort_on_error
     @row_index = index # 0-based, not counting the header line
     @errors = []
     @cardid = nil

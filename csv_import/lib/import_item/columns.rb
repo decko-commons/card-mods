@@ -42,6 +42,10 @@ class ImportItem
       column_hash[column][:type] || column
     end
 
+    def map_types
+      @map_types ||= mapped_column_keys.map { |column| map_type column }.uniq
+    end
+
     def normalize_column_hash
       raise Card::Error, "@columns configuration missing" unless @columns
       case @columns
