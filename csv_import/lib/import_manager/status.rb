@@ -71,7 +71,7 @@ class ImportManager
     end
 
     def count key
-      self[:counts][key]
+      self[:counts][key].to_i
     end
 
     def percentage key

@@ -26,7 +26,7 @@ def history?
 end
 
 def content_hash
-  JSON.parse content
+  content.present? ? JSON.parse(content) : {}
 end
 
 def save_status
