@@ -1,4 +1,4 @@
-# Inherit from ImportItem to describe and process a csv row.
+# Inherit from ImportItem to describe and process a import item.
 # CsvFile creates an instance of ImportItem for every row and calls #execute_import on it
 class ImportItem
   include ::Card::Model::SaveHelper

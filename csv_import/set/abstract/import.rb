@@ -72,7 +72,7 @@ format :html do
 
   def help_text
     rows = card.import_item_class.column_keys.map { |s| s.to_s.humanize }
-    "expected csv row format: #{rows.join ', '}"
+    "expected import item format: #{rows.join ', '}"
   end
 
   def download_link

@@ -36,8 +36,8 @@ class ImportManager
 
   def validate_rows row_indices
     #row_count = row_indices ? row_indices.size : @csv_file.row_count
-    @csv_file.each_row self, row_indices do |csv_row|
-      csv_row.validate!
+    @csv_file.each_row self, row_indices do |import_item|
+      import_item.validate!
     end
   end
 
