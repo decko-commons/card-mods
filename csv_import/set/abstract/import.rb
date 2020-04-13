@@ -1,8 +1,5 @@
 card_accessor :import_status
-card_accessor :imported_rows
 card_accessor :import_map, type: :json
-
-delegate :mark_as_imported, :already_imported?, to: :imported_rows_card
 
 def import_file?
   true
