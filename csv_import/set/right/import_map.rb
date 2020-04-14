@@ -101,7 +101,7 @@ def normalize_submap_item column, cardname
 end
 
 def mapping_from_param
-  mapping_param&.to_unsafe_h.symbolize_keys
+  Env.hash(mapping_param).symbolize_keys
 end
 
 def mapping_param
