@@ -8,5 +8,5 @@
     - each_row_with_status status do |hash, index|
       %tr
         - each_cell columns, hash, index do |value, klass|
-          %td{ class: klass }
+          %td{ class: klass, title: value }
             = value

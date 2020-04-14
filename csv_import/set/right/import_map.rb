@@ -36,6 +36,13 @@ event :update_import_mapping, :validate, on: :update, when: :mapping_param do
   self.content = map.to_json
 end
 
+event :update_import_status, :finalize, on: :update, when: :mapping_param do
+  status_card = left.import_status_card
+  not_ready_items = status_card.status.status_indeces :not_ready
+  left.import_manager.validate not_ready_items
+  status_card.save_status
+end
+
 def auto_map!
   @map ||= {}
   auto_map_items
@@ -91,13 +98,19 @@ def normalize_submap column, submap
 end
 
 def normalize_submap_item column, cardname
-  return nil if cardname.blank?
-  ii = import_item_class.new column => cardname
-  if (card_id = ii.map_field column)
-    card_id
-  else
-    errors.add :content, "invalid #{column} mapping: #{cardname}"
+  normalize_cardname(cardname) do |cardname|
+    ii = import_item_class.new column => cardname
+    if (card_id = ii.map_field column)
+      card_id
+    else
+      errors.add :content, "invalid #{column} mapping: #{cardname}"
+    end
   end
+end
+
+def normalize_cardname cardname
+  cardname = Card::Env::Location.cardname_from_url(cardname) || cardname
+  cardname.blank? ? nil : yield(cardname)
 end
 
 def mapping_from_param
