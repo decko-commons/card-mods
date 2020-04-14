@@ -96,7 +96,7 @@ def normalize_submap_item column, cardname
   if (card_id = ii.map_field column)
     card_id
   else
-    errors.add :content, "invalid mapping: #{cardname}"
+    errors.add :content, "invalid #{column} mapping: #{cardname}"
   end
 end
 

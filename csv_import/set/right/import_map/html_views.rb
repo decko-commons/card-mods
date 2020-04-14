@@ -1,14 +1,16 @@
 
 format :html do
-  view :core, template: :haml
+  view :core do
+    wrap { haml(:core) }
+  end
 
   view :tabs, cache: :never do
     static_tabs tab_map
   end
 
   view :map_form do
-    card_form :update do
-      [submit_button(text: "Update Mappings"), render_tabs]
+    card_form :update, id: "mappingForm" do
+      submit_button(text: "Update Mappings")
     end
   end
 
