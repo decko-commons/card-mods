@@ -1,17 +1,13 @@
 # ImportManager coordinates the import of a CsvFile. It defines the conflict and error
 # policy. It collects all errors and provides extra data like corrections for row fields.
 class ImportManager
-  include Conflicts
-
   attr_reader :conflict_strategy, :corrections, :status
 
   def initialize csv_file, conflict_strategy: :skip, corrections: {}, status: {}
     @csv_file = csv_file
     @conflict_strategy = conflict_strategy
-
-    @corrections = corrections
+    @corrections = corrections || {}
     @status = init_status status
-    @imported_keys = ::Set.new
   end
 
   def import row_indices=nil, &block

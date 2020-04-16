@@ -11,14 +11,15 @@ class ImportItem
   attr_reader :errors, :row_index, :import_manager
   attr_accessor :status, :name
 
-  delegate :override?, to: :import_manager
+  delegate :status, :corrections, :conflict_strategy, to: :import_manager
 
   def initialize row, index=0, import_manager=nil, abort_on_error: false
     @row = row
-    @import_manager = import_manager
+    @import_manager = import_manager || ImportManager.new(nil)
     @abort_on_error = abort_on_error
     @row_index = index # 0-based, not counting the header line
     @errors = []
+    @conflict = nil
     @cardid = nil
     @before_corrected = {}
   end
@@ -33,10 +34,10 @@ class ImportItem
   end
 
   def import
-    handle_import do
+    logging_status :success do
       validate
       ImportLog.debug "start import"
-      import_card import_hash
+      handling_conflicts { import_card import_hash }
     end
   rescue => e
     log_error e
@@ -63,32 +64,37 @@ class ImportItem
 
   private
 
-  def import_status
-    import_manager&.status
+  def handling_conflicts
+    return yield unless @cardid
+    if conflict_strategy == :skip
+      @conflict = :skipped
+    else
+      yield
+      @conflict = :overridden
+    end
   end
 
-  def log_status
-    return unless import_status
+  def logging_status default_status
+    status_value = catch :skip_row do
+      yield
+      default_status
+    end
+    log_status status_value
+  end
 
-    item = { status: status, id: @cardid }
+  def log_status status_value
+    return unless status
+
+    item = { status: status_value, id: @cardid }
     item[:errors] = @errors if @errors.present?
-    import_status.update_item row_index, item
-  end
-
-  def corrections
-    import_manager&.corrections || []
+    item[:conflict] = @conflict if @conflict.present?
+    status.update_item row_index, item
   end
 
   def log_error error
+    log_status :failed
     ImportLog.debug "import failed: #{error.message}"
     ImportLog.debug error.backtrace
-  end
-
-  def handle_import
-    status = catch(:skip_row) { yield }
-    self.status = specify_success_status status
-    log_status
-    # run_hook status
   end
 
   # add the final import card
@@ -118,10 +124,5 @@ class ImportItem
       card.errors.clear
     end
     card
-  end
-
-  def specify_success_status status
-    return status if status.in? %i[failed ready not_ready]
-    @status == :overridden ? :overridden : :imported
   end
 end

@@ -35,7 +35,7 @@ def save_status status=nil
 end
 
 def generate!
-  im = import_manager
+  im = left.import_manager
   im.validate
   self.content = im.status.to_json
 end

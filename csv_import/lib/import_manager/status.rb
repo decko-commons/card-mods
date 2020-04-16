@@ -6,7 +6,7 @@
 
 class ImportManager
   class Status < Hash
-    STATUS_OPTIONS = %i[failed not_ready ready imported overridden importing]
+    STATUS_OPTIONS = %i[not_ready ready importing failed success]
     STATUS_INDEX = 0
     ID_INDEX = 1
     EXTRAS_INDEX = 2
@@ -59,7 +59,6 @@ class ImportManager
       STATUS_OPTIONS.each do |option|
         counts[option] = items.select { |i| i.first == option }.size
       end
-      counts[:success] = counts[:imported] + counts[:overridden]
       self[:counts] = counts
     end
 

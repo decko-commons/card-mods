@@ -2,7 +2,7 @@ class ImportItem
   # validation of import fields
   module Validation
     def validate!
-      handle_import { validate }
+      logging_status(:ready) { validate }
     end
 
     def validate
