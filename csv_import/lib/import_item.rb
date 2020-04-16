@@ -13,7 +13,7 @@ class ImportItem
 
   delegate :override?, to: :import_manager
 
-  def initialize row, index=0, import_manager=nil, abort_on_error: true
+  def initialize row, index=0, import_manager=nil, abort_on_error: false
     @row = row
     @import_manager = import_manager
     @abort_on_error = abort_on_error
@@ -27,6 +27,41 @@ class ImportItem
     # FIXME: make reasonable default!
     {}
   end
+
+  def original_row
+    @row.merge @before_corrected
+  end
+
+  def import
+    handle_import do
+      validate
+      ImportLog.debug "start import"
+      import_card import_hash
+    end
+  rescue => e
+    log_error e
+    raise e if @abort_on_error
+  ensure
+    yield self if block_given?
+  end
+
+  def skip status=:skipped
+    throw :skip_row, status
+  end
+
+  def error msg
+    @errors << msg
+  end
+
+  def [] key
+    @row[key]
+  end
+
+  def fields
+    @row
+  end
+
+  private
 
   def import_status
     import_manager&.status
@@ -44,37 +79,16 @@ class ImportItem
     import_manager&.corrections || []
   end
 
-  def original_row
-    @row.merge @before_corrected
-  end
-
-  def label
-    label = "##{@row_index + 1}"
-    label += ": #{@name}" if @name
-    label
-  end
-
-  def execute_import
-    handle_import do
-      validate
-      ImportLog.debug "start import"
-      import
-    end
-  rescue => e
-    ImportLog.debug "import failed: #{e.message}"
-    ImportLog.debug e.backtrace
-    raise e
+  def log_error error
+    ImportLog.debug "import failed: #{error.message}"
+    ImportLog.debug error.backtrace
   end
 
   def handle_import
     status = catch(:skip_row) { yield }
     self.status = specify_success_status status
     log_status
-      # run_hook status
-  end
-
-  def import
-    import_card import_hash
+    # run_hook status
   end
 
   # add the final import card
@@ -85,27 +99,6 @@ class ImportItem
       card.save
       card
     end
-  end
-
-  def skip status=:skipped
-    #if import_manager
-    throw :skip_row, status
-      # else
-    #  raise Card::Error, "Import Error: #{@errors.join("\n")}" # (for testing)
-    #  end
-  end
-
-  def error msg
-    @errors << msg
-    skip :failed if @abort_on_error
-  end
-
-  def [] key
-    @row[key]
-  end
-
-  def fields
-    @row
   end
 
   def method_missing method_name, *args
@@ -126,15 +119,6 @@ class ImportItem
     end
     card
   end
-
-  def error_list
-    import_status[:errors].each_with_object([]) do |(index, errors), list|
-      next if errors.empty?
-      list << "##{index + 1}: #{errors.join('; ')}"
-    end
-  end
-
-  private
 
   def specify_success_status status
     return status if status.in? %i[failed ready not_ready]

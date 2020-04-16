@@ -2,23 +2,26 @@ class ImportItem
   # validation of import fields
   module Validation
     def validate!
-      handle_import do
-        validate
-        @errors.present? ? :not_ready : :ready
-      end
+      handle_import { validate }
     end
 
     def validate
-      collect_errors { check_required_fields }
-      normalize
-      collect_errors { validate_fields }
+     collect_errors { check_required_fields }
+     collect_errors(:not_ready) { merge_corrections }
+     collect_errors do
+       normalize
+       validate_fields
+     end
+     detect_existing
+    end
+
+    def detect_existing
       if (name = import_hash[:name])
         @cardid = Card.fetch_id name
       end
     end
 
     def normalize
-      merge_corrections
       @row.each do |k, v|
         normalize_field k, v
       end
@@ -78,12 +81,9 @@ class ImportItem
       respond_to?(method_name) ? method_name : self.class.send(type, field)
     end
 
-    def collect_errors
-      @abort_on_error = false
+    def collect_errors status=:failed
       yield
-      skip :failed if @errors.present?
-    ensure
-      @abort_on_error = true
+      skip status if @errors.present?
     end
   end
 end

@@ -1,15 +1,12 @@
-
-
 # {
 #   act_ids: array,
 #   items: [[status, cardid, message_hash],[...],...
 #   counts: { status: count }
 # }
 
-
 class ImportManager
   class Status < Hash
-    STATUS_OPTIONS = %i[failed not_ready ready imported overridden]
+    STATUS_OPTIONS = %i[failed not_ready ready imported overridden importing]
     STATUS_INDEX = 0
     ID_INDEX = 1
     EXTRAS_INDEX = 2
@@ -22,8 +19,9 @@ class ImportManager
     def normalize
       symbolize_keys!
       self[:counts].symbolize_keys!
-      self[:items].each do |array|
+      items.each do |array|
         array[STATUS_INDEX] = array[STATUS_INDEX].to_sym
+        array[EXTRAS_INDEX]&.symbolize_keys!
       end
     end
 

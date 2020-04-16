@@ -10,15 +10,13 @@ end
 # extra data to override fields.
 class ScriptImportManager < ImportManager
   def initialize csv_file, conflict_strategy: :skip, error_policy: :fail, user: nil
-    super(csv_file, conflict_strategy, {})
+    super csv_file, conflict_strategy, {}
     @error_policy = error_policy
     @user = user
   end
 
-  def import_rows row_indices
-    with_user do
-      super
-    end
+  def import row_indices
+    with_user { super }
   end
 
   def with_user
@@ -31,16 +29,16 @@ class ScriptImportManager < ImportManager
     end
   end
 
-  def row_failed _import_item
-    case @error_policy
-    when :fail then
-      raise ImportError, @import_status[:errors].inspect
-    when :report then
-      puts @import_status[:errors].inspect
-    when :skip then
-      nil
-    end
-  end
+  # def row_failed _import_item
+  #   case @error_policy
+  #   when :fail then
+  #     raise ImportError, @import_status[:errors].inspect
+  #   when :report then
+  #     puts @import_status[:errors].inspect
+  #   when :skip then
+  #     nil
+  #   end
+  # end
 
   def log_status
     puts "#{@current_row.row_index}:  #{@current_row.name}"

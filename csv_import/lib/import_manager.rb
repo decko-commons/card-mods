@@ -14,38 +14,29 @@ class ImportManager
     @imported_keys = ::Set.new
   end
 
-  def init_status status
-    status.is_a?(Status) ? status : Status.new(status)
-  end
-
-  def import row_indices=nil
-    import_rows row_indices
-  end
-
-  def import_rows row_indices
+  def import row_indices=nil, &block
     @csv_file.each_row self, row_indices do |row|
-      row.execute_import
-      yield row if block_given?
+      row.import &block
     end
   end
 
   def validate row_indices=nil
-    @abort_on_error = false
-    validate_rows row_indices
-  end
-
-  def validate_rows row_indices
-    #row_count = row_indices ? row_indices.size : @csv_file.row_count
     @csv_file.each_row self, row_indices do |import_item|
       import_item.validate!
     end
   end
 
   def errors? row=nil
-    row ? errors(row).present? : errors.present?
+    errors(row).present?
   end
 
   def errors row=nil
     row ? status.item_errors(row) : status.errors
+  end
+
+  private
+
+  def init_status status
+    status.is_a?(Status) ? status : Status.new(status)
   end
 end

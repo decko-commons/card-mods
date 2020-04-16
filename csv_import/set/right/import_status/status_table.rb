@@ -1,4 +1,6 @@
 format :html do
+  LEFT_CELL = { ready: :checkbox, failed: :checkbox }.freeze
+
   def table status
     wrap do
       haml :table, status: status, columns: table_columns(status)
@@ -6,7 +8,7 @@ format :html do
   end
 
   def table_columns status
-    columns = [:row]
+    columns = [(LEFT_CELL[status] || :row)]
     columns << :exists unless status == :not_ready
     columns << :errors if status == :failed
     columns += import_item_class.column_keys
@@ -15,20 +17,28 @@ format :html do
 
   def each_cell columns, hash, index
     table_row_hash(columns, hash, index).each do |column, val|
-      val, klass = cell_mapping column, val
-      yield val, klass
+      styled_val, klass = cell_value_and_class column, val
+      yield styled_val, klass, cell_title(column, val)
     end
   end
 
-  def cell_mapping column, val
+  def cell_title column, val
+    column.in?(import_item_class.column_keys) ? val : ""
+  end
+
+  def cell_value_and_class column, val
     if (map = corrections[column])
-      if mapped = map[val]
-        [mapped_link(mapped), "mapped-import-cell"]
-      else
-        [val, "unmapped-import-cell"]
-      end
+      mappable_cell_value_and_class map[val], val
     else
       [val, ""]
+    end
+  end
+
+  def mappable_cell_value_and_class mapped, val
+    if mapped
+      [mapped_link(mapped), "mapped-import-cell"]
+    else
+      [val, "unmapped-import-cell"]
     end
   end
 
@@ -47,13 +57,21 @@ format :html do
     index + 1
   end
 
+  def checkbox_value index
+    check_box_tag("import_rows[#{index}]", true) + " #{index + 1}"
+  end
+
+  def item index
+    status.item_hash index
+  end
+
   def exists_value index
-    return unless (id = status.item_hash(index)[:id])
+    return unless (id = item(index)[:id])
     mapped_link id, icon_tag(:open_in_browser)
   end
 
   def errors_value index
-    errors = status.item_hash(index)["errors"]
+    errors = item(index)["errors"]
     return unless errors.present?
 
     popover_link errors.join("\n"), # haml(:errors, errors: errors),

@@ -11,18 +11,23 @@ class ImportItem
     end
 
     def default_mapping field, value
-      status = catch(:skip_row) { validate_field field, value }
-      status == :failed ? nil : Card.fetch_id(value)
+      Card.fetch_id value unless validate_field field, value
     end
 
     def merge_corrections
       corrections.each do |column, hash|
         next unless hash.present?
-        skip :not_ready unless (old = @row[column]) && (new = hash[old])
-        next if old == new
-        @before_corrected[column] = old
-        @row[column] = new
+        if (old = @row[column]) && (new = hash[old])
+          record_correction column, old, new unless old == new
+        else
+          error "unmapped #{column}"
+        end
       end
+    end
+
+    def record_correction column, old, new
+      @before_corrected[column] = old
+      @row[column] = new
     end
   end
 end

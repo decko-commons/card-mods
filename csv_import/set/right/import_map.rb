@@ -99,13 +99,17 @@ end
 
 def normalize_submap_item column, cardname
   normalize_cardname(cardname) do |cardname|
-    ii = import_item_class.new column => cardname
-    if (card_id = ii.map_field column)
-      card_id
-    else
-      errors.add :content, "invalid #{column} mapping: #{cardname}"
-    end
+    mapped_id(column, cardname) || invalid_mapping(column, cardname)
   end
+end
+
+def mapped_id column, cardname
+  import_item_class.new(column => cardname).map_field column
+end
+
+def invalid_mapping column, cardname
+  errors.add :content, "invalid #{column} mapping: #{cardname}"
+  nil
 end
 
 def normalize_cardname cardname

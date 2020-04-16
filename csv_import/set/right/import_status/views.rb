@@ -38,8 +38,12 @@ format :html do
     table :not_ready
   end
 
+  view :importing_tab do
+    table :importing
+  end
+
   view :ready_tab do
-    table :ready
+    import_form { table(:ready) }
   end
 
   view :success_tab do
@@ -53,6 +57,12 @@ format :html do
       progress_section group, config
     end.compact
     progress_bar(*sections)
+  end
+
+  def import_form
+    card_form :update do
+      [submit_button(text: "Import"), yield]
+    end
   end
 
   def progress_section group, config

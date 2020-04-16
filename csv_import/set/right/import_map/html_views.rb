@@ -10,7 +10,7 @@ format :html do
 
   view :map_form do
     card_form :update, id: "mappingForm" do
-      submit_button(text: "Update Mappings")
+      submit_button text: "Update Mappings"
     end
   end
 

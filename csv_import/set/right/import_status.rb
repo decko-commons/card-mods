@@ -7,6 +7,7 @@ include_set Abstract::Tabs
 STATUS_GROUPS = {
   not_ready: [:warning, "Not Ready"],
   ready: [:info, "Ready"],
+  importing: [:secondary, "Importing"],
   failed: [:danger, "Failure"],
   success: [:success, "Success"]
 }.freeze
@@ -39,6 +40,3 @@ def generate!
   self.content = im.status.to_json
 end
 
-def import_manager
-  ImportManager.new csv_file, corrections: corrections
-end
