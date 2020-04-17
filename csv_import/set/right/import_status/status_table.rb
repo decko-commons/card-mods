@@ -10,7 +10,7 @@ format :html do
   def table_columns status
     columns = [(LEFT_CELL[status] || :row)]
     columns << :exists unless status == :not_ready
-    columns << :errors if status == :failed
+    columns << :errors if %i[failed not_ready].include?(status)
     columns += import_item_class.column_keys
     columns
   end
