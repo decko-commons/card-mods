@@ -3,7 +3,7 @@
 class CsvFile
   # @param headers [true, false, :detect] (false) if true the import raises an error
   #    if the csv file has no or wrong headers
-  def initialize path_or_file, row_class, col_sep: ",", encoding: "utf-8", headers: false
+  def initialize path_or_file, row_class, col_sep: ",", encoding: "utf-8", headers: true
     raise ArgumentError, "no row class given" unless row_class.is_a?(Class)
     raise ArgumentError, "#{row_class} must inherit from ImportItem" unless row_class < ImportItem
     @row_class = row_class
@@ -12,6 +12,7 @@ class CsvFile
     @headers = headers
 
     read_csv path_or_file
+    @rows.shift if @headers
   end
 
   # yields the rows of the csv file as ImportItem objects
