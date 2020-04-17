@@ -1,4 +1,10 @@
-.import-status-buttons.d-flex.justify-content-end
-  = submit_button text: "Import"
-.status-table-section
-  = table
+._import-status-form
+  .import-status-buttons.py-2.d-flex.justify-content-between
+    .checkboxipants
+      = check_box_tag '_check-all', '', false, class: 'checkbox-button'
+      = label_tag '_check-all', 'all'
+    .submitipants
+      = submit_button text: "Cool Import", class: "mr-2"
+      = submit_button name: :conflict_strategy, value: "override", text: "Hot Import"
+  .status-table-section
+    = table

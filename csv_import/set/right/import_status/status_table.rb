@@ -58,7 +58,8 @@ format :html do
   end
 
   def checkbox_value index
-    check_box_tag("import_rows[#{index}]", true) + " #{index + 1}"
+    check_box_tag("import_rows[#{index}]", true, false, class: "_import-row-checkbox") +
+      " #{index + 1}"
   end
 
   def item index
