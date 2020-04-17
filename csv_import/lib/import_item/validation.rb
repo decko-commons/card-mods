@@ -37,7 +37,7 @@ class ImportItem
 
     def normalize_field field, value
       field_action :normalize, field, value do |result|
-        @row_field = result
+        @row[field] = result
       end
     end
 

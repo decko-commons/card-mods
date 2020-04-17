@@ -29,6 +29,10 @@ class ImportItem
     {}
   end
 
+  def status_hash
+    status.item_hash row_index
+  end
+
   def original_row
     @row.merge @before_corrected
   end
@@ -37,7 +41,9 @@ class ImportItem
     logging_status :success do
       validate
       ImportLog.debug "start import"
-      handling_conflicts { import_card import_hash }
+      handling_conflicts do
+        import_card import_hash
+      end
     end
   rescue => e
     log_error e
@@ -92,6 +98,7 @@ class ImportItem
   end
 
   def log_error error
+    error e.message
     log_status :failed
     ImportLog.debug "import failed: #{error.message}"
     ImportLog.debug error.backtrace
