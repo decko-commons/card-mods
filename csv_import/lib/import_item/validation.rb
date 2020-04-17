@@ -41,6 +41,7 @@ class ImportItem
       end
     end
 
+    # confusing.  returns nil if valid and @errors (I think) if not
     def validate_field field, value
       valid =
         if method_name field, :validate
