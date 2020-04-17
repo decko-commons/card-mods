@@ -67,11 +67,17 @@ format :html do
 
   def exists_value index
     return unless (id = item(index)[:id])
-    mapped_link id, icon_tag(:open_in_browser)
+    mapped_link(id, icon_tag(:open_in_browser)) + conflict_note(item(index)[:conflict])
+  end
+
+  def conflict_note conflict
+    return "" unless conflict
+
+    raw(" <small class=\"faint\">(#{conflict})</small>")
   end
 
   def errors_value index
-    errors = item(index)["errors"]
+    errors = item(index)[:errors]
     return unless errors.present?
 
     popover_link errors.join("\n"), # haml(:errors, errors: errors),

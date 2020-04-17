@@ -103,6 +103,7 @@ class ImportItem
       self.name = card_args[:name]
       card = Card.fetch self.name, new: card_args
       card.save
+      @cardid = card.id if card.id
       card
     end
   end

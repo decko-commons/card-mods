@@ -17,7 +17,7 @@ format :html do
   end
 
   def default_tab
-    :"#{first_group_with_rows}_tab"
+    tab_from_params || :"#{first_group_with_rows}_tab"
   end
 
   def first_group_with_rows
@@ -31,7 +31,7 @@ format :html do
   end
 
   view :failed_tab do
-    table :failed
+    import_form { table :failed }
   end
 
   view :not_ready_tab do
@@ -43,11 +43,11 @@ format :html do
   end
 
   view :ready_tab do
-    import_form { table(:ready) }
+    import_form { table :ready }
   end
 
   view :success_tab do
-    table(:imported) + table(:overridden)
+    table(:success)
   end
 
   view :core, cache: :never, template: :haml
@@ -60,8 +60,8 @@ format :html do
   end
 
   def import_form
-    card_form :update do
-      [submit_button(text: "Import"), yield]
+    card.left.format.card_form :update, success: { mark: card.name } do
+      haml :import_form, table: yield
     end
   end
 
