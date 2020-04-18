@@ -98,7 +98,7 @@ class ImportItem
   end
 
   def log_error error
-    error e.message
+    error error.message
     log_status :failed
     ImportLog.debug "import failed: #{error.message}"
     ImportLog.debug error.backtrace

@@ -20,7 +20,7 @@ class ImportItem
         if (old = @row[column]) && (new = hash[old])
           record_correction column, old, new unless old == new
         else
-          error "unmapped #{column.cardname}"
+          error "unmapped #{column}"
         end
       end
     end
