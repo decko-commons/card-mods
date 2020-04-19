@@ -21,17 +21,25 @@ class ImportItem
       end
     end
 
+    def each_value
+      @row.each_key do |field|
+        value_array(field).each do |value|
+          yield field, value
+        end
+      end
+    end
+
     def normalize
-      @row.each do |k, v|
-        normalize_field k, v
+      each_value do |field, value|
+        normalize_field field, value
       end
     end
 
     private
 
     def validate_fields
-      @row.each do |k, v|
-        validate_field k, v
+      each_value do |field, value|
+        validate_field field, value
       end
     end
 

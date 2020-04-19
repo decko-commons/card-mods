@@ -15,18 +15,36 @@ class ImportItem
     end
 
     def merge_corrections
-      corrections.each do |column, hash|
-        next unless hash.present?
-        if (old = @row[column]) && (new = hash[old])
-          record_correction column, old, new unless old == new
-        else
-          error "unmapped #{column}"
-        end
+      corrections.each do |column, map|
+        next unless map.present?
+
+        correct_value(column, map) || error("unmapped #{column}")
       end
     end
 
+    def correct_value column, map
+      return true unless (old = @row[column]) # no val returns true here (see required)
+
+      new = catch(:unmapped_value) { correct_from_map column, map }
+      case new
+      when false
+        false
+      when old
+        true
+      else
+        record_correction column, old, new
+      end
+    end
+
+    def correct_value_from_map column, map
+      corrected_values = value_array(column).map do |old_value|
+        map[old_value] || throw(:unmapped_value, false)
+      end
+      corrected_values.join separator
+    end
+
     def record_correction column, old, new
-      @before_corrected[column] = old
+      @before_corrected[column] = @row_column
       @row[column] = new
     end
   end

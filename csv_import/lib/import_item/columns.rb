@@ -46,6 +46,12 @@ class ImportItem
       @map_types ||= mapped_column_keys.map { |column| map_type column }.uniq
     end
 
+    def separator column
+      column_hash[column][:separator]
+    rescue
+      "jhi"
+    end
+
     def normalize_column_hash
       raise Card::Error, "@columns configuration missing" unless @columns
       case @columns
@@ -59,5 +65,5 @@ class ImportItem
     end
   end
 
-  delegate :required, :column_hash, :mapped_column_keys, :map_type, :column_keys, to: :class
+  delegate :required, :column_hash, :mapped_column_keys, :map_type, :column_keys, :separator, to: :class
 end

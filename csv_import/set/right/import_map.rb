@@ -70,17 +70,18 @@ private
 def auto_map_items
   csv_file.each_row do |import_item|
     mapped_column_keys.each do |column|
-      auto_map_item import_item, column
+      auto_map_item_vals import_item, column
     end
   end
 end
 
-def auto_map_item import_item, column
-  val = import_item[column]
+def auto_map_item_vals import_item, column
   submap = @map[map_type(column)] ||= {}
-  return if val.strip.blank? || submap.key?(val)
+  import_item.value_array(column).each do |val|
+    next if val.strip.blank? || submap.key?(val)
 
-  submap[val] = import_item.map_field column
+    submap[val] = import_item.map_field column
+  end
 end
 
 def merge_mapping mapping

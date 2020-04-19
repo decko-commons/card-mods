@@ -4,7 +4,7 @@ class ImportItem
   include ::Card::Model::SaveHelper
 
   extend Columns
-  include Normalizer
+  include HelperMethods
   include Validation
   include Mapping
 
@@ -62,6 +62,17 @@ class ImportItem
 
   def [] key
     @row[key]
+  end
+
+  def value_array key
+    val = self[key]
+    if val.blank?
+      []
+    elsif (sep = separator key)
+      val.split(/\s*#{Regexp.escape sep}\s*/)
+    else
+      [val]
+    end
   end
 
   def fields
