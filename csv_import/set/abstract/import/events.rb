@@ -38,6 +38,7 @@ def import! row_indeces
   import_manager.import row_indeces do |_row|
     # refresh seems inefficient, but without this it won't keep updating
     import_status_card.refresh(true).save_status status
+    import_status_card.expire
   end
 end
 

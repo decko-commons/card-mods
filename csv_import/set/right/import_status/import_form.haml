@@ -1,10 +1,17 @@
 ._import-status-form
+  = hidden_field_tag
   .import-status-buttons.py-2.d-flex.justify-content-between
-    .checkboxipants
-      = check_box_tag '_check-all', '', false, class: 'checkbox-button'
+    .import-status-checkbox
+      = check_box_tag '_check-all', '', false, class: '_check-all checkbox-button'
       = label_tag '_check-all', 'all'
-    .submitipants
-      = submit_button text: "Cool Import", class: "mr-2"
-      = submit_button name: :conflict_strategy, value: "override", text: "Hot Import"
+    .import-status-radio
+      %span.preface
+        If exists:
+      = radio_button_tag :conflict_strategy, "skip", true
+      = label_tag :conflict_strategy, "Keep"
+      = radio_button_tag :conflict_strategy, "override", false
+      = label_tag :conflict_strategy, "Override"
+    .import-status-submit
+      = submit_button name: :conflict_strategy, value: "override", text: "Import"
   .status-table-section
     = table

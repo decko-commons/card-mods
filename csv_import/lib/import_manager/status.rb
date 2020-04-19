@@ -1,3 +1,7 @@
+# TODO: optimize
+# We should keep the (less repetitive) json format as it is,
+# but only convert to that format when we're ready to store.
+
 # {
 #   act_ids: array,
 #   items: [[status, cardid, message_hash],[...],...

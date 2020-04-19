@@ -13,11 +13,7 @@ class ImportItem
         normalize
         validate_fields
       end
-      detect_existing
-    end
-
-    def reset_status
-
+      @cardid = detect_existing
     end
 
     def detect_existing
