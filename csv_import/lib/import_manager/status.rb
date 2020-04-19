@@ -35,14 +35,9 @@ class ImportManager
     end
 
     def item_hash num
-      return {} unless (array = items[num])
-      hash = array[2] || {}
-      hash.merge simple_item_hash(num)
-    end
-
-    def simple_item_hash num
-      array = items[num]
-      { status: array[STATUS_INDEX], id: array[ID_INDEX] }
+      with_item_array num do |array|
+        (array[EXTRAS_INDEX] || {}).merge simple_item_hash(num)
+      end
     end
 
     def items
@@ -80,6 +75,20 @@ class ImportManager
     def percentage key
       return 0 if count(:total) == 0 || count(key).nil?
       (count(key) / count(:total).to_f * 100).floor(2)
+    end
+
+    private
+
+    def with_item_array num
+      return {} unless (array = items[num])
+
+      yield array
+    end
+
+    def simple_item_hash num
+      with_item_array num do |array|
+        { status: array[STATUS_INDEX], id: array[ID_INDEX] }
+      end
     end
   end
 end
