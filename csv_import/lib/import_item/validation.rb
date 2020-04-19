@@ -6,13 +6,18 @@ class ImportItem
     end
 
     def validate
-     collect_errors { check_required_fields }
-     collect_errors(:not_ready) { merge_corrections }
-     collect_errors do
-       normalize
-       validate_fields
-     end
-     detect_existing
+      @errors = []
+      collect_errors { check_required_fields }
+      collect_errors(:not_ready) { merge_corrections }
+      collect_errors do
+        normalize
+        validate_fields
+      end
+      detect_existing
+    end
+
+    def reset_status
+
     end
 
     def detect_existing

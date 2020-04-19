@@ -12,7 +12,7 @@ STATUS_GROUPS = {
   success: [:success, "Success"]
 }.freeze
 
-delegate :csv_file, :import_item_class, :corrections, to: :left
+delegate :csv_file, :import_item_class, :corrections, :import_manager, to: :left
 
 def status
   @status ||= ImportManager::Status.new content_hash
@@ -34,9 +34,13 @@ def save_status status=nil
   update content: (status || self.status).to_json
 end
 
+def reset status_option
+  import_manager.validate(status.status_indeces status_option)
+  save_status import_manager.status
+end
+
 def generate!
-  im = left.import_manager
-  im.validate
-  self.content = im.status.to_json
+  import_manager.validate
+  self.content = import_manager.status.to_json
 end
 

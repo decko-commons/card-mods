@@ -15,31 +15,63 @@ format :html do
     columns
   end
 
-  def each_cell columns, hash, index
-    table_row_hash(columns, hash, index).each do |column, val|
-      styled_val, klass = cell_value_and_class column, val
-      yield styled_val, klass, cell_title(column, val)
+  def each_row_with_status option
+    import_manager.each_row(status.status_indeces(option)) do |item|
+      yield item
     end
+  end
+
+  def each_cell columns, item
+    columns.each do |col|
+      ch = cell_hash col, item
+
+      yield ch[:value], ch[:class], ch[:title]
+
+    end
+      # cell_title(column, val)
+  end
+
+  def import_manager
+    card.left.import_manager
   end
 
   def cell_title column, val
     column.in?(import_item_class.column_keys) ? val : ""
   end
 
-  def cell_value_and_class column, val
+  def cell_hash column, item
+    cell_type =  column.in?(import_item_class.column_keys) ? :import_content : :metadata
+    send "#{cell_type}_cell_hash", column, item
+  end
+
+  def import_content_cell_hash column, item
     if (map = corrections[column])
-      mappable_cell_value_and_class map[val], val
+      mappable_cell_hash map, column, item
     else
-      [val, ""]
+      val = item[column]
+      { value: val, title: val }
     end
   end
 
-  def mappable_cell_value_and_class mapped, val
-    if mapped
-      [mapped_link(mapped), "mapped-import-cell"]
-    else
-      [val, "unmapped-import-cell"]
+  def metadata_cell_hash column, item
+    { value: send("#{column}_value", item) }
+  end
+
+  def mappable_cell_hash map, column, item
+    klass = "mapped-import-cell"
+    raw = []
+    styled = []
+    item.value_array(column).each do |value|
+      if mapped = map[value]
+        raw << mapped
+        styled << mapped_link(mapped)
+      else
+        klass = "unmapped-import-cell"
+        raw << value
+        styled << value
+      end
     end
+    { value: styled.join(", "), title: raw.join(", "), class: klass }
   end
 
   def mapped_link id, text=nil
@@ -47,28 +79,29 @@ format :html do
     modal_link text, path: { mark: id, view: :expanded_bar }
   end
 
-  def table_row_hash columns, hash, index
-    columns.each_with_object({}) do |col, row_hash|
-      row_hash[col] = hash.key?(col) ? hash[col] : send("#{col}_value", index)
-    end
+  # def table_row_hash columns, hash, index
+  #   columns.each_with_object({}) do |col, row_hash|
+  #     row_hash[col] = hash.key?(col) ? hash[col] : send("#{col}_value", index)
+  #   end
+  # end
+
+  def row_value item
+    item.index + 1
   end
 
-  def row_value index
-    index + 1
+  def checkbox_value item
+    check_box_tag("import_rows[#{item.index}]", true, false, class: "_import-row-checkbox") +
+      " #{row_value item}"
   end
 
-  def checkbox_value index
-    check_box_tag("import_rows[#{index}]", true, false, class: "_import-row-checkbox") +
-      " #{index + 1}"
-  end
-
-  def item index
+  def status_item index
     status.item_hash index
   end
 
-  def exists_value index
-    return unless (id = item(index)[:id])
-    mapped_link(id, icon_tag(:open_in_browser)) + conflict_note(item(index)[:conflict])
+  def exists_value item
+    si = status_item item.index
+    return unless (id = si[:id])
+    mapped_link(id, icon_tag(:open_in_browser)) + conflict_note(si[:conflict])
   end
 
   def conflict_note conflict
@@ -77,8 +110,8 @@ format :html do
     raw(" <small class=\"faint\">(#{conflict})</small>")
   end
 
-  def errors_value index
-    errors = item(index)[:errors]
+  def errors_value item
+    errors = status_item(item.index)[:errors]
     return unless errors.present?
 
     popover_link errors.join("\n"), # haml(:errors, errors: errors),

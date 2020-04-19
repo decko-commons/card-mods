@@ -12,7 +12,7 @@ class ImportItem
     def prep_subfields hash
       hash = select_present hash
       hash.each_key do |field|
-        hash[field] = value_array(field) if separator(field)
+        hash[field] =  { content: value_array(field) } if separator(field)
       end
       hash
     end

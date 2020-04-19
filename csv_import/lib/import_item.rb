@@ -8,7 +8,7 @@ class ImportItem
   include Validation
   include Mapping
 
-  attr_reader :errors, :row_index, :import_manager
+  attr_reader :errors, :index, :cardid, :import_manager
   attr_accessor :status, :name
 
   delegate :status, :corrections, :conflict_strategy, to: :import_manager
@@ -17,7 +17,7 @@ class ImportItem
     @row = row
     @import_manager = import_manager || ImportManager.new(nil)
     @abort_on_error = abort_on_error
-    @row_index = index # 0-based, not counting the header line
+    @index = index # 0-based, not counting the header line
     @errors = []
     @conflict = nil
     @cardid = nil
@@ -30,7 +30,7 @@ class ImportItem
   end
 
   def status_hash
-    status.item_hash row_index
+    status.item_hash index
   end
 
   def original_row
@@ -105,7 +105,7 @@ class ImportItem
     item = { status: status_value, id: @cardid }
     item[:errors] = @errors if @errors.present?
     item[:conflict] = @conflict if @conflict.present?
-    status.update_item row_index, item
+    status.update_item index, item
   end
 
   def log_error error

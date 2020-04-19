@@ -47,9 +47,7 @@ class ImportItem
     end
 
     def separator column
-      column_hash[column][:separator]
-    rescue
-      "jhi"
+      column_hash.dig column, :separator
     end
 
     def normalize_column_hash

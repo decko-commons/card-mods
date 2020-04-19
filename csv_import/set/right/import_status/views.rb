@@ -24,12 +24,6 @@ format :html do
     STATUS_GROUPS.keys.find { |status| count(status).positive? }
   end
 
-  def each_row_with_status option
-    csv_file.selected_rows(status.status_indeces(option)) do |hash, index|
-      yield hash, index
-    end
-  end
-
   view :failed_tab do
     import_form { table :failed }
   end

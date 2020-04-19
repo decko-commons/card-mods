@@ -25,25 +25,29 @@ class ImportItem
     def correct_value column, map
       return true unless (old = @row[column]) # no val returns true here (see required)
 
-      new = catch(:unmapped_value) { correct_from_map column, map }
+      new = catch(:unmapped_value) { correct_value_from_map column, map }
       case new
       when false
         false
       when old
         true
       else
-        record_correction column, old, new
+        record_correction column, new
       end
     end
 
     def correct_value_from_map column, map
       corrected_values = value_array(column).map do |old_value|
-        map[old_value] || throw(:unmapped_value, false)
+        stringify(map[old_value]) || throw(:unmapped_value, false)
       end
-      corrected_values.join separator
+      corrected_values.join separator(column)
     end
 
-    def record_correction column, old, new
+    def stringify value
+      value.is_a?(Integer) ? "~#{value}" : value
+    end
+
+    def record_correction column, new
       @before_corrected[column] = @row_column
       @row[column] = new
     end

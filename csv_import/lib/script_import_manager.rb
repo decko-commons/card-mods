@@ -41,7 +41,7 @@ class ScriptImportManager < ImportManager
   # end
 
   def log_status
-    puts "#{@current_row.row_index}:  #{@current_row.name}"
+    puts "#{@current_row.index}:  #{@current_row.name}"
     super
   end
 end

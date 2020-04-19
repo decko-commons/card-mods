@@ -10,16 +10,18 @@ class ImportManager
     @status = init_status status
   end
 
-  def import row_indices=nil, &block
+  def each_row row_indices=nil
     @csv_file.each_row self, row_indices do |row|
-      row.import &block
+      yield row
     end
   end
 
-  def validate row_indices=nil
-    @csv_file.each_row self, row_indices do |import_item|
-      import_item.validate!
-    end
+  def import row_indices=nil, &block
+    each_row(row_indices) { |row| row.import &block }
+  end
+
+  def validate row_indices=nil, &block
+    each_row(row_indices) { |row| row.validate! &block }
   end
 
   def errors? row=nil

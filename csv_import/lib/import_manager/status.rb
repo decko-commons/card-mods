@@ -27,7 +27,7 @@ class ImportManager
 
     def update_item num, update_hash
       num = num.to_i
-      hash = item_hash(num).merge update_hash
+      hash = simple_item_hash(num).merge update_hash # drops conflict/error info
       array = [hash.delete(:status), hash.delete(:id)]
       array << hash if hash.present?
       self[:items][num] = array
@@ -35,9 +35,14 @@ class ImportManager
     end
 
     def item_hash num
-      return {} unless (array = self[:items][num])
+      return {} unless (array = items[num])
       hash = array[2] || {}
-      hash.merge status: array[STATUS_INDEX], id: array[ID_INDEX]
+      hash.merge simple_item_hash(num)
+    end
+
+    def simple_item_hash num
+      array = items[num]
+      { status: array[STATUS_INDEX], id: array[ID_INDEX] }
     end
 
     def items
