@@ -45,9 +45,6 @@ class ImportItem
         import_card import_hash
       end
     end
-  rescue => e
-    log_error e
-    raise e if @abort_on_error
   ensure
     yield self if block_given?
   end
@@ -93,10 +90,17 @@ class ImportItem
 
   def logging_status default_status
     status_value = catch :skip_row do
-      yield
+      rescuing_errors { yield }
       default_status
     end
     log_status status_value
+  end
+
+  def rescuing_errors
+    yield
+  rescue StandardError => e
+    major_error e
+    raise e if @abort_on_error
   end
 
   def log_status status_value
@@ -106,13 +110,6 @@ class ImportItem
     item[:errors] = @errors if @errors.present?
     item[:conflict] = @conflict if @conflict.present?
     status.update_item index, item
-  end
-
-  def log_error error
-    error error.message
-    skip :failed
-    ImportLog.debug "import failed: #{error.message}"
-    ImportLog.debug error.backtrace
   end
 
   # add the final import card
@@ -134,14 +131,21 @@ class ImportItem
     @row.keys.include? method_name
   end
 
-  def pick_up_card_errors card=nil
-    card = yield if block_given?
-    if card
-      card.errors.each do |error_key, msg|
-        error "#{card.name} (#{error_key}): #{msg}"
-      end
-      card.errors.clear
+  def pick_up_card_errors
+    card = yield
+    return card unless card.errors.any?
+
+    card.errors.each do |error_key, msg|
+      error "#{card.name} (#{error_key}): #{msg}"
     end
-    card
+    card.errors.clear
+    skip :failed
+  end
+
+  def major_error error
+    error error.message
+    skip :failed
+    ImportLog.debug "import failed: #{error.message}"
+    ImportLog.debug error.backtrace
   end
 end
