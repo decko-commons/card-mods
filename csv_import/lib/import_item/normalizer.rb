@@ -10,6 +10,15 @@ class ImportItem
       value.gsub "\n", "<br>"
     end
 
+    def standard_subfields hash
+      hash = hash.select { |_k, v| v.present? }
+      hash.each do |k, v|
+        next unless v.is_a? Integer
+        hash[k] = "~#{v}"
+      end
+      hash
+    end
+
     def select_present hash
       hash.select { |_k, v| v.present? }
     end
