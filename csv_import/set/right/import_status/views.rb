@@ -25,7 +25,7 @@ format :html do
   end
 
   view :failed_tab do
-    import_form { table :failed }
+    import_form(:failed) { table :failed }
   end
 
   view :not_ready_tab do
@@ -37,7 +37,7 @@ format :html do
   end
 
   view :ready_tab do
-    import_form { table :ready }
+    import_form(:ready) { table :ready }
   end
 
   view :success_tab do
@@ -53,9 +53,9 @@ format :html do
     progress_bar(*sections)
   end
 
-  def import_form
+  def import_form status
     card.left.format.card_form :update, success: { mark: card.name } do
-      haml :import_form, table: yield
+      haml :import_form, table: yield, status: status
     end
   end
 

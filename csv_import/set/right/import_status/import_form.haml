@@ -1,5 +1,5 @@
 ._import-status-form
-  = hidden_field_tag
+  = hidden_field_tag :tab, status
   .import-status-buttons.py-2.d-flex.justify-content-between
     .import-status-checkbox
       = check_box_tag '_check-all', '', false, class: '_check-all checkbox-button'
