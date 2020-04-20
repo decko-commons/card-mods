@@ -37,9 +37,14 @@ class ImportItem
 
     def correct_value_from_map column, map
       corrected_values = value_array(column).map do |old_value|
-        stringify(map[old_value]) || throw(:unmapped_value, false)
+        stringify(map[old_value]) || unmapped_value(column)
       end
-      corrected_values.join separator(column)
+      corrected_values.compact.join separator(column)
+    end
+
+    def unmapped_value column
+      return nil unless column.in? required
+      throw :unmapped_value, false
     end
 
     def stringify value
