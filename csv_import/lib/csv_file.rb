@@ -64,44 +64,44 @@ class CsvFile
   end
 
   def read_csv_from_file_handle file
-    CSV.parse File.read(file.path), csv_options
-    # file.read keeps returning ascii :(
+    CSV.parse to_utf_8(file.read, force: true), csv_options
+    # CSV.parse file.read, csv_options
   end
 
-  # def rescue_encoding_error
-  #   yield
-  # rescue ArgumentError => _e
-  #   # if parsing with utf-8 encoding fails, assume it's iso-8859-1 encoding
-  #   # and convert to utf-8
-  #   with_encoding "iso-8859-1:utf-8" do
-  #     yield
-  #   end
-  # end
+  def rescue_encoding_error
+    yield
+  rescue ArgumentError => _e
+    # if parsing with utf-8 encoding fails, assume it's iso-8859-1 encoding
+    # and convert to utf-8
+    with_encoding "iso-8859-1:utf-8" do
+      yield
+    end
+  end
 
-  # def to_utf_8 str, encoding="utf-8", force=false
-  #   if force
-  #     str.force_encoding("iso-8859-1").encode("utf-8")
-  #   else
-  #     str.encode encoding
-  #   end
-  # rescue Encoding::UndefinedConversionError => _e
-  #   # If parsing with utf-8 encoding fails, assume it's iso-8859-1 encoding
-  #   # and convert to utf-8.
-  #   # If that failed to force it to iso-8859-1 before converting it.
-  #   to_utf_8 str, "iso-8859-1", encoding == "iso-8859-1"
-  # end
+  def to_utf_8 str, encoding: "utf-8", force: false
+    if force
+      str.force_encoding encoding
+    else
+      str.encode encoding
+    end
+  rescue Encoding::UndefinedConversionError => _e
+    # If parsing with utf-8 encoding fails, assume it's iso-8859-1 encoding
+    # and convert to utf-8.
+    # If that failed to force it to iso-8859-1 before converting it.
+    to_utf_8 str, encoding: "iso-8859-1", force: (encoding == "iso-8859-1")
+  end
 
   def csv_options
     { col_sep: @col_sep, encoding: @encoding }
   end
 
-  # def with_encoding encoding
-  #   enc = @encoding
-  #   @encoding = encoding
-  #   yield
-  # ensure
-  #   @encoding = enc
-  # end
+  def with_encoding encoding
+    enc = @encoding
+    @encoding = encoding
+    yield
+  ensure
+    @encoding = enc
+  end
 
   def all_rows
     @rows.each.with_index do |row, i|
