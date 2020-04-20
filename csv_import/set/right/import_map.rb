@@ -80,7 +80,7 @@ def auto_map_item_vals import_item, column
   import_item.value_array(column).each do |val|
     next if val.strip.blank? || submap.key?(val)
 
-    submap[val] = import_item.map_field column
+    submap[val] = import_item.map_field column, val
   end
 end
 
@@ -105,7 +105,7 @@ def normalize_submap_item column, cardname
 end
 
 def mapped_id column, cardname
-  import_item_class.new(column => cardname).map_field column
+  import_item_class.new(column => cardname).map_field column, cardname
 end
 
 def invalid_mapping column, cardname

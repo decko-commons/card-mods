@@ -1,8 +1,7 @@
 class ImportItem
   module Mapping
     # return id for column value if it exists
-    def map_field field
-      value = self[field]
+    def map_field field, value
       if method_name field, :map
         field_action :map, field, value
       else
