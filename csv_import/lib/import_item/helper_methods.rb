@@ -6,7 +6,7 @@ class ImportItem
     end
 
     def to_html value
-      value.gsub "\n", "<br>"
+      value.gsub "\n", "<br>\n"
     end
 
     def prep_subfields hash
