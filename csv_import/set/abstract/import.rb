@@ -28,7 +28,8 @@ def import_manager
 end
 
 def conflict_strategy
-  Env.params[:conflict_strategy]&.to_sym || :skip
+  cs = Env.params[:conflict_strategy]
+  cs ? cs.to_sym : :skip
 end
 
 def corrections
