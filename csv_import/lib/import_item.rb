@@ -144,8 +144,8 @@ class ImportItem
 
   def major_error error
     error error.message
-    skip :failed
     ImportLog.debug "import failed: #{error.message}"
     ImportLog.debug error.backtrace
+    skip :failed
   end
 end
