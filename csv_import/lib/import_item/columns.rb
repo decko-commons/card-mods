@@ -46,9 +46,17 @@ class ImportItem
       @map_types ||= mapped_column_keys.map { |column| map_type column }.uniq
     end
 
+    def headers
+      @headers ||= column_keys.map do |column|
+        column_hash[column][:header] || autoheader(column)
+      end
+    end
+
     def separator column
       column_hash.dig column, :separator
     end
+
+    private
 
     def normalize_column_hash
       raise Card::Error, "@columns configuration missing" unless @columns
@@ -60,6 +68,11 @@ class ImportItem
       else
         raise Card::Error, "@column configuration must be Hash or Array"
       end
+    end
+
+    def autoheader column
+      string = Card::Codename[column] ? column.cardname : column.to_s
+      string.tr("_", " ").tr("*", "").split.map(&:capitalize).join(" ")
     end
   end
 
