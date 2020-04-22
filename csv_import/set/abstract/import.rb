@@ -53,8 +53,8 @@ format :html do
   end
 
   def help_text
-    rows = card.import_item_class.column_keys.map { |s| s.to_s.humanize }
-    "expected import item format: #{rows.join ', '}"
+    headers = card.import_item_class.headers
+    "expected import item format: #{headers.join ', '}"
   end
 
   def download_link
