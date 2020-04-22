@@ -47,9 +47,11 @@ class ImportItem
     end
 
     def headers
-      @headers ||= column_keys.map do |column|
-        column_hash[column][:header] || autoheader(column)
-      end
+      @headers ||= column_keys.map { |column| header column }
+    end
+
+    def header column
+      column_hash[column][:header] || autoheader(column)
     end
 
     def separator column

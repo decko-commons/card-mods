@@ -16,7 +16,7 @@ format :html do
   end
 
   def column_title column
-    import_item_class.headers[column] || column.to_s.capitalize
+    import_item_class.header(column) || column.to_s.capitalize
   end
 
   def each_row_with_status option
