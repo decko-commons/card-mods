@@ -15,8 +15,12 @@ format :html do
     columns
   end
 
+  def import_column? column
+    column.in? import_item_class.column_keys
+  end
+
   def column_title column
-    import_item_class.header(column) || column.to_s.capitalize
+    import_column?(column) ? import_item_class.header(column) : column.to_s.capitalize
   end
 
   def each_row_with_status option
@@ -44,7 +48,7 @@ format :html do
   end
 
   def cell_hash column, item
-    cell_type =  column.in?(import_item_class.column_keys) ? :import_content : :metadata
+    cell_type = import_column?(column) ? :import_content : :metadata
     send "#{cell_type}_cell_hash", column, item
   end
 
