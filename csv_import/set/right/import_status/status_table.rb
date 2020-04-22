@@ -15,6 +15,10 @@ format :html do
     columns
   end
 
+  def column_title column
+    import_item_class.headers[column] || column.to_s.capitalize
+  end
+
   def each_row_with_status option
     import_manager.each_row(status.status_indeces(option)) do |item|
       yield item

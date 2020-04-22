@@ -12,10 +12,6 @@ format :html do
     end
   end
 
-  def column_title column
-    Card::Codename.id(column) ? Card.fetch_name(column) : column.to_s.capitalize
-  end
-
   def default_tab
     tab_from_params || :"#{first_group_with_rows}_tab"
   end
