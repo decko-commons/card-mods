@@ -115,7 +115,7 @@ format :html do
   def conflict_note conflict
     return "" unless conflict
 
-    raw(" <small class=\"faint\">(#{conflict})</small>")
+    raw(" <small class=\"text-muted\">(#{conflict})</small>")
   end
 
   def errors_value item
