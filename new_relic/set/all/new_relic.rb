@@ -32,10 +32,8 @@ def new_relic_tracking?
   Rails.env.production?
 end
 
-private
-
 def name_new_relic_transaction name_parts, args={}
-  name = name_parts.compact.join "-"
+  name = Array.wrap(name_parts).compact.join "-"
   ::NewRelic::Agent.set_transaction_name name, args
 end
 
@@ -51,6 +49,8 @@ def add_new_relic_act_attributes time=true
   args[:time] = "#{(Time.now - @act_start) * 1000} ms" if time
   ::NewRelic::Agent.add_custom_attributes args
 end
+
+private
 
 def action_names_for_new_relic
   return unless (actions = ActManager.act&.actions(false))
