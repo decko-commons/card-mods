@@ -1,14 +1,7 @@
 event :new_relic_act_transaction, after: :act, when: :new_relic_tracking? do
-  action = @action || :create # not sure why @action is sometimes nil on create?
-  name_new_relic_transaction [action, new_relic_label], category: :controller
   add_new_relic_card_attributes
-end
-
-event :new_relic_read_transaction,
-      before: :show_page, on: :read, when: :new_relic_tracking? do
-  format = Env[:controller]&.response_format
-  name_new_relic_transaction ["read", new_relic_label, format], category: :controller
-  add_new_relic_card_attributes
+  add_new_relic_act_attributes unless @action == :read
+  name_new_relic_transaction new_relic_transaction_name_parts, category: :controller
 end
 
 event :notify_new_relic, after: :notable_exception_raised, when: :new_relic_tracking? do
@@ -36,12 +29,19 @@ def new_relic_tracking?
 end
 
 def track_delayed_job job
-  name_new_relic_transaction job.queue_name
+  name_new_relic_transaction ["delayed-#{job.queue_name}"]
   add_new_relic_card_attributes
   add_new_relic_act_attributes time=false
 end
 
 private
+
+def new_relic_transaction_name_parts
+  parts = [@action, new_relic_label]
+  return parts unless @action == :read
+
+  parts << Env[:controller]&.response_format
+end
 
 def name_new_relic_transaction name_parts, args={}
   name = Array.wrap(name_parts).compact.map(&:to_s).join "-"
@@ -58,7 +58,7 @@ end
 
 def add_new_relic_act_attributes time=true
   args = { act: { actions: action_names_for_new_relic } }
-  args[:time] = "#{(Time.now - @act_start) * 1000} ms" if time
+  args[:time_from_start] = "#{(Time.now - @act_start) * 1000} ms" if time
   ::NewRelic::Agent.add_custom_attributes args
 end
 
