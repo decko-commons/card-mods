@@ -45,7 +45,6 @@ end
 
 def name_new_relic_transaction name_parts, args={}
   name = Array.wrap(name_parts).compact.map(&:to_s).join "-"
-  Rails.logger.info "setting new relic name to: #{name}"
   ::NewRelic::Agent.set_transaction_name name, args
 end
 
