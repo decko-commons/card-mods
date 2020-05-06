@@ -70,7 +70,7 @@ class ImportItem
     def default_validation field, value
       return true unless mapped_column_keys.include? field
 
-      Card[value]&.type_code == field
+      Card[value]&.type_code == map_type(field)
     end
 
     private
