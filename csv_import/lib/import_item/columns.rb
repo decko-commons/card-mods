@@ -78,5 +78,6 @@ class ImportItem
     end
   end
 
-  delegate :required, :column_hash, :mapped_column_keys, :map_type, :column_keys, :separator, to: :class
+  delegate :required, :column_hash, :mapped_column_keys, :map_type, :column_keys,
+           :separator, to: :class
 end
