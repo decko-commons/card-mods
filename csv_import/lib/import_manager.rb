@@ -3,10 +3,10 @@
 class ImportManager
   attr_reader :conflict_strategy, :corrections, :status
 
-  def initialize csv_file, conflict_strategy: :skip, corrections: {}, status: {}
+  def initialize csv_file, conflict_strategy: :skip, corrections: nil, status: {}
     @csv_file = csv_file
     @conflict_strategy = conflict_strategy
-    @corrections = corrections || nil
+    @corrections = corrections
     @status = init_status status
   end
 
