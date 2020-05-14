@@ -23,19 +23,26 @@ class ImportItem
 
     def correct_value column, map
       return true unless (old = @row[column]) # no val returns true here (see required)
-
-      new = catch(:unmapped_value) { correct_value_from_map column, map }
-      return false if new == false  # unmapped value
-      return true if new == old     # mapped value same as current value
-
-      record_correction column, new # corrected value from map
+      new = correct_value_from_map column, map
+      case new
+      when false      # unmapped value
+        false
+      when "auto_add" # automatically add unknown card
+        @auto_add[column] = true
+      when old        # mapped value same as current value
+        true
+      else            # corrected value from map
+        record_correction column, new
+      end
     end
 
     def correct_value_from_map column, map
-      corrected_values = value_array(column).map do |old_value|
-        stringify(map[old_value]) || unmapped_value(column)
+      catch :unmapped_value do
+        corrected_values = value_array(column).map do |old_value|
+          stringify(map[old_value]) || unmapped_value(column)
+        end
+        corrected_values.compact.join separator(column)
       end
-      corrected_values.compact.join separator(column)
     end
 
     def unmapped_value column

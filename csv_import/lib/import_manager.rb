@@ -6,7 +6,7 @@ class ImportManager
   def initialize csv_file, conflict_strategy: :skip, corrections: nil, status: {}
     @csv_file = csv_file
     @conflict_strategy = conflict_strategy
-    @corrections = corrections
+    @corrections = corrections # import map
     @status = init_status status
   end
 

@@ -10,8 +10,9 @@ class ImportItem
 
   attr_reader :errors, :index, :cardid, :import_manager
   attr_accessor :status, :name
+  attr_writer :corrections
 
-  delegate :status, :corrections, :conflict_strategy, to: :import_manager
+  delegate :status, :conflict_strategy, to: :import_manager
 
   def initialize row, index=0, import_manager=nil, abort_on_error: false
     @row = row
@@ -20,6 +21,7 @@ class ImportItem
     @index = index # 0-based, not counting the header line
     @errors = []
     @conflict = nil
+    @auto_add = {}
     @cardid = nil
     @before_corrected = {}
   end
@@ -35,6 +37,10 @@ class ImportItem
 
   def original_row
     @row.merge @before_corrected
+  end
+
+  def corrections
+    @corrections ||= import_manager.corrections
   end
 
   def import
