@@ -1,4 +1,3 @@
-
 format :html do
   view :core do
     wrap { haml(:core) }

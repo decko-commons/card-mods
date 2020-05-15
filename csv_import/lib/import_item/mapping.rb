@@ -17,17 +17,17 @@ class ImportItem
       return unless corrections
       mapped_column_keys.each do |column|
         map = corrections[map_type(column)]
-        error "unmapped #{column}" unless correct_value column, map
+        error "unmapped #{column}" unless mapped_value? column, map
       end
     end
 
-    def correct_value column, map
+    def mapped_value? column, map
       return true unless (old = @row[column]) # no val returns true here (see required)
-      new = correct_value_from_map column, map
+      new = map_value column, map
       case new
       when false      # unmapped value
         false
-      when "auto_add" # automatically add unknown card
+      when "AutoAdd" # automatically add unknown card
         @auto_add[column] = true
       when old        # mapped value same as current value
         true
@@ -36,7 +36,7 @@ class ImportItem
       end
     end
 
-    def correct_value_from_map column, map
+    def map_value column, map
       catch :unmapped_value do
         corrected_values = value_array(column).map do |old_value|
           stringify(map[old_value]) || unmapped_value(column)

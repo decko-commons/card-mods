@@ -60,9 +60,17 @@ format :csv do
 
   def export_content_lines type, lines
     card.map[type.to_sym].map do |key, value|
-      lines << [key, value&.cardname, value]
+      lines << [key, clean_value(value), value]
     end
   end
+
+  def clean_value value
+    value == "AutoAdd" ? value : value&.cardname
+  end
+end
+
+def auto_add_type? column
+  import_item_class.auto_add_types.include? column
 end
 
 private
@@ -92,30 +100,53 @@ def merge_mapping mapping
   end
 end
 
-def normalize_submap column, submap
+def normalize_submap type, submap
   submap.each do |name_in_file, cardname|
-    submap[name_in_file] = normalize_submap_item column, cardname
+    submap[name_in_file] = MapItem.new(self, type, cardname).normalize
   end
 end
 
-def normalize_submap_item column, cardname
-  normalize_cardname(cardname) do |cardname|
-    mapped_id(column, cardname) || invalid_mapping(column, cardname)
+class MapItem
+  attr_reader :map_card, :type, :cardname
+
+  def initialize map_card, type, cardname
+    @map_card = map_card
+    @type = type
+    @cardname = cardname
   end
-end
 
-def mapped_id column, cardname
-  import_item_class.new(column => cardname).map_field column, cardname
-end
+  def normalize
+    handling_auto_add do
+      normalize_cardname do
+        mapped_id || invalid_mapping
+      end
+    end
+  end
 
-def invalid_mapping column, cardname
-  errors.add :content, "invalid #{column} mapping: #{cardname}"
-  nil
-end
+  private
 
-def normalize_cardname cardname
-  cardname = Card::Env::Location.cardname_from_url(cardname) || cardname
-  cardname.blank? ? nil : yield(cardname)
+  # FIXME: could break if type and column have different names
+  def mapped_id
+    map_card.import_item_class.new(type => cardname).map_field type, cardname
+  end
+
+  def invalid_mapping
+    map_card.errors.add :content, "invalid #{type} mapping: #{cardname}"
+    nil
+  end
+
+  def handling_auto_add
+    cardname == "AutoAdd" && auto_add_type? ? "AutoAdd" : yield
+  end
+
+  def normalize_cardname
+    @cardname = Card::Env::Location.cardname_from_url(cardname) || cardname
+    cardname.blank? ? nil : yield
+  end
+
+  def auto_add_type?
+    map_card.auto_add_type? type
+  end
 end
 
 def mapping_from_param

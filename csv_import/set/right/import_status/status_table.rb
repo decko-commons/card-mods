@@ -34,7 +34,6 @@ format :html do
       ch = cell_hash col, item
 
       yield ch[:value], ch[:class], ch[:title]
-
     end
       # cell_title(column, val)
   end
@@ -74,7 +73,7 @@ format :html do
         raw << mapped
         styled << mapped_link(mapped)
       else
-        klass = "unmapped-import-cell"
+        klass = "unmapped-import-attrib"
         raw << value
         styled << value
       end
@@ -98,7 +97,8 @@ format :html do
   end
 
   def checkbox_value item
-    check_box_tag("import_rows[#{item.index}]", true, false, class: "_import-row-checkbox") +
+    check_box_tag("import_rows[#{item.index}]", true, false,
+                  class: "_import-row-checkbox") +
       " #{row_value item}"
   end
 

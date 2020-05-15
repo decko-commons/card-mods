@@ -1,20 +1,30 @@
 // %h5
 //  = Card[map_type.to_sym].name
 
+- if card.auto_add_type? map_type
+  auto add, baby
+
 %table.wikirate-table.import-table
   %thead
     %tr
+      %th{ style: "width: 50px" }
+        = check_box_tag "allImportMapItems"
+        All
       %th
         in File
       %th
         on WikiRate
   %tbody
     - card.map[map_type].each do |name_in_file, cardname|
-      %tr{ class: (cardname ? "" : "unmapped-import-cell") }
+      %tr{ class: "_map-item #{cardname ? '' : 'unmapped-import-attrib'}" }
+        %td
+          = check_box_tag "importMapItem"
         %td.in-file
           = name_in_file
         %td
-          - if cardname.present?
+          - if cardname == "AutoAdd"
+            %em (AutoAdd)
+          - elsif cardname.present?
             = nest cardname, view: item_view(map_type)
           - else
             = map_ui map_type, name_in_file

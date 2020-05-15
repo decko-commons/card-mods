@@ -23,7 +23,13 @@ class ImportItem
     end
 
     def mapped_column_keys
-      @mapped ||= column_keys.select { |key| column_hash[key][:map] }
+      @mapped_column_keys ||= columns_with_config :map
+    end
+
+    def auto_add_types
+      @auto_add_types ||= columns_with_config(:auto_add).map do |col|
+        map_type col
+      end.uniq
     end
 
     def normalize key
@@ -59,6 +65,10 @@ class ImportItem
     end
 
     private
+
+    def columns_with_config config
+      column_keys.select { |col_key| column_hash[col_key][config] }
+    end
 
     def normalize_column_hash
       raise Card::Error, "@columns configuration missing" unless @columns
