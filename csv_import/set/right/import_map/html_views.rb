@@ -46,7 +46,8 @@ format :html do
   end
 
   def export_link type
-    link_to_card card, "csv", path: { format: :csv, view: :export, map_type: type }
+    link_to_card card, "csv",
+                 path: { format: :csv, view: :export, map_type: type }
   end
 
   def map_ui type, name_in_file

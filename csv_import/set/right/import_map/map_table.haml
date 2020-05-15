@@ -1,10 +1,7 @@
-// %h5
-//  = Card[map_type.to_sym].name
-
 - if card.auto_add_type? map_type
-  auto add, baby
+  = button_tag "Auto Add, baby", class: "_auto-add"
 
-%table.wikirate-table.import-table
+%table.wikirate-table.import-table._import-table
   %thead
     %tr
       %th{ style: "width: 50px" }
