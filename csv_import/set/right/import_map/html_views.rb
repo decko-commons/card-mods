@@ -9,7 +9,7 @@ format :html do
 
   view :map_form do
     card_form :update, id: "mappingForm" do
-      submit_button text: "Update Mappings"
+      submit_button text: "Save Mappings", class: "_save-mapping"
     end
   end
 
@@ -52,5 +52,10 @@ format :html do
 
   def map_ui type, name_in_file
     haml :map_ui, type: type, name_in_file: name_in_file
+  end
+
+  def map_action_dropdown
+    select_tag "map_action",
+               options_for_select(["reset", "auto add"])
   end
 end

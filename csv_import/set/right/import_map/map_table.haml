@@ -1,3 +1,13 @@
+.d-flex.justify-content-between.pb-2
+  .mapping-visibility
+    %a._toggle-mapping-vis
+      %span._mapping-vis_name
+        Hide
+      Mapped
+  .map-action-dropdown
+    = map_action_dropdown
+
+
 - if card.auto_add_type? map_type
   = button_tag "Auto Add, baby", class: "_auto-add"
 
