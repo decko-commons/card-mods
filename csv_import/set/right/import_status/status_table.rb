@@ -71,7 +71,7 @@ format :html do
     item.value_array(column).each do |value|
       if mapped = map[value]
         raw << mapped
-        styled << mapped_link(mapped)
+        styled << styled_value(value, mapped)
       else
         klass = "unmapped-import-attrib"
         raw << value
@@ -79,6 +79,14 @@ format :html do
       end
     end
     { value: styled.join(", "), title: raw.join(", "), class: klass }
+  end
+
+  def styled_value value, mapped
+    if mapped == "AutoAdd"
+      "<em>AutoAdd (#{value})</em>"
+    else
+      mapped_link mapped
+    end
   end
 
   def mapped_link id, text=nil

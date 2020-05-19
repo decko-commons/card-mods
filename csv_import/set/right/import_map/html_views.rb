@@ -54,8 +54,15 @@ format :html do
     haml :map_ui, type: type, name_in_file: name_in_file
   end
 
-  def map_action_dropdown
-    select_tag "map_action",
-               options_for_select(["reset", "auto add"])
+  def map_action_dropdown map_type
+    select_tag "import_map_action",
+               options_for_select(action_hash(map_type)),
+               class: "_import-map-action"
+  end
+
+  def action_hash map_type
+    h = {"Select Action" => "", "Clear" => "clear" }
+    h.merge!("Flag to AutoAdd" => "auto-add") if card.auto_add_type? map_type
+    h
   end
 end

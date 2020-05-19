@@ -1,15 +1,10 @@
-.d-flex.justify-content-between.pb-2
+.d-flex.justify-content-between.mb-2.p-3.bg-light.align-items-center
   .mapping-visibility
-    %a._toggle-mapping-vis
-      %span._mapping-vis_name
-        Hide
+    %a._toggle-mapping-vis.font-italic{ href: "#" }
+      %span._mapping-vis-name Hide
       Mapped
   .map-action-dropdown
-    = map_action_dropdown
-
-
-- if card.auto_add_type? map_type
-  = button_tag "Auto Add, baby", class: "_auto-add"
+    = map_action_dropdown map_type
 
 %table.wikirate-table.import-table._import-table
   %thead
@@ -23,9 +18,9 @@
         on WikiRate
   %tbody
     - card.map[map_type].each do |name_in_file, cardname|
-      %tr{ class: "_map-item #{cardname ? '' : 'unmapped-import-attrib'}" }
+      %tr{ class: "_map-item #{cardname ? 'mapped' : 'unmapped'}-import-attrib" }
         %td
-          = check_box_tag "importMapItem"
+          = check_box_tag "importMapItem" unless cardname
         %td.in-file
           = name_in_file
         %td
