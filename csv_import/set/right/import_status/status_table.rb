@@ -52,7 +52,7 @@ format :html do
   end
 
   def import_content_cell_hash column, item
-    if (map = corrections[column])
+    if (map = corrections[import_item_class.map_type(column)])
       mappable_cell_hash map, column, item
     else
       val = item[column]
