@@ -1,3 +1,8 @@
-%input{ name: "mapping[#{type}][#{name_in_file}]",
-        class: "_import-mapping",
-        form: "mappingForm" }
+- input_id = "#{type}-#{SecureRandom.hex(10)}"
+.import-map-input-item
+  %input{ name: "mapping[#{type}][#{name_in_file}]",
+          class: "_import-mapping",
+          id: input_id,
+          form: "mappingForm" }
+
+  = suggest_link type, name_in_file, "##{input_id}"

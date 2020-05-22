@@ -54,6 +54,16 @@ format :html do
     haml :map_ui, type: type, name_in_file: name_in_file
   end
 
+  def suggest_link type, name, input_selector
+    return unless mark = card.import_item_class.try("#{type}_suggestion_filter_mark")
+    modal_link "Suggest",
+               class: "btn btn-sm btn-secondary _suggest-link",
+               path: { view: :selectable_filtered_content,
+                       mark: mark,
+                       input_selector: input_selector,
+                       filter: { name: name } }
+  end
+
   def map_action_dropdown map_type
     select_tag "import_map_action",
                options_for_select(action_hash(map_type)),
