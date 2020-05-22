@@ -1,0 +1,1 @@
+include ::NewRelic::Agent::MethodTracer
