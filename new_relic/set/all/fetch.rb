@@ -1,4 +1,4 @@
 module ClassMethods
   include ::NewRelic::Agent::MethodTracer
-  add_method_tracer :set_modules, "Custom/Card/set_modules"
+  add_method_tracer :fetch, "Custom/Card/fetch"
 end
