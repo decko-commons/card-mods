@@ -55,13 +55,15 @@ format :html do
   end
 
   def suggest_link type, name, input_selector
-    return unless mark = card.import_item_class.try("#{type}_suggestion_filter_mark")
+    klass = card.import_item_class
+    return unless (mark = klass.try "#{type}_suggestion_filter_mark")
+    filter_key = klass.try "#{type}_suggestion_filter_key" || :name
     modal_link "Suggest",
                class: "btn btn-sm btn-secondary _suggest-link",
                path: { view: :selectable_filtered_content,
                        mark: mark,
                        input_selector: input_selector,
-                       filter: { name: name } }
+                       filter: { filter_key => name } }
   end
 
   def map_action_dropdown map_type

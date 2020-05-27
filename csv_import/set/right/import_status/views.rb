@@ -13,7 +13,7 @@ format :html do
   end
 
   def default_tab
-    tab_from_params || :"#{first_group_with_rows}_tab"
+    tab_from_params || first_group_with_rows
   end
 
   def first_group_with_rows
@@ -65,4 +65,9 @@ format :html do
   end
 
   view :compact, cache: :never, template: :haml
+
+  view :refresh do
+    link_to icon_tag(:refresh),
+            path: "#", class: "_import-status-refresh import-status-refresh"
+  end
 end
