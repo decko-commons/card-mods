@@ -1,19 +1,15 @@
 format :html do
-  LEFT_CELL = { ready: :checkbox, failed: :checkbox }.freeze
+  SHOW_CHECKBOX = { ready: true, failed: true }.freeze
 
   def table status
     wrap do
-      haml :table, status: status, columns: table_columns(status)
+      haml :table, status: status, columns: import_item_class.column_keys
     end
   end
 
-  def table_columns status
-    columns = [(LEFT_CELL[status] || :row)]
-    columns << :exists unless status == :not_ready
-    columns << :errors if %i[failed not_ready].include?(status)
-    columns += import_item_class.column_keys
-    columns
-  end
+  # def table_columns status
+
+  # end
 
   def import_column? column
     column.in? import_item_class.column_keys
@@ -47,21 +43,12 @@ format :html do
   end
 
   def cell_hash column, item
-    cell_type = import_column?(column) ? :import_content : :metadata
-    send "#{cell_type}_cell_hash", column, item
-  end
-
-  def import_content_cell_hash column, item
     if (map = corrections[import_item_class.map_type(column)])
       mappable_cell_hash map, column, item
     else
       val = item[column]
       { value: val, title: val }
     end
-  end
-
-  def metadata_cell_hash column, item
-    { value: send("#{column}_value", item) }
   end
 
   def mappable_cell_hash map, column, item
@@ -100,14 +87,22 @@ format :html do
   #   end
   # end
 
+  def row_label_cell status, item
+    output([
+      (checkbox(item) if SHOW_CHECKBOX[status]),
+      row_value(item),
+      exists_value(item),
+      errors_value(item)
+    ].compact)
+  end
+
   def row_value item
     item.index + 1
   end
 
-  def checkbox_value item
+  def checkbox item
     check_box_tag("import_rows[#{item.index}]", true, false,
-                  class: "_import-row-checkbox") +
-      " #{row_value item}"
+                  class: "_import-row-checkbox")
   end
 
   def status_item index

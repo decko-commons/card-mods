@@ -5,9 +5,9 @@ include_set Abstract::Tabs
 # key = status group
 # value = [context, label]
 STATUS_GROUPS = {
-  not_ready: [:warning, "Not Ready"],
+  not_ready: [:secondary, "Not Ready"],
   ready: [:info, "Ready"],
-  importing: [:secondary, "Importing"],
+  importing: [:warning, "Importing"],
   failed: [:danger, "Failure"],
   success: [:success, "Success"]
 }.freeze

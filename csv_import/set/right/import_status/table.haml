@@ -1,12 +1,15 @@
 %table.wikirate-table.import-table.import-status-table
   %thead
     %tr
+      %th &nbsp;
       - columns.each do |column|
-        %th
+        %th.text-left
           = column_title column
   %tbody
-    - each_row_with_status status do |item, index|
+    - each_row_with_status status do |item|
       %tr
+        %td
+          = row_label_cell status, item
         - each_cell columns, item do |value, klass, title|
           %td{ class: klass, title: title }
             = value

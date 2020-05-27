@@ -110,7 +110,6 @@ class CsvFile
     end
   end
 
-
   # def map_headers
   #   @col_map = {}
   #   headers = @rows.shift.map { |h| h.to_name.key.to_sym }
