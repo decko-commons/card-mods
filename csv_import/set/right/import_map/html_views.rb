@@ -4,7 +4,7 @@ format :html do
   end
 
   view :tabs, cache: :never do
-    static_tabs tab_map
+    tabs tab_map
   end
 
   view :map_form do
