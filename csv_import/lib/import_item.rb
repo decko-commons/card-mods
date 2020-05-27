@@ -68,7 +68,7 @@ class ImportItem
   end
 
   def value_array key
-    val = self[key]
+    val = self[key]&.strip
     if val.blank?
       []
     elsif (sep = separator key)
