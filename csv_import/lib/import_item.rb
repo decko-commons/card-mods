@@ -9,14 +9,17 @@ class ImportItem
   include Mapping
 
   attr_reader :errors, :index, :cardid, :import_manager
-  attr_accessor :status, :name
+  attr_accessor :status, :name, :conflict_strategy
   attr_writer :corrections
 
-  delegate :status, :conflict_strategy, to: :import_manager
+  delegate :status, to: :import_manager
 
-  def initialize row, index=0, import_manager=nil, abort_on_error: false
+  def initialize(row, index=0, import_manager: nil,
+                               abort_on_error: false,
+                               conflict_strategy: nil)
     @row = row
     @import_manager = import_manager || ImportManager.new(nil)
+    @conflict_strategy = conflict_strategy || @import_manager.conflict_strategy
     @abort_on_error = abort_on_error
     @index = index # 0-based, not counting the header line
     @errors = []
@@ -123,7 +126,11 @@ class ImportItem
     pick_up_card_errors do
       self.name = card_args[:name]
       card = Card.fetch self.name, new: card_args
-      card.save
+      if card.real?
+        card.update card_args
+      else
+        card.save
+      end
       @cardid = card.id if card.id
       card
     end
@@ -151,7 +158,7 @@ class ImportItem
   def major_error error
     error error.message
     ImportLog.debug "import failed: #{error.message}"
-    ImportLog.debug error.backtrace
+    ImportLog.debug error.backtrace.join "\n"
     skip :failed
   end
 end

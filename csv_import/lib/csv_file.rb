@@ -3,10 +3,10 @@
 class CsvFile
   # @param headers [true, false, :detect] (false) if true the import raises an error
   #    if the csv file has no or wrong headers
-  def initialize path_or_file, row_class, col_sep: ",", encoding: "utf-8", headers: true
-    raise ArgumentError, "no row class given" unless row_class.is_a?(Class)
-    raise ArgumentError, "#{row_class} must inherit from ImportItem" unless row_class < ImportItem
-    @row_class = row_class
+  def initialize path_or_file, item_class, col_sep: ",", encoding: "utf-8", headers: true
+    raise ArgumentError, "no row class given" unless item_class.is_a?(Class)
+    raise ArgumentError, "#{item_class} must inherit from ImportItem" unless item_class < ImportItem
+    @item_class = item_class
     @col_sep = col_sep
     @encoding = encoding
     @headers = headers
@@ -18,7 +18,7 @@ class CsvFile
   # yields the rows of the csv file as ImportItem objects
   def each_row import_manager=nil, rows=nil
     each_row_hash rows do |row_hash, index|
-      yield @row_class.new(row_hash, index, import_manager)
+      yield @item_class.new(row_hash, index, import_manager: import_manager)
     end
   end
 
@@ -113,7 +113,7 @@ class CsvFile
   # def map_headers
   #   @col_map = {}
   #   headers = @rows.shift.map { |h| h.to_name.key.to_sym }
-  #   @row_class.columns.each do |key|
+  #   @item_class.columns.each do |key|
   #     @col_map[key] = headers.index key
   #     raise StandardError, "column #{key} is missing" unless @col_map[key]
   #   end
@@ -121,13 +121,13 @@ class CsvFile
 #
   # def header_row?
   #   return unless first_row = @rows.first.map { |h| h.to_name.key.to_sym }
-  #   @row_class.columns.all? do |item|
+  #   @item_class.columns.all? do |item|
   #     first_row.include? item
   #   end
   # end
 
   def row_to_hash row
-    @row_class.column_keys.each_with_object({}).with_index do |(k, h), i|
+    @item_class.column_keys.each_with_object({}).with_index do |(k, h), i|
       h[k] = row[i]
       h[k] &&= h[k].strip
     end
@@ -137,7 +137,7 @@ class CsvFile
   #   if (header_line == :detect && header_row?) || header_line == true
   #     map_headers
   #   else
-  #     @col_map = @row_class.columns.zip((0..@row_class.columns.size)).to_h
+  #     @col_map = @item_class.columns.zip((0..@item_class.columns.size)).to_h
   #   end
   # end
 end
