@@ -1,3 +1,5 @@
+include_set Abstract::Export
+
 format :html do
   delegate :status, :csv_file, :import_item_class, :corrections, to: :card
   delegate :percentage, :count, to: :status
@@ -21,23 +23,23 @@ format :html do
   end
 
   view :failed_tab do
-    import_form(:failed) { table :failed }
+    import_form(:failed) { tab_content :failed }
   end
 
   view :not_ready_tab do
-    table :not_ready
+    tab_content :not_ready
   end
 
   view :importing_tab do
-    table :importing
+    tab_content :importing
   end
 
   view :ready_tab do
-    import_form(:ready) { table :ready }
+    import_form(:ready) { tab_content :ready }
   end
 
   view :success_tab do
-    table(:success)
+    tab_content :success
   end
 
   view :core, cache: :never, template: :haml
@@ -49,10 +51,25 @@ format :html do
     progress_bar(*sections)
   end
 
+  def tab_content status
+    @current_status = status
+    table(status) + render_export_links
+  end
+
   def import_form status
     card.left.format.card_form :update, success: { mark: card.name } do
       haml :import_form, table: yield, status: status
     end
+  end
+
+  def export_formats
+    [:csv]
+  end
+
+  def export_link_path format
+    path = super
+    path[:status] = @current_status if @current_status
+    path
   end
 
   def progress_section group, config
@@ -69,5 +86,11 @@ format :html do
   view :refresh do
     link_to icon_tag(:refresh),
             path: "#", class: "_import-status-refresh import-status-refresh"
+  end
+end
+
+format :csv do
+  view :core do
+    Answer.csv_title + Answer.where(metric_id: card.id).map(&:csv_line).join
   end
 end

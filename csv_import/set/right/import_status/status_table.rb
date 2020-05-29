@@ -7,22 +7,12 @@ format :html do
     end
   end
 
-  # def table_columns status
-
-  # end
-
   def import_column? column
     column.in? import_item_class.column_keys
   end
 
   def column_title column
     import_column?(column) ? import_item_class.header(column) : column.to_s.capitalize
-  end
-
-  def each_row_with_status option
-    import_manager.each_row(status.status_indeces(option)) do |item|
-      yield item
-    end
   end
 
   def each_cell columns, item
@@ -32,10 +22,6 @@ format :html do
       yield ch[:value], ch[:class], ch[:title]
     end
       # cell_title(column, val)
-  end
-
-  def import_manager
-    card.left.import_manager
   end
 
   def cell_title column, val

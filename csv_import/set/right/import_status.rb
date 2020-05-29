@@ -44,3 +44,12 @@ def generate!
   self.content = import_manager.status.to_json
 end
 
+def import_manager
+  left.import_manager
+end
+
+def each_row_with_status option
+  import_manager.each_row(status.status_indeces(option)) do |item|
+    yield item
+  end
+end

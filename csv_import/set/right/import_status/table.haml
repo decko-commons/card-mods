@@ -6,7 +6,7 @@
         %th.text-left
           = column_title column
   %tbody
-    - each_row_with_status status do |item|
+    - card.each_row_with_status status do |item|
       %tr
         %td
           = row_label_cell status, item
