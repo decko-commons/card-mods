@@ -1,19 +1,22 @@
-# CsvFile loads csv data from a given path or file handle and provides methods
+# Card::ImportCsv loads csv data from a given path or file handle and provides methods
 # to iterate over the data.
 class Card
-  class CsvFile
+  class ImportCsv
+    attr_reader :item_class
+    delegate :default_header_map, to: :item_class
+
     # @param headers [true, false, :detect] (false) if true the import raises an error
     #    if the csv file has no or wrong headers
-    def initialize path_or_file, item_class, col_sep: ",", encoding: "utf-8", headers: true
+    def initialize(path_or_file, item_class,
+                   col_sep: ",", encoding: "utf-8", headers: true)
       raise ArgumentError, "no row class given" unless item_class.is_a?(Class)
       raise ArgumentError, "#{item_class} must inherit from ImportItem" unless item_class < ImportItem
       @item_class = item_class
       @col_sep = col_sep
       @encoding = encoding
-      @headers = headers
 
       read_csv path_or_file
-      @rows.shift if @headers
+      @headers = headers ? map_headers : default_header_map
     end
 
     # yields the rows of the csv file as ImportItem objects
@@ -111,35 +114,15 @@ class Card
       end
     end
 
-    # def map_headers
-    #   @col_map = {}
-    #   headers = @rows.shift.map { |h| h.to_name.key.to_sym }
-    #   @item_class.columns.each do |key|
-    #     @col_map[key] = headers.index key
-    #     raise StandardError, "column #{key} is missing" unless @col_map[key]
-    #   end
-    # end
-  #
-    # def header_row?
-    #   return unless first_row = @rows.first.map { |h| h.to_name.key.to_sym }
-    #   @item_class.columns.all? do |item|
-    #     first_row.include? item
-    #   end
-    # end
-
     def row_to_hash row
-      @item_class.column_keys.each_with_object({}).with_index do |(k, h), i|
-        h[k] = row[i]
-        h[k] &&= h[k].strip
+      @headers.each_with_object({}) do |(column_key, index), h|
+        h[column_key] = row[index]
+        h[column_key] &&= h[column_key].strip
       end
     end
 
-    # def initialize_column_map header_line
-    #   if (header_line == :detect && header_row?) || header_line == true
-    #     map_headers
-    #   else
-    #     @col_map = @item_class.columns.zip((0..@item_class.columns.size)).to_h
-    #   end
-    # end
+    def map_headers
+      @item_class.map_headers @rows.shift.map(&:to_name)
+    end
   end
 end

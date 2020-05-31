@@ -1,5 +1,5 @@
 class Card
-  # ImportManager coordinates the import of a CsvFile. It defines the conflict and error
+  # ImportManager coordinates the import of a Card::ImportCsv. It defines the conflict and error
   # policy. It collects all errors and provides extra data like corrections for row fields.
   class ImportManager
     attr_reader :conflict_strategy, :corrections, :status

@@ -9,7 +9,7 @@ end
 
 def csv_file
   # maybe we have to use file.read ?
-  @csv_file ||= CsvFile.new attachment, import_item_class, headers: :true
+  @csv_file ||= ImportCsv.new attachment, import_item_class, headers: :true
 end
 
 def clean_html?

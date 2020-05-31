@@ -65,7 +65,26 @@ class Card
         column_hash.dig column, :separator
       end
 
+      # @return [Hash] { column_key_0 => 0, column_key_1 => 1 }
+      def map_headers names
+        names = names.map(&:to_name)
+        column_keys.each_with_object({}) do |column, hash|
+          unmapped column unless (hash[column] = names.index(header(column)))
+        end
+      end
+
+      # @return [Hash] { column_key_0 => 0, column_key_1 => 1 }
+      def default_header_map
+        column_keys.zip((0..column_keys.size)).to_h
+      end
+
       private
+
+      def unmapped column
+        return unless required.include? column
+
+        raise StandardError, "#{header(column)} column is missing"
+      end
 
       def columns_with_config config
         column_keys.select { |col_key| column_hash[col_key][config] }
@@ -85,7 +104,7 @@ class Card
 
       def autoheader column
         string = Card::Codename[column] ? column.cardname : column.to_s
-        string.tr("_", " ").tr("*", "").split.map(&:capitalize).join(" ")
+        string.tr("_", " ").tr("*", "").split.map(&:capitalize).join(" ").to_name
       end
     end
 

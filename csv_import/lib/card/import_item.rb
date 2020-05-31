@@ -1,6 +1,6 @@
 class Card
   # Inherit from Card::ImportItem to describe and process a import item.
-  # CsvFile creates an instance of ImportItem for every row and calls #import on it
+  # Card::ImportCsv creates an instance of ImportItem for every row and calls #import on it
   class ImportItem
     include ::Card::Model::SaveHelper
 

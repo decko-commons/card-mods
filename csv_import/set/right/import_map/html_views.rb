@@ -57,7 +57,7 @@ format :html do
   def suggest_link type, name, input_selector
     klass = card.import_item_class
     return unless (mark = klass.try "#{type}_suggestion_filter_mark")
-    filter_key = klass.try "#{type}_suggestion_filter_key" || :name
+    filter_key = klass.try("#{type}_suggestion_filter_key") || :name
     modal_link "Suggest",
                class: "btn btn-sm btn-secondary _suggest-link",
                path: { view: :selectable_filtered_content,

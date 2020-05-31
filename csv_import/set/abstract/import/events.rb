@@ -67,7 +67,7 @@ def validate_file_card file_card
 end
 
 def validate_csv file_card
-  CsvFile.new file_card.attachment, import_item_class, headers: :true
+  ImportCsv.new file_card.attachment, import_item_class, headers: :true
 rescue CSV::MalformedCSVError => e
   abort :failure, "malformed csv: #{e.message}"
 end
