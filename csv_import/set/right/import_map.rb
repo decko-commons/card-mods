@@ -121,6 +121,8 @@ class MapItem
         mapped_id || invalid_mapping
       end
     end
+  rescue StandardError
+    invalid_mapping
   end
 
   private
