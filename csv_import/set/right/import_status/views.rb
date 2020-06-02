@@ -91,6 +91,15 @@ end
 
 format :csv do
   view :core do
-    Answer.csv_title + Answer.where(metric_id: card.id).map(&:csv_line).join
+    card.import_item_class.export_csv_header +
+      csv_lines_for(params[:status]&.to_sym).join
+  end
+
+  def csv_lines_for status
+    lines = []
+    card.each_row_with_status(status) do |item|
+      lines << item.export_csv_line(status)
+    end
+    lines
   end
 end

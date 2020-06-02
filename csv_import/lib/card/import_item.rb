@@ -86,6 +86,10 @@ class Card
       @row
     end
 
+    def export_csv_line _status
+      CSV.generate_line column_keys.map { |ck| @row[ck] }
+    end
+
     private
 
     def handling_conflicts

@@ -78,6 +78,10 @@ class Card
         column_keys.zip((0..column_keys.size)).to_h
       end
 
+      def export_csv_header
+        CSV.generate_line headers
+      end
+
       private
 
       def unmapped column
