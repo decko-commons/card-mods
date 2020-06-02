@@ -58,7 +58,11 @@ class Card
       end
 
       def header column
-        column_hash[column][:header] || autoheader(column)
+        column_hash[column][:header]&.to_name || autoheader(column)
+      end
+
+      def header_alias column
+        column_hash[column][:alias]&.to_name
       end
 
       def separator column
@@ -69,7 +73,9 @@ class Card
       def map_headers names
         names = names.map(&:to_name)
         column_keys.each_with_object({}) do |column, hash|
-          unmapped column unless (hash[column] = names.index(header(column)))
+          num = names.index header(column)
+          num ||= (ha = header_alias column) && names.index(ha)
+          unmapped column unless (hash[column] = num)
         end
       end
 
