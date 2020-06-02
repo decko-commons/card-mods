@@ -116,9 +116,11 @@ class Card
 
     def row_to_hash row
       @headers.each_with_object({}) do |(column_key, index), h|
-        h[column_key] = row[index]
+        h[column_key] = index ? row[index] : nil
         h[column_key] &&= h[column_key].strip
       end
+    rescue StandardError=> e
+      binding.pry
     end
 
     def map_headers
