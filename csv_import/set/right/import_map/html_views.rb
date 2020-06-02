@@ -62,7 +62,7 @@ format :html do
                class: "btn btn-sm btn-secondary _suggest-link",
                path: { view: :selectable_filtered_content,
                        mark: mark,
-                       slot: { hide: :full_page_link },
+                       # slot: { items: { hide: :full_page_link } },
                        input_selector: input_selector,
                        filter: { filter_key => name } }
   end
