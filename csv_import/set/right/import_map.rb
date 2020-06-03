@@ -152,7 +152,13 @@ class MapItem
 end
 
 def mapping_from_param
-  Env.hash(mapping_param).symbolize_keys
+  mapping = Env.hash(mapping_param).symbolize_keys
+  mapping.values.each do |submap|
+    submap.keys.each do |key|
+      submap[CGI.unescape(key)] = submap.delete(key)
+    end
+  end
+  mapping
 end
 
 def mapping_param
