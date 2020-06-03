@@ -8,7 +8,6 @@ def log_path item
   File.join log_dir, "#{item.gsub('&#47;','_').gsub(/[^0-9A-Za-z.\-]/, '_')}.log"
 end
 
-
 def csv_path
   File.join log_dir, "#{cardname.safe_key}.csv"
 end
@@ -51,8 +50,6 @@ def add_csv_entry page, wbench_data, runs
     all.add_csv_entry page, wbench_data, runs
   end
 end
-
-
 
 format :html do
   view :core do
