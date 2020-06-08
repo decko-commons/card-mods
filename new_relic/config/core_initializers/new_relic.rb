@@ -76,6 +76,12 @@ ActiveSupport.on_load :card do
         add_method_tracer :cache_fetch, "Custom/Voo/cache_fetch"
       end
     end
+
+    class Fetch
+      include ::NewRelic::Agent::MethodTracer
+      add_method_tracer :initialize, "Custom/Fetch/initialize"
+      add_method_tracer :retrieve_or_new, "Custom/Fetch/retrieve_or_new"
+    end
   end
 end
 

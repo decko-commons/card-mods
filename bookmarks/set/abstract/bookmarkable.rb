@@ -1,4 +1,4 @@
-card_accessor :bookmarkers, type: :number
+card_accessor :bookmarkers, type_id: NumberID
 
 event :toggle_bookmark, :prepare_to_validate, on: :save, trigger: :required do
   toggle_bookmarks_item

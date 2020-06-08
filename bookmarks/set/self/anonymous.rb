@@ -1,4 +1,4 @@
-# card_accessor :bookmarks, type: :session
+# card_accessor :bookmarks, type_id: SessionID
 # accessor wasn't working, because
 #
 
