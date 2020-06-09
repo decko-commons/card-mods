@@ -1,7 +1,7 @@
 include_set Type::File
 
-card_accessor :import_status, type_id: JsonID
-card_accessor :import_map, type_id: JsonID
+card_accessor :import_status, type: JsonID
+card_accessor :import_map, type: JsonID
 
 def import_file?
   true

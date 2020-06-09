@@ -1,1 +1,1 @@
-card_accessor :bookmarks, type_id: PointerID
+card_accessor :bookmarks, type: PointerID
