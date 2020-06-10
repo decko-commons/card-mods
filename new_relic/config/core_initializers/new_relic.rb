@@ -81,6 +81,9 @@ ActiveSupport.on_load :card do
       include ::NewRelic::Agent::MethodTracer
       add_method_tracer :initialize, "Custom/Fetch/initialize"
       add_method_tracer :retrieve_or_new, "Custom/Fetch/retrieve_or_new"
+      add_method_tracer :retrieve_existing, "Custom/Fetch/retrieve_existing"
+      add_method_tracer :update_cache, "Custom/Fetch/update_cache"
+      add_method_tracer :results, "Custom/Fetch/results"
     end
   end
 end
