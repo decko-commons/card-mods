@@ -1,4 +1,4 @@
-card_accessor :bookmarkers, type: NumberID
+card_accessor :bookmarkers, type: :search_type
 
 event :toggle_bookmark, :prepare_to_validate, on: :save, trigger: :required do
   toggle_bookmarks_item
@@ -28,7 +28,7 @@ format :html do
       card_form :update, recaptcha: :off, success: { view: :bookmark } do
         [
           hidden_tags(card: { trigger: :toggle_bookmark }),
-          field_nest(:bookmarkers, view: :toggle)
+          nest(card.bookmarkers_card, view: :toggle)
         ]
       end
     end

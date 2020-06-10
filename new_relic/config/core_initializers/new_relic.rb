@@ -63,6 +63,8 @@ ActiveSupport.on_load :card do
       include ::NewRelic::Agent::MethodTracer
       # add_method_tracer :initialize, "Custom/Voo/initialize"
       add_method_tracer :process, "Custom/Voo/process"
+      add_method_tracer :fetch, "Custom/Voo/fetch"
+      add_method_tracer :process_live_options, "Custom/Voo/process_live_options"
       add_method_tracer :ok_view, "Custom/Voo/ok_view"
       module Permission
         include ::NewRelic::Agent::MethodTracer
