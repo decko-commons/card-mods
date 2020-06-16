@@ -63,29 +63,29 @@ ActiveSupport.on_load :card do
       include ::NewRelic::Agent::MethodTracer
       # add_method_tracer :initialize, "Custom/Voo/initialize"
       add_method_tracer :process, "Custom/Voo/process"
-      add_method_tracer :fetch, "Custom/Voo/fetch"
-      add_method_tracer :process_live_options, "Custom/Voo/process_live_options"
-      add_method_tracer :ok_view, "Custom/Voo/ok_view"
+      # add_method_tracer :fetch, "Custom/Voo/fetch"
+      # add_method_tracer :process_live_options, "Custom/Voo/process_live_options"
+      # add_method_tracer :ok_view, "Custom/Voo/ok_view"
       module Permission
-        include ::NewRelic::Agent::MethodTracer
-        add_method_tracer :alter_unknown, "Custom/Voo/alter_unknown"
-        add_method_tracer :denial, "Custom/Voo/denial"
+        # include ::NewRelic::Agent::MethodTracer
+        # add_method_tracer :alter_unknown, "Custom/Voo/alter_unknown"
+        # add_method_tracer :denial, "Custom/Voo/denial"
       end
 
       module Cache
-        include ::NewRelic::Agent::MethodTracer
-        add_method_tracer :cache_render, "Custom/Voo/cache_render"
-        add_method_tracer :cache_fetch, "Custom/Voo/cache_fetch"
+        # include ::NewRelic::Agent::MethodTracer
+        # add_method_tracer :cache_render, "Custom/Voo/cache_render"
+        # add_method_tracer :cache_fetch, "Custom/Voo/cache_fetch"
       end
     end
 
     class Fetch
-      include ::NewRelic::Agent::MethodTracer
-      add_method_tracer :initialize, "Custom/Fetch/initialize"
-      add_method_tracer :retrieve_or_new, "Custom/Fetch/retrieve_or_new"
-      add_method_tracer :retrieve_existing, "Custom/Fetch/retrieve_existing"
-      add_method_tracer :update_cache, "Custom/Fetch/update_cache"
-      add_method_tracer :results, "Custom/Fetch/results"
+      # include ::NewRelic::Agent::MethodTracer
+      # add_method_tracer :initialize, "Custom/Fetch/initialize"
+      # add_method_tracer :retrieve_or_new, "Custom/Fetch/retrieve_or_new"
+      # add_method_tracer :retrieve_existing, "Custom/Fetch/retrieve_existing"
+      # add_method_tracer :update_cache, "Custom/Fetch/update_cache"
+      # add_method_tracer :results, "Custom/Fetch/results"
     end
   end
 end
