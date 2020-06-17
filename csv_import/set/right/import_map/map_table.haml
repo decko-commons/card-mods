@@ -17,7 +17,8 @@
       %th
         on WikiRate
   %tbody
-    - card.map[map_type].each do |name_in_file, cardname|
+    - card.map[map_type].each do |name_in_file, cardid|
+      - cardname = cardid == "AutoAdd" ? "AutoAdd" : cardid&.cardname
       %tr{ class: "_map-item #{cardname ? 'mapped' : 'unmapped'}-import-attrib" }
         %td
           = check_box_tag "importMapItem" unless cardname
