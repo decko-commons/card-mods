@@ -52,10 +52,9 @@ end
 
 def row_indeces_from_params
   @row_indeces_from_params ||=
-    Env.hash(Env.params[:import_rows]).each_with_object([]) do |(index, value), a|
-      next unless [true, "true"].include?(value)
-      a << index.to_i
-    end
+    Env.hash(Env.params[:import_rows]).select do |_k, v|
+      [true, "true"].include?(v)
+    end.keys.map(&:to_i)
 end
 
 def validate_file_card file_card
