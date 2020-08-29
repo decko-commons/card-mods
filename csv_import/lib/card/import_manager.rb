@@ -18,11 +18,11 @@ class Card
     end
 
     def import row_indices=nil, &block
-      each_row(Array.wrap(row_indices)) { |row| row.import &block }
+      each_row(row_indices) { |row| row.import &block }
     end
 
     def validate row_indices=nil, &block
-      each_row(Array.wrap(row_indices)) { |row| row.validate! &block }
+      each_row(row_indices) { |row| row.validate! &block }
     end
 
     def errors? row=nil
