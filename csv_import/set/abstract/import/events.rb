@@ -1,7 +1,6 @@
 # CREATE EVENTS
 
-event :validate_import_format_on_create, :validate,
-      on: :create, when: :save_preliminary_upload? do
+event :validate_import_format_on_create, :validate, on: :create, when: :save_preliminary_upload? do
   validate_file_card upload_cache_card
 end
 
@@ -30,8 +29,21 @@ event :mark_items_as_importing, :validate, on: :update, when: :data_import? do
   import_status_card.save_status
 end
 
-event :initiate_import, :integrate_with_delay, on: :update, when: :data_import? do
+event :initiate_import, :integrate, on: :update, when: :data_import? do
+  return unless (indeces = row_indeces_from_params)&.size > 1
+  indeces.each do |index|
+    Env.with_params(import_rows: { index => true }) do
+      import_row_with_delay
+    end
+  end
+end
+
+event :import_row, :integrate_with_delay, on: :update, when: :import_single_row? do
   import! row_indeces_from_params
+end
+
+def import_single_row?
+  row_indeces_from_params&.size == 1
 end
 
 def import! row_indeces

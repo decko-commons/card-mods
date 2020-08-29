@@ -21,10 +21,8 @@ def csv_only? # for override
 end
 
 def import_manager
-  @import_manager ||= ActImportManager.new self, csv_file,
-                                           conflict_strategy: conflict_strategy,
-                                           status: status,
-                                           corrections: corrections
+  @import_manager ||= ImportManager.new csv_file, conflict_strategy: conflict_strategy,
+                                                  status: status, corrections: corrections
 end
 
 def conflict_strategy
