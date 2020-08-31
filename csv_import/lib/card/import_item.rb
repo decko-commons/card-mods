@@ -35,10 +35,6 @@ class Card
       {}
     end
 
-    def status_hash
-      status.item_hash index
-    end
-
     def original_row
       @row.merge @before_corrected
     end
@@ -48,15 +44,13 @@ class Card
     end
 
     def import
-      logging_status :success do
+      returning_status :success do
         validate
         ImportLog.debug "start import"
         handling_conflicts do
           import_card import_hash
         end
       end
-    ensure
-      yield self if block_given?
     end
 
     def skip status=:skipped
@@ -102,12 +96,12 @@ class Card
       end
     end
 
-    def logging_status default_status
+    def returning_status default_status
       status_value = catch :skip_row do
         rescuing_errors { yield }
         default_status
       end
-      log_status status_value
+      status_hash status_value
     end
 
     def rescuing_errors
@@ -117,13 +111,11 @@ class Card
       raise e if @abort_on_error
     end
 
-    def log_status status_value
-      return unless status
-
-      item = { status: status_value, id: @cardid }
-      item[:errors] = @errors if @errors.present?
-      item[:conflict] = @conflict if @conflict.present?
-      status.update_item index, item
+    def status_hash status_value
+      { status: status_value, id: @cardid }.tap do |hash|
+        hash[:errors] = @errors if @errors.present?
+        hash[:conflict] = @conflict if @conflict.present?
+      end
     end
 
     # add the final import card

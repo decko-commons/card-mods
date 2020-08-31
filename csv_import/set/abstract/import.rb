@@ -22,7 +22,7 @@ end
 
 def import_manager
   @import_manager ||= ImportManager.new csv_file, conflict_strategy: conflict_strategy,
-                                                  status: status, corrections: corrections
+                                                  corrections: corrections
 end
 
 def conflict_strategy
@@ -32,8 +32,4 @@ end
 
 def corrections
   import_map_card.map
-end
-
-def status
-  @status ||= import_status_card.status
 end

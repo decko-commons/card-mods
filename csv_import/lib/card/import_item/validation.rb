@@ -3,7 +3,7 @@ class Card
     # validation of import fields
     module Validation
       def validate!
-        logging_status(:ready) { validate }
+        returning_status(:ready) { validate }
       end
 
       def validate

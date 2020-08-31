@@ -23,31 +23,31 @@ event :disallow_content_update, :validate, on: :update, changed: :content do
 end
 
 event :mark_items_as_importing, :validate, on: :update, when: :data_import? do
-  row_indeces_from_params.each do |index|
+  item_indeces_from_params.each do |index|
     status.update_item index, status: :importing
   end
   import_status_card.save_status
 end
 
 event :initiate_import, :integrate, on: :update, when: :data_import? do
-  return unless (indeces = row_indeces_from_params)&.size > 1
+  return unless (indeces = item_indeces_from_params)&.size > 1
   indeces.each do |index|
     Env.with_params(import_rows: { index => true }) do
-      import_row_with_delay
+      import_item_with_delay
     end
   end
 end
 
-event :import_row, :integrate_with_delay, on: :update, when: :import_single_row? do
-  import! row_indeces_from_params
+event :import_item, :integrate_with_delay, on: :update, when: :import_single_item? do
+  import! item_indeces_from_params
 end
 
-def import_single_row?
-  row_indeces_from_params&.size == 1
+def import_single_item?
+  item_indeces_from_params&.size == 1
 end
 
-def import! row_indeces
-  import_manager.import row_indeces do |_row|
+def import! item_indeces
+  import_manager.import item_indeces do |status_hash|
     # refresh seems inefficient, but without this it won't keep updating
     import_status_card.refresh(true).save_status status
     import_status_card.expire
@@ -62,8 +62,8 @@ def silent_change?
   data_import? || super
 end
 
-def row_indeces_from_params
-  @row_indeces_from_params ||=
+def item_indeces_from_params
+  @item_indeces_from_params ||=
     Env.hash(Env.params[:import_rows]).select do |_k, v|
       [true, "true"].include?(v)
     end.keys.map(&:to_i)
