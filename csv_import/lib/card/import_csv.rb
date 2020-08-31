@@ -18,28 +18,20 @@ class Card
       @headers = headers ? map_headers : default_header_map
     end
 
-    # yields the rows of the csv file as ImportItem objects
-    def each_item import_manager=nil, indeces=nil
-      each_row_hash indeces do |hash, index|
-        item_object = @item_class.new hash, import_manager: import_manager
-        yield index, item_object
+    # yields the rows of the csv file as simple hashes
+    def each_input indeces=nil, &block
+      if indeces
+        selected_rows indeces, &block
+      else
+        all_rows &block
       end
     end
 
     private
 
     def validate_item_class!
-      return if item_class.is_a? Class && item_class < ImportItem
+      return if item_class.is_a?(Class) && item_class < ImportItem
       raise ArgumentError, "#{item_class} must inherit from ImportItem"
-    end
-
-    # yields the rows of the csv file as simple hashes
-    def each_row_hash rows=nil, &block
-      if rows
-        selected_rows rows, &block
-      else
-        all_rows &block
-      end
     end
 
     def row_count

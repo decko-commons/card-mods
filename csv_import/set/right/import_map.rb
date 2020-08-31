@@ -1,6 +1,6 @@
 include_set Abstract::Tabs
 
-delegate :csv_file, to: :left
+delegate :import_manager, to: :left
 delegate :column_hash, :mapped_column_keys, :map_type, :map_types, to: :import_item_class
 attr_writer :import_item_class
 
@@ -39,7 +39,9 @@ end
 event :update_import_status, :finalize, on: :update, when: :mapping_param do
   status_card = left.import_status_card
   not_ready_items = status_card.status.status_indeces :not_ready
-  left.import_manager.validate not_ready_items
+  left.import_manager.each_item not_ready_items do |index, item|
+    status_card.status.update_item index, item.validate!
+  end
   status_card.save_status
 end
 
@@ -76,7 +78,7 @@ end
 private
 
 def auto_map_items
-  csv_file.each_row do |import_item|
+  import_manager.each_item do |_index, import_item|
     mapped_column_keys.each do |column|
       auto_map_item_vals import_item, column
     end

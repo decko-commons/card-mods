@@ -7,6 +7,7 @@ class Card
                 abort_on_error: false }.freeze
 
     OPTIONS.keys.map { |o| attr_accessor o }
+    attr_reader :importer
 
     def initialize importer, options={}
       @importer = importer
@@ -16,15 +17,9 @@ class Card
     end
 
     def each_item item_indices=nil
-      @importer.each_item self, item_indices do |index, item|
-        [index, yield(item)]
-      end
-    end
-
-    def import item_indices=nil
-      each_item(item_indices) do |index, item|
-        [index, yield(item.import)]
-        yield item.import
+      importer.each_input item_indices do |input_hash, index|
+        item_object = importer.item_class.new input_hash, import_manager: self
+        yield index, item_object
       end
     end
   end

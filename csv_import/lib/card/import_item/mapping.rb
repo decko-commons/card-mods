@@ -17,7 +17,7 @@ class Card
       def merge_corrections
         return unless corrections
         mapped_column_keys.each do |column|
-          map = corrections[map_type(column)]
+          next unless (map = corrections[map_type(column)])
           error "unmapped #{column}" unless mapped_value? column, map
         end
       end

@@ -9,7 +9,7 @@ class Card
     include Validation
     include Mapping
 
-    attr_reader :errors, :cardid, :import_manager, :input
+    attr_reader :errors, :cardid, :import_manager, :input, :status
     attr_accessor :name
 
     delegate :conflict_strategy, :abort_on_error, :corrections, to: :import_manager
@@ -82,7 +82,7 @@ class Card
         rescuing_errors { yield }
         default_status
       end
-      status_hash status_value
+      @status = status_hash status_value
     end
 
     def rescuing_errors
