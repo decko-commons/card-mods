@@ -12,10 +12,7 @@ event :generate_import_map, :finalize, on: :create do
 end
 
 event :generate_import_status, :finalize, after: :generate_import_map, on: :create do
-  import_manager.each_item do |index, import_item|
-    status.update_item index, import_item.validate!
-  end
-  import_status_card.save_status
+  import_status_card.update_items
 end
 
 event :disallow_content_update, :validate, on: :update, changed: :content do

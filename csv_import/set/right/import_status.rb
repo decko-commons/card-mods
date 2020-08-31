@@ -34,22 +34,14 @@ def save_status status=nil
   update content: (status || self.status).to_json
 end
 
-def reset status_option
-  import_manager.validate(status.status_indeces status_option)
-  save_status import_manager.status
-end
-
-def generate!
-  import_manager.validate
-  self.content = import_manager.status.to_json
-end
-
-def import_manager
-  left.import_manager
-end
-
-def each_row_with_status option
-  import_manager.each_row(status.status_indeces(option)) do |item|
-    yield item
+def update_items indeces=nil
+  import_manager.each_item(indeces) do |index, import_item|
+    status.update_item index, import_item.validate!
   end
+  save_status
 end
+
+def update_items_with_status status_option
+  update_items status.status_indeces(status_option)
+end
+
