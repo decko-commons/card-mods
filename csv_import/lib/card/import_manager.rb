@@ -1,30 +1,30 @@
 class Card
-  # ImportManager coordinates the import of a Card::ImportCsv. It defines the conflict and error
-  # policy. It collects all errors and provides extra data like corrections for item fields.
+  # ImportManager coordinates an Car.
+  # It defines the conflict strategy and corrections for item fields.
   class ImportManager
-    attr_reader :conflict_strategy, :corrections, :status
+    OPTIONS = { conflict_strategy: :skip,
+                corrections: nil,
+                abort_on_error: false }.freeze
 
-    def initialize csv_file, conflict_strategy: :skip, corrections: nil
-      @csv_file = csv_file
-      @conflict_strategy = conflict_strategy
-      @corrections = corrections # import map
+    OPTIONS.keys.map { |o| attr_accessor o }
+
+    def initialize importer, options={}
+      @importer = importer
+      OPTIONS.each do |optname, default_value|
+        self.send "#{optname}=", (options.key?(optname) ? options[optname] : default_value)
+      end
     end
 
     def each_item item_indices=nil
-      @csv_file.each_row self, item_indices do |item|
-        yield item
+      @importer.each_item self, item_indices do |index, item|
+        [index, yield(item)]
       end
     end
 
     def import item_indices=nil
-      each_item(item_indices) do |item|
+      each_item(item_indices) do |index, item|
+        [index, yield(item.import)]
         yield item.import
-      end
-    end
-
-    def validate item_indices=nil
-      each_item(item_indices) do |item|
-        yield item.validate!
       end
     end
   end

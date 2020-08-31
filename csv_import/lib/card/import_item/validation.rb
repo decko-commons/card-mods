@@ -24,7 +24,7 @@ class Card
       end
 
       def each_value
-        @row.each_key do |field|
+        input.each_key do |field|
           value_array(field).each do |value|
             yield field, value
           end
@@ -47,7 +47,7 @@ class Card
 
       def normalize_field field, value
         field_action :normalize, field, value do |result|
-          @row[field] = result
+          input[field] = result
         end
       end
 
@@ -64,7 +64,7 @@ class Card
 
       def check_required_fields
         required.each do |key|
-          error "value for #{key} missing" unless @row[key].present?
+          error "value for #{key} missing" unless input[key].present?
         end
       end
 

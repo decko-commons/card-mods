@@ -23,7 +23,7 @@ class Card
       end
 
       def mapped_value? column, map
-        return true unless (old = @row[column]) # no val returns true here (see required)
+        return true unless (old = input[column]) # no val returns true here (see required)
         new = map_value column, map
         case new
         when false      # unmapped value
@@ -33,7 +33,7 @@ class Card
         when old        # mapped value same as current value
           true
         else            # corrected value from map
-          record_correction column, new
+          input[column] = new
         end
       end
 
@@ -53,11 +53,6 @@ class Card
 
       def stringify value
         value.is_a?(Integer) ? "~#{value}" : value
-      end
-
-      def record_correction column, new
-        @before_corrected[column] = @row_column
-        @row[column] = new
       end
     end
   end

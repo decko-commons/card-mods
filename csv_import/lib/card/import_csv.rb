@@ -9,9 +9,8 @@ class Card
     #    if the csv file has no or wrong headers
     def initialize(path_or_file, item_class,
                    col_sep: ",", encoding: "utf-8", headers: true)
-      raise ArgumentError, "no row class given" unless item_class.is_a?(Class)
-      raise ArgumentError, "#{item_class} must inherit from ImportItem" unless item_class < ImportItem
       @item_class = item_class
+      validate_item_class!
       @col_sep = col_sep
       @encoding = encoding
 
@@ -20,10 +19,18 @@ class Card
     end
 
     # yields the rows of the csv file as ImportItem objects
-    def each_row import_manager=nil, rows=nil
-      each_row_hash rows do |row_hash, index|
-        yield @item_class.new(row_hash, index, import_manager: import_manager)
+    def each_item import_manager=nil, indeces=nil
+      each_row_hash indeces do |hash, index|
+        item_object = @item_class.new hash, import_manager: import_manager
+        yield index, item_object
       end
+    end
+
+    private
+
+    def validate_item_class!
+      return if item_class.is_a? Class && item_class < ImportItem
+      raise ArgumentError, "#{item_class} must inherit from ImportItem"
     end
 
     # yields the rows of the csv file as simple hashes

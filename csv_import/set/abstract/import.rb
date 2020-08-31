@@ -33,3 +33,7 @@ end
 def corrections
   import_map_card.map
 end
+
+def status
+  import_status_card.status
+end

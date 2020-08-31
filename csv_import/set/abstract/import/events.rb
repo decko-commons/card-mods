@@ -12,8 +12,10 @@ event :generate_import_map, :finalize, on: :create do
 end
 
 event :generate_import_status, :finalize, after: :generate_import_map, on: :create do
-  import_manager.validate
-  import_status_card.save_status status
+  import_manager.each_item do |index, import_item|
+    status.update_item index, import_item.validate!
+  end
+  import_status_card.save_status
 end
 
 event :disallow_content_update, :validate, on: :update, changed: :content do
@@ -47,10 +49,12 @@ def import_single_item?
 end
 
 def import! item_indeces
-  import_manager.import item_indeces do |status_hash|
+  import_manager.each_item item_indeces do |index, import_item|
     # refresh seems inefficient, but without this it won't keep updating
-    import_status_card.refresh(true).save_status status
-    import_status_card.expire
+
+    status = import_status_card.refresh true
+    status.update_item index, import_item.import
+    status.save_status
   end
 end
 

@@ -9,38 +9,23 @@ class Card
     include Validation
     include Mapping
 
-    attr_reader :errors, :index, :cardid, :import_manager
-    attr_accessor :status, :name, :conflict_strategy
-    attr_writer :corrections
+    attr_reader :errors, :cardid, :import_manager, :input
+    attr_accessor :name
 
-    delegate :status, to: :import_manager
+    delegate :conflict_strategy, :abort_on_error, :corrections, to: :import_manager
 
-    def initialize(row, index=0, import_manager: nil,
-                                 abort_on_error: false,
-                                 conflict_strategy: nil)
-      @row = row
+    def initialize input_hash, import_manager: nil
+      @input = input_hash
       @import_manager = import_manager || ImportManager.new(nil)
-      @conflict_strategy = conflict_strategy || @import_manager.conflict_strategy
-      @abort_on_error = abort_on_error
-      @index = index # 0-based, not counting the header line
       @errors = []
       @conflict = nil
-      @auto_add = {}
       @cardid = nil
-      @before_corrected = {}
+      @auto_add = {}
     end
 
     def import_hash
       # FIXME: make reasonable default!
       {}
-    end
-
-    def original_row
-      @row.merge @before_corrected
-    end
-
-    def corrections
-      @corrections ||= import_manager.corrections
     end
 
     def import
@@ -62,7 +47,7 @@ class Card
     end
 
     def [] key
-      @row[key]
+      input[key]
     end
 
     def value_array key
@@ -76,12 +61,8 @@ class Card
       end
     end
 
-    def fields
-      @row
-    end
-
     def export_csv_line _status
-      CSV.generate_line column_keys.map { |ck| @row[ck] }
+      CSV.generate_line column_keys.map { |ck| input[ck] }
     end
 
     private
@@ -108,7 +89,7 @@ class Card
       yield
     rescue StandardError => e
       major_error e
-      raise e if @abort_on_error
+      raise e if abort_on_error
     end
 
     def status_hash status_value
@@ -134,11 +115,11 @@ class Card
     end
 
     def method_missing method_name, *args
-      respond_to_missing?(method_name) ? @row[method_name.to_sym] : super
+      respond_to_missing?(method_name) ? input[method_name.to_sym] : super
     end
 
     def respond_to_missing? method_name, _include_private=false
-      @row.keys.include? method_name
+      input.keys.include? method_name
     end
 
     def pick_up_card_errors
