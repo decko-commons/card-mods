@@ -73,21 +73,17 @@ format :html do
   #   end
   # end
 
-  def row_label_cell status, item
+  def row_label_cell status, index
     output([
-      (checkbox(item) if SHOW_CHECKBOX[status]),
-      row_value(item),
-      exists_value(item),
-      errors_value(item)
+      (checkbox(index) if SHOW_CHECKBOX[status]),
+      (index + 1),
+      exists_value(index),
+      errors_value(index)
     ].compact)
   end
 
-  def row_value item
-    item.index + 1
-  end
-
-  def checkbox item
-    check_box_tag("import_rows[#{item.index}]", true, false,
+  def checkbox index
+    check_box_tag("import_rows[#{index}]", true, false,
                   class: "_import-row-checkbox")
   end
 
@@ -95,8 +91,8 @@ format :html do
     status.item_hash index
   end
 
-  def exists_value item
-    si = status_item item.index
+  def exists_value index
+    si = status_item index
     return unless (id = si[:id])
     mapped_link(id, icon_tag(:open_in_browser)) + conflict_note(si[:conflict])
   end
@@ -107,8 +103,8 @@ format :html do
     raw(" <small class=\"text-muted\">(#{conflict})</small>")
   end
 
-  def errors_value item
-    errors = status_item(item.index)[:errors]
+  def errors_value index
+    errors = status_item(index)[:errors]
     return unless errors.present?
 
     popover_link errors.join("\n"), # haml(:errors, errors: errors),
