@@ -46,8 +46,8 @@ def import_single_item?
 end
 
 def import! item_indeces
-  import_manager.each_item item_indeces do |index, import_item|
-    Card.transaction do
+  Card.transaction do
+    import_manager.each_item item_indeces do |index, import_item|
       s = import_status_card.refresh true
       s.status.update_item index, import_item.import
       s.save_status
