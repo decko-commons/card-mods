@@ -47,11 +47,11 @@ end
 
 def import! item_indeces
   import_manager.each_item item_indeces do |index, import_item|
-    # refresh is to reduce race conditions.  Could be wise to wrap in transaction...
-
-    s = import_status_card.refresh true
-    s.status.update_item index, import_item.import
-    s.save_status
+    Card.transaction do
+      s = import_status_card.refresh true
+      s.status.update_item index, import_item.import
+      s.save_status
+    end
   end
 end
 
