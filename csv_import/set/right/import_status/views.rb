@@ -97,7 +97,7 @@ format :csv do
 
   def csv_lines_for status
     lines = []
-    card.each_row_with_status(status) do |item|
+    card.each_item_with_status(status) do |_index, item|
       lines << item.export_csv_line(status)
     end
     lines

@@ -45,3 +45,7 @@ def update_items_with_status status_option
   update_items status.status_indeces(status_option)
 end
 
+def each_item_with_status status_option, &block
+  import_manager.each_item status.status_indeces(status_option), &block
+end
+
