@@ -18,8 +18,17 @@ class Card
 
     def each_item item_indices=nil
       importer.each_input item_indices do |input_hash, index|
-        item_object = importer.item_class.new input_hash, import_manager: self
-        yield index, item_object
+        import_transaction do
+          item_object = importer.item_class.new input_hash, import_manager: self
+          yield index, item_object
+        end
+      end
+    end
+
+    def import_transaction
+      Card.transaction do
+        Card::Cache.renew
+        yield
       end
     end
   end
