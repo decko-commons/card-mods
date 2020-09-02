@@ -28,7 +28,17 @@ event :mark_items_as_importing, :validate, on: :update, when: :data_import? do
   import_status_card.save_status
 end
 
-event :import_item, :integrate_with_delay, on: :update, when: :data_import? do
+event :initiate_import, :integrate, on: :update, when: :data_import? do
+  return unless (indeces = item_indeces_from_params)&.size > 1
+  indeces.each do |index|
+    Env.with_params(import_rows: { index => true }) do
+      import_item_with_delay
+    end
+  end
+end
+
+event :import_item, :integrate_with_delay, on: :update, when: :import_single_item? do
+  # event :import_item, :integrate_with_delay, on: :update, when: :data_import? do
   import! item_indeces_from_params
 end
 

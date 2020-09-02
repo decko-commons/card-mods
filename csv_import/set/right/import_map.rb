@@ -39,7 +39,7 @@ end
 event :update_import_status, :finalize, on: :update, when: :mapping_param do
   status_card = left.import_status_card
   not_ready_items = status_card.status.status_indeces :not_ready
-  left.import_manager.each_item not_ready_items do |index, item|
+  import_manager.each_item not_ready_items do |index, item|
     status_card.status.update_item index, item.validate!
   end
   status_card.save_status
