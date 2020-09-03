@@ -1,4 +1,4 @@
-describe Card::Set::Abstract::Tab do
+describe Card::Set::Abstract::Table do
   subject do
     Card["Samsung"].format_with_set(described_class, :html)
   end
