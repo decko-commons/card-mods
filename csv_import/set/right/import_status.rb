@@ -48,4 +48,3 @@ end
 def each_item_with_status status_option, &block
   import_manager.each_item status.status_indeces(status_option), &block
 end
-
