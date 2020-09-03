@@ -39,7 +39,7 @@ end
 event :update_import_status, :finalize, on: :update, when: :mapping_param do
   status_card = left.import_status_card
   not_ready_items = status_card.status.status_indeces :not_ready
-  left.import_manager.each_item not_ready_items do |index, item|
+  import_manager.each_item not_ready_items do |index, item|
     status_card.status.update_item index, item.validate!
   end
   status_card.save_status
@@ -104,22 +104,23 @@ end
 
 def normalize_submap type, submap
   submap.each do |name_in_file, cardname|
-    submap[name_in_file] = MapItem.new(self, type, cardname).normalize
+    submap[name_in_file] = MapItem.new(self, type, name_in_file, cardname).normalize
   end
 end
 
 class MapItem
-  attr_reader :map_card, :type, :cardname
+  attr_reader :map_card, :type, :cardname, :name_in_file
 
-  def initialize map_card, type, cardname
+  def initialize map_card, type, name_in_file, cardname
     @map_card = map_card
     @type = type
+    @name_in_file = name_in_file
     @cardname = cardname
   end
 
   def normalize
-    handling_auto_add do
-      normalize_cardname do
+    normalize_cardname do
+      handling_auto_add do
         mapped_id || invalid_mapping
       end
     end
@@ -140,7 +141,7 @@ class MapItem
   end
 
   def handling_auto_add
-    cardname == "AutoAdd" && auto_add_type? ? "AutoAdd" : yield
+    cardname == "AutoAdd" && auto_add_type? ? auto_add : yield
   end
 
   def normalize_cardname
@@ -150,6 +151,10 @@ class MapItem
 
   def auto_add_type?
     map_card.auto_add_type? type
+  end
+
+  def auto_add
+    map_card.import_item_class.auto_add type, name_in_file
   end
 end
 

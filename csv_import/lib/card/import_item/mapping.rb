@@ -14,10 +14,10 @@ class Card
         Card.fetch_id value unless validate_field field, value
       end
 
-      def merge_corrections
-        return unless corrections
+      def merge_mapping
+        return unless mapping
         mapped_column_keys.each do |column|
-          next unless (map = corrections[map_type(column)])
+          next unless (map = mapping[map_type(column)])
           error "unmapped #{column}" unless mapped_value? column, map
         end
       end
@@ -26,14 +26,10 @@ class Card
         return true unless (old = input[column]) # no val returns true here (see required)
         new = map_value column, map
         case new
-        when false      # unmapped value
-          false
-        when "AutoAdd" # automatically add unknown card
-          @auto_add[column] = true
-        when old        # mapped value same as current value
-          true
-        else            # corrected value from map
-          input[column] = new
+        when false, "AutoAdd" then false # unmapped value
+        when old              then true  # mapped value same as current value
+        else
+          input[column] = new            # corrected value from map
         end
       end
 

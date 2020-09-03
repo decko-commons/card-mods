@@ -69,6 +69,11 @@ class Card
         column_hash.dig column, :separator
       end
 
+      def separate_vals column, val
+        return unless (sep = separator column)
+        val.split(/\s*#{Regexp.escape sep}\s*/)
+      end
+
       # @return [Hash] { column_key_0 => 0, column_key_1 => 1 }
       def map_headers names
         names = names.map(&:to_name)
@@ -88,7 +93,15 @@ class Card
         CSV.generate_line headers
       end
 
+      def auto_add type, value
+        try("auto_add_#{type}", value) || auto_add_default(type, value)
+      end
+
       private
+
+      def auto_add_default type, value
+        (Card.create! name: value, type: type)&.id
+      end
 
       def unmapped column
         return unless required.include? column
@@ -119,6 +132,6 @@ class Card
     end
 
     delegate :required, :column_hash, :mapped_column_keys, :map_type, :column_keys,
-             :separator, to: :class
+             :separator, :separate_vals, to: :class
   end
 end

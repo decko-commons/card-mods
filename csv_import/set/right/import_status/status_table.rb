@@ -29,7 +29,7 @@ format :html do
   end
 
   def cell_hash column, item
-    if (map = corrections[import_item_class.map_type(column)])
+    if (map = mapping[import_item_class.map_type(column)])
       mappable_cell_hash map, column, item
     else
       val = item[column]

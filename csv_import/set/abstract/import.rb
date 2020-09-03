@@ -22,7 +22,7 @@ end
 
 def import_manager
   @import_manager ||= ImportManager.new csv_file, conflict_strategy: conflict_strategy,
-                                                  corrections: corrections
+                                                  mapping: mapping
 end
 
 def conflict_strategy
@@ -30,7 +30,7 @@ def conflict_strategy
   cs ? cs.to_sym : :skip
 end
 
-def corrections
+def mapping
   import_map_card.map
 end
 

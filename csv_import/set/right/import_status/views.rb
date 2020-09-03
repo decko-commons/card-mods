@@ -1,7 +1,7 @@
 include_set Abstract::Export
 
 format :html do
-  delegate :status, :csv_file, :import_item_class, :corrections, to: :card
+  delegate :status, :csv_file, :import_item_class, :mapping, to: :card
   delegate :percentage, :count, to: :status
 
   def tab_list

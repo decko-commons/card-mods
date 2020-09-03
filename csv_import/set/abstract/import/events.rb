@@ -37,7 +37,8 @@ event :initiate_import, :integrate, on: :update, when: :data_import? do
   end
 end
 
-event :import_item, :integrate_with_delay, on: :update, when: :import_single_item? do
+# event :import_item, :integrate_with_delay, on: :update, when: :import_single_item? do
+event :import_item, :integrate_with_delay, on: :update, when: :data_import? do
   import! item_indeces_from_params
 end
 
@@ -47,11 +48,14 @@ end
 
 def import! item_indeces
   import_manager.each_item item_indeces do |index, import_item|
-    # refresh is to reduce race conditions.  Could be wise to wrap in transaction...
+    Rails.logger.info "IMPORTING ITEM: #{import_item.input}"
 
-    s = import_status_card.refresh true
-    s.status.update_item index, import_item.import
-    s.save_status
+    status = import_item.import
+    import_status_card.status.update_item index, status
+    Rails.logger.info "ITEM IMPORTED: #{status}"
+
+    import_status_card.save_status
+    Rails.logger.info "STATUS SAVED: #{status}"
   end
 end
 

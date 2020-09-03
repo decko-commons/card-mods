@@ -12,7 +12,7 @@ class Card
     attr_reader :errors, :cardid, :import_manager, :input, :status
     attr_accessor :name
 
-    delegate :conflict_strategy, :abort_on_error, :corrections, to: :import_manager
+    delegate :conflict_strategy, :abort_on_error, :mapping, to: :import_manager
 
     def initialize input_hash, import_manager: nil
       @input = input_hash
@@ -20,7 +20,6 @@ class Card
       @errors = []
       @conflict = nil
       @cardid = nil
-      @auto_add = {}
     end
 
     def import_hash
@@ -54,10 +53,8 @@ class Card
       val = self[key]
       if val.blank?
         []
-      elsif (sep = separator key)
-        val.split(/\s*#{Regexp.escape sep}\s*/)
       else
-        [val]
+        separate_vals(key, val) || [val]
       end
     end
 
