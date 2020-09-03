@@ -37,8 +37,8 @@ event :initiate_import, :integrate, on: :update, when: :data_import? do
   end
 end
 
-event :import_item, :integrate_with_delay, on: :update, when: :import_single_item? do
-  # event :import_item, :integrate_with_delay, on: :update, when: :data_import? do
+# event :import_item, :integrate_with_delay, on: :update, when: :import_single_item? do
+event :import_item, :integrate_with_delay, on: :update, when: :data_import? do
   import! item_indeces_from_params
 end
 

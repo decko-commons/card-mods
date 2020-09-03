@@ -9,7 +9,7 @@ class Card
       def validate
         @errors = []
         collect_errors { check_required_fields }
-        collect_errors(:not_ready) { merge_corrections }
+        collect_errors(:not_ready) { merge_mapping }
         collect_errors do
           normalize
           validate_fields
@@ -69,7 +69,7 @@ class Card
       end
 
       def default_validation field, value
-        return true if @auto_add[field] || !mapped_column_keys.include?(field)
+        return true if !mapped_column_keys.include?(field)
 
         Card[value]&.type_code == map_type(field)
       end

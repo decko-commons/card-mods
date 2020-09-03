@@ -12,7 +12,7 @@ STATUS_GROUPS = {
   success: [:success, "Success"]
 }.freeze
 
-delegate :csv_file, :import_item_class, :corrections, :import_manager, to: :left
+delegate :csv_file, :import_item_class, :mapping, :import_manager, to: :left
 
 def status
   @status ||= ImportManager::Status.new content_hash

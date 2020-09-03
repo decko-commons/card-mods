@@ -1,10 +1,8 @@
 class Card
   # ImportManager coordinates an Car.
-  # It defines the conflict strategy and corrections for item fields.
+  # It defines the conflict strategy and mapping for item fields.
   class ImportManager
-    OPTIONS = { conflict_strategy: :skip,
-                corrections: nil,
-                abort_on_error: false }.freeze
+    OPTIONS = { conflict_strategy: :skip, mapping: nil, abort_on_error: false }.freeze
 
     OPTIONS.keys.map { |o| attr_accessor o }
     attr_reader :importer
@@ -21,13 +19,6 @@ class Card
         Card::Cache.renew
         item_object = importer.item_class.new input_hash, import_manager: self
         yield index, item_object
-      end
-    end
-
-    def import_transaction
-      Card.transaction do
-        Card::Cache.renew
-        yield
       end
     end
   end
