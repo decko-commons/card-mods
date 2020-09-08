@@ -51,26 +51,6 @@ def auto_map!
   self.content = @map.to_json
 end
 
-format :csv do
-  view :export do
-    raise Card::Error, "type required" unless (type = params[:map_type])
-
-    lines = [["Name in File", "Name in WikiRate", "WikiRate ID"]]
-    export_content_lines type, lines
-    lines.map { |l| CSV.generate_line l }.join
-  end
-
-  def export_content_lines type, lines
-    card.map[type.to_sym].map do |key, value|
-      lines << [key, clean_value(value), value]
-    end
-  end
-
-  def clean_value value
-    value == "AutoAdd" ? value : value&.cardname
-  end
-end
-
 def auto_add_type? column
   import_item_class.auto_add_types.include? column
 end
@@ -86,7 +66,7 @@ def auto_map_items
 end
 
 def auto_map_item_vals import_item, column
-  submap = @map[map_type(column)] ||= {}
+  submap = map[map_type(column)] ||= {}
   import_item.value_array(column).each do |val|
     next if val.strip.blank? || submap.key?(val)
 
@@ -104,8 +84,23 @@ end
 
 def normalize_submap type, submap
   submap.each do |name_in_file, cardname|
-    submap[name_in_file] = MapItem.new(self, type, name_in_file, cardname).normalize
+    submap[name_in_file] =
+      cardname.blank? ? nil : MapItem.new(self, type, name_in_file, cardname).normalize
   end
+end
+
+def mapping_from_param
+  mapping = Env.hash(mapping_param).symbolize_keys
+  mapping.values.each do |submap|
+    submap.keys.each do |key|
+      submap[CGI.unescape(key)] = submap.delete(key)
+    end
+  end
+  mapping
+end
+
+def mapping_param
+  Env.params[:mapping]
 end
 
 class MapItem
@@ -124,8 +119,8 @@ class MapItem
         mapped_id || invalid_mapping
       end
     end
-  rescue StandardError
-    invalid_mapping
+  rescue StandardError => e
+    invalid_mapping e.message
   end
 
   private
@@ -135,8 +130,10 @@ class MapItem
     map_card.import_item_class.new(type => cardname).map_field type, cardname
   end
 
-  def invalid_mapping
-    map_card.errors.add :content, "invalid #{type} mapping: #{cardname}"
+  def invalid_mapping error=nil
+    message = "invalid #{type} mapping: #{cardname}"
+    message += " (#{error})" if error
+    map_card.errors.add :content, message
     nil
   end
 
@@ -156,18 +153,4 @@ class MapItem
   def auto_add
     map_card.import_item_class.auto_add type, name_in_file
   end
-end
-
-def mapping_from_param
-  mapping = Env.hash(mapping_param).symbolize_keys
-  mapping.values.each do |submap|
-    submap.keys.each do |key|
-      submap[CGI.unescape(key)] = submap.delete(key)
-    end
-  end
-  mapping
-end
-
-def mapping_param
-  Env.params[:mapping]
 end
