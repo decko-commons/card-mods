@@ -51,6 +51,7 @@ def import! item_indeces
     Rails.logger.info "IMPORTING ITEM: #{import_item.input}"
     result = import_item.import
     s = import_status_card.refresh true
+    s.director.restart
     Rails.logger.info "ITEM IMPORTED: #{result}"
     s.status.update_item index, result
     Rails.logger.info "STATUS ITEM UPDATED: #{result}"
