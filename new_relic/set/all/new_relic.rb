@@ -13,7 +13,7 @@ event :new_relic_act_start, before: :act, when: :new_relic_tracking? do
 end
 
 ::Card::Set::Event::IntegrateWithDelayJob.after_perform do |job|
-  ActManager.contextualize_delayed_event *job.arguments[0..3] do
+  Director.contextualize_delayed_event *job.arguments[0..3] do
     card = job.arguments[1]
     card&.track_delayed_job job
   end
@@ -62,7 +62,7 @@ def add_new_relic_act_attributes time=true
 end
 
 def action_names_for_new_relic
-  return unless (actions = ActManager.act&.actions(false))
+  return unless (actions = Director.act&.actions(false))
   actions.map(&:card).compact.map &:name
 end
 
