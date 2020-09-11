@@ -28,16 +28,16 @@ event :mark_items_as_importing, :validate, on: :update, when: :data_import? do
   import_status_card.save_status
 end
 
-event :initiate_import, :integrate, on: :update, when: :data_import? do
-  return unless (indeces = item_indeces_from_params)&.size > 1
-  indeces.each do |index|
-    Env.with_params(import_rows: { index => true }) do
-      import_item_with_delay
-    end
-  end
-end
+# event :initiate_import, :integrate, on: :update, when: :data_import? do
+#   return unless (indeces = item_indeces_from_params)&.size > 1
+#   indeces.each do |index|
+#     Env.with_params(import_rows: { index => true }) do
+#       import_item_with_delay
+#     end
+#   end
+# end
 
-event :import_item, :integrate_with_delay, on: :update, when: :import_single_item? do
+event :import_items, :integrate_with_delay, on: :update, when: :import_single_item? do
   # event :import_item, :integrate_with_delay, on: :update, when: :data_import? do
   import! item_indeces_from_params
 end
@@ -51,7 +51,8 @@ def import! item_indeces
     Rails.logger.info "IMPORTING ITEM: #{import_item.input}"
     result = import_item.import
     s = import_status_card
-    s.refresh_content
+    s.director.restart
+    # s.refresh_content
     Rails.logger.info "ITEM IMPORTED: #{result}"
     s.status.update_item index, result
     Rails.logger.info "STATUS ITEM UPDATED: #{result}"
