@@ -26,6 +26,10 @@ def history?
   false
 end
 
+def refresh_content
+  super.tap { @status = nil }
+end
+
 def content_hash
   content.present? ? JSON.parse(content) : {}
 end

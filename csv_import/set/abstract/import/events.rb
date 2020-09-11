@@ -37,8 +37,8 @@ event :initiate_import, :integrate, on: :update, when: :data_import? do
   end
 end
 
-# event :import_item, :integrate_with_delay, on: :update, when: :import_single_item? do
-event :import_item, :integrate_with_delay, on: :update, when: :data_import? do
+event :import_item, :integrate_with_delay, on: :update, when: :import_single_item? do
+  # event :import_item, :integrate_with_delay, on: :update, when: :data_import? do
   import! item_indeces_from_params
 end
 
@@ -50,8 +50,8 @@ def import! item_indeces
   import_manager.each_item item_indeces do |index, import_item|
     Rails.logger.info "IMPORTING ITEM: #{import_item.input}"
     result = import_item.import
-    s = import_status_card.refresh true
-    s.director.restart
+    s = import_status_card
+    s.refresh_content
     Rails.logger.info "ITEM IMPORTED: #{result}"
     s.status.update_item index, result
     Rails.logger.info "STATUS ITEM UPDATED: #{result}"
