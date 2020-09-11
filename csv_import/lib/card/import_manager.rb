@@ -16,7 +16,6 @@ class Card
 
     def each_item item_indices=nil
       importer.each_input item_indices do |input_hash, index|
-        Card::Cache.renew
         item_object = importer.item_class.new input_hash, import_manager: self
         yield index, item_object
       end

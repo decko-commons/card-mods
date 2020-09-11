@@ -48,8 +48,6 @@ class Card
       end
     end
 
-    private
-
     def read_csv path_or_file
       @rows =
         if path_or_file.respond_to?(:read)

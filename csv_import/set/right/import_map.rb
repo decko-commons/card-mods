@@ -1,6 +1,6 @@
 include_set Abstract::Tabs
 
-delegate :import_manager, :import_item_class, to: :left
+delegate :import_manager, :import_item_class, :import_status_card, to: :left
 delegate :column_hash, :mapped_column_keys, :map_type, :map_types, to: :import_item_class
 attr_writer :import_item_class
 
@@ -33,7 +33,7 @@ event :update_import_mapping, :validate, on: :update, when: :mapping_param do
 end
 
 event :update_import_status, :integrate, on: :update, when: :mapping_param do
-  status_card = left.import_status_card
+  status_card = import_status_card
   not_ready_items = status_card.status.status_indeces :not_ready
   import_manager.each_item not_ready_items do |index, item|
     status_card.status.update_item index, item.validate!
