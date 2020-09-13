@@ -48,16 +48,12 @@ end
 
 def import! item_indeces
   import_manager.each_item item_indeces do |index, import_item|
-    Rails.logger.info "IMPORTING ITEM: #{import_item.input}"
+    puts "IMPORTING ITEM: #{import_item.input}".red
     result = import_item.import
     s = import_status_card
     s.director.restart
-    # s.refresh_content
-    Rails.logger.info "ITEM IMPORTED: #{result}"
     s.status.update_item index, result
-    Rails.logger.info "STATUS ITEM UPDATED: #{result}"
     s.save_status
-    Rails.logger.info "STATUS SAVED: #{result}"
   end
 end
 
