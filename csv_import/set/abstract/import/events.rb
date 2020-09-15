@@ -48,7 +48,7 @@ end
 
 def import! item_indeces
   import_manager.each_item item_indeces do |index, import_item|
-    puts "IMPORTING ITEM: #{import_item.input}".red
+    # puts "IMPORTING ITEM: #{import_item.input}".red
     result = import_item.import
     s = import_status_card
     s.director.restart
