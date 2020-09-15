@@ -16,5 +16,4 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 2.3.0"
   s.metadata = { "card-mod" => "layout" }
-  s.add_runtime_dependency "card"
 end
