@@ -26,10 +26,10 @@ class Card
         return true unless (old = input[column]) # no val returns true here (see required)
         new = map_value column, map
         case new
-        when false, "AutoAdd" then false # unmapped value
-        when old              then true  # mapped value same as current value
+        when false, "AutoAdd", "AutoAddFailure" then false # unmapped value
+        when old                                then true  # mapped value same as current value
         else
-          input[column] = new            # corrected value from map
+          input[column] = new                              # corrected value from map
         end
       end
 

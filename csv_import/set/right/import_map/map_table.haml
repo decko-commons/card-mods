@@ -18,15 +18,16 @@
         on WikiRate
   %tbody
     - card.map[map_type].each do |name_in_file, cardid|
-      - cardname = cardid == "AutoAdd" ? "AutoAdd" : cardid&.cardname
+      - auto_add = cardid&.to_s&.match?(/^AutoAdd/)
+      - cardname = auto_add ? cardid : cardid&.cardname
       %tr{ class: "_map-item #{cardname ? 'mapped' : 'unmapped'}-import-attrib" }
         %td
           = check_box_tag "importMapItem" unless cardname
         %td.in-file
           = name_in_file
         %td
-          - if cardname == "AutoAdd"
-            %em (AutoAdd)
+          - if auto_add
+            %em (#{cardname})
           - elsif cardname.present?
             = nest cardname, view: item_view(map_type)
           - else

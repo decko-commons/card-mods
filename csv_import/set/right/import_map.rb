@@ -27,12 +27,14 @@ def parse_map map
   JSON.parse(map).symbolize_keys
 end
 
-event :update_import_mapping, :validate, on: :update, when: :mapping_param do
+event :update_import_mapping, :validate, on: :update, when: :mapping? do
   merge_mapping mapping_from_param
   self.content = map.to_json
 end
 
-event :update_import_status, :integrate_with_delay, on: :update, when: :mapping_param do
+event :update_import_status, :integrate_with_delay, on: :update, when: :mapping? do
+  @already_mapping = true
+  auto_add_items
   status_card = import_status_card
   not_ready_items = status_card.status.status_indeces :not_ready
   import_manager.each_item not_ready_items do |index, item|
@@ -82,7 +84,11 @@ end
 def normalize_submap type, submap
   submap.each do |name_in_file, cardname|
     submap[name_in_file] =
-      cardname.blank? ? nil : MapItem.new(self, type, name_in_file, cardname).normalize
+      if cardname.blank?
+        nil
+      else
+        ImportMapItem.new(self, type, name_in_file, cardname).normalize
+      end
   end
 end
 
@@ -100,54 +106,29 @@ def mapping_param
   Env.params[:mapping]
 end
 
-class MapItem
-  attr_reader :map_card, :type, :cardname, :name_in_file
+def mapping?
+  mapping_param
+end
 
-  def initialize map_card, type, name_in_file, cardname
-    @map_card = map_card
-    @type = type
-    @name_in_file = name_in_file
-    @cardname = cardname
-  end
-
-  def normalize
-    normalize_cardname do
-      handling_auto_add do
-        mapped_id || invalid_mapping
-      end
+def each_map_item
+  map.each do |map_type, mapping|
+    mapping.each do |name_in_file, cardname|
+      yield ImportMapItem.new self, map_type, name_in_file, cardname
     end
-  rescue StandardError => e
-    invalid_mapping e.message
   end
+end
 
-  private
-
-  # FIXME: could break if type and column have different names
-  def mapped_id
-    map_card.import_item_class.new(type => cardname).map_field type, cardname
+def auto_add_items
+  each_map_item do |item|
+    next unless item.auto_add?
+    result = item.auto_add
+    update_map item.type, item.name_in_file, result
   end
+end
 
-  def invalid_mapping error=nil
-    message = "invalid #{type} mapping: #{cardname}"
-    message += " (#{error})" if error
-    map_card.errors.add :content, message
-    nil
-  end
-
-  def handling_auto_add
-    cardname == "AutoAdd" && auto_add_type? ? auto_add : yield
-  end
-
-  def normalize_cardname
-    @cardname = Card::Env::Location.cardname_from_url(cardname) || cardname
-    cardname.blank? ? nil : yield
-  end
-
-  def auto_add_type?
-    map_card.auto_add_type? type
-  end
-
-  def auto_add
-    map_card.import_item_class.auto_add type, name_in_file
-  end
+def update_map type, key, value
+  map[type][key] = value
+  self.content = map.to_json
+  update_column :db_content, content
+  expire
 end

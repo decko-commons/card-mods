@@ -55,8 +55,8 @@ format :html do
   end
 
   def styled_value value, mapped
-    if mapped == "AutoAdd"
-      "<em>AutoAdd (#{value})</em>"
+    if mapped&.to_s&.match?(/^AutoAdd/)
+      "<em>#{mapped} (#{value})</em>"
     else
       mapped_link mapped
     end
