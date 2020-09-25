@@ -5,7 +5,7 @@ RSpec.describe Card::Set::Right::Account do
         name: "BookmarkUser",
         type_id: Card::SignupID,
         "+*account" => {
-          "+*email" => "tmpuser@wagn.org",
+          "+*email" => "tmpuser@decko.org",
           "+*password" => "tmp_pass"
         }
       }
