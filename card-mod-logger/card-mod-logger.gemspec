@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 
+require "../card_mod_gem"
+
 CardModGem.mod "logger" do |s, _d|
   s.version = "1.1"
   s.summary = "request and performance logger for decko"
