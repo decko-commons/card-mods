@@ -94,7 +94,11 @@ class Card
       end
 
       def auto_add type, value
-        try("auto_add_#{type}", value) || auto_add_default(type, value)
+        if respond_to? "auto_add_#{type}"
+          send "auto_add_#{type}", value
+        else
+          auto_add_default type, value
+        end
       end
 
       private
