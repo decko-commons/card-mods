@@ -1,4 +1,4 @@
-format :html do
+format do
   def sort_options
     handling_fulltext do
       # TODO: make it possible to use super here
