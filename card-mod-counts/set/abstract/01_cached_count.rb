@@ -32,24 +32,28 @@ def recount
 end
 
 module ClassMethods
-  def recount_trigger *set_parts_of_changed_card
-    args =
-      set_parts_of_changed_card.last.is_a?(Hash) ? set_parts_of_changed_card.pop : {}
-    set_of_changed_card = ensure_set { set_parts_of_changed_card }
+  # @param parts [Array] set parts of changed card
+  def recount_trigger *set_parts
+    args = set_parts.last.is_a?(Hash) ? set_parts.pop : {}
+    set = ensure_set { set_parts }
     # args[:on] ||= [:create, :update, :delete]
-    name = event_name set_of_changed_card, args
-    set_of_changed_card.class_eval do
-      event name, :after_integrate, args do
-        # , args.merge(after_all: :refresh_updated_answers) do
-        Array.wrap(yield(self)).compact.each do |expired_count_card|
-          next unless expired_count_card.respond_to?(:recount)
-          expired_count_card.update_cached_count self
+    event_name = recount_event_name set, args
+    define_recount_event set, event_name, args
+  end
+
+  private
+
+  def define_recount_event set, event_name, args
+    set.class_eval do
+      event event_name, :after_integrate, args do
+        Array.wrap(yield(self)).compact.each do |count_card|
+          count_card.update_cached_count self if count_card.respond_to? :recount
         end
       end
     end
   end
 
-  def event_name set, args
+  def recount_event_name set, args
     changed_card_set = set.to_s.tr(":", "_").underscore
     cached_count_set = to_s.tr(":", "_").underscore
     actions = Array.wrap args[:on]
