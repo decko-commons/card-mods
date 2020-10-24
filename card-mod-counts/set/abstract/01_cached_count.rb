@@ -33,19 +33,18 @@ end
 
 module ClassMethods
   # @param parts [Array] set parts of changed card
-  def recount_trigger *set_parts
-    args = set_parts.last.is_a?(Hash) ? set_parts.pop : {}
+  def recount_trigger *set_parts, &block
+    event_args = set_parts.last.is_a?(Hash) ? set_parts.pop : {}
     set = ensure_set { set_parts }
-    # args[:on] ||= [:create, :update, :delete]
-    event_name = recount_event_name set, args
-    define_recount_event set, event_name, args
+    event_name = recount_event_name set, event_args[:on]
+    define_recount_event set, event_name, event_args, &block
   end
 
   private
 
-  def define_recount_event set, event_name, args
+  def define_recount_event set, event_name, event_args
     set.class_eval do
-      event event_name, :after_integrate, args do
+      event event_name, :after_integrate, event_args do
         Array.wrap(yield(self)).compact.each do |count_card|
           count_card.update_cached_count self if count_card.respond_to? :recount
         end
@@ -53,12 +52,11 @@ module ClassMethods
     end
   end
 
-  def recount_event_name set, args
-    changed_card_set = set.to_s.tr(":", "_").underscore
-    cached_count_set = to_s.tr(":", "_").underscore
-    actions = Array.wrap args[:on]
-    "update_cached_count_for_#{cached_count_set}_due_to_change_in_" \
-        "#{changed_card_set}_on_#{actions.join('_')}".to_sym
+  def recount_event_name set, on
+    changed_set = set.to_s.tr(":", "_").underscore
+    count_set = to_s.tr(":", "_").underscore
+    on_actions = on.present? ? "_on_#{Array.wrap(on).join '_'}" : nil
+    :"update_cached_count_for_#{count_set}_triggered_by_#{changed_set}#{on_actions}"
   end
 end
 
