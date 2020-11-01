@@ -1,3 +1,5 @@
+include_set Abstract::BsBadge
+
 format :html do
   SHOW_CHECKBOX = { ready: true, failed: true }.freeze
 
