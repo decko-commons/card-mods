@@ -12,6 +12,13 @@ STATUS_GROUPS = {
   success: [:success, "Success"]
 }.freeze
 
+event :reset_importing, :validate, trigger: :required do
+  import_manager.each_item(status.status_indeces(:importing)) do |index, import_item|
+    status.update_item index, status: :ready
+  end
+  self.content = status.to_json
+end
+
 delegate :csv_file, :import_item_class, :mapping, :import_manager, to: :left
 
 def status

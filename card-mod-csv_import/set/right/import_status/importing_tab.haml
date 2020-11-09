@@ -1,0 +1,7 @@
+._import-status-form
+  = hidden_tags tab: :importing, card: { trigger: :reset_importing }
+  .import-status-buttons.py-2.d-flex.justify-content-end
+    .import-status-submit
+      = submit_button text: "Reset"
+  .status-table-section
+    = main_content :importing

@@ -23,23 +23,23 @@ format :html do
   end
 
   view :failed_tab do
-    import_form(:failed) { tab_content :failed }
+    import_form :failed
   end
 
   view :not_ready_tab do
-    tab_content :not_ready
+    main_content :not_ready
   end
 
   view :importing_tab do
-    tab_content :importing
+    card_form(:update) { haml :importing_tab }
   end
 
   view :ready_tab do
-    import_form(:ready) { tab_content :ready }
+    import_form :ready
   end
 
   view :success_tab do
-    tab_content :success
+    main_content :success
   end
 
   view :core, cache: :never, template: :haml
@@ -51,14 +51,14 @@ format :html do
     progress_bar(*sections)
   end
 
-  def tab_content status
+  def main_content status
     @current_status = status
     table(status) + render_export_links
   end
 
   def import_form status
     card.left.format.card_form :update, success: { mark: card.name } do
-      haml :import_form, table: yield, status: status
+      haml :import_form, status: status
     end
   end
 
