@@ -55,11 +55,11 @@ class Card
         cache.delete CURRENT_BOOKMARKS_KEY
       end
 
-      def sort rel, join_field, sort_order
+      def sort rel, join_field, sort_dir
         rel.joins(
           "LEFT JOIN counts cts " \
           "ON #{join_field} = cts.left_id AND cts.right_id = #{Card::BookmarkersID}"
-        ).order "cts.value #{sort_order}"
+        ).order "cts.value #{sort_dir}"
       end
     end
   end
