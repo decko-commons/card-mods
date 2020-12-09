@@ -63,7 +63,7 @@ class HtmlFormatter
       end
       <<-HTML
         #{cat_sum}
-        <span class="pull-right">
+        <span class="float-right">
           <a class="toggle-fast-items">hide < 100ms</a>
         </span>
       HTML
