@@ -56,10 +56,14 @@ class Card
       end
 
       def sort rel, join_field, sort_dir
+        add_sort_join(rel, join_field).order "cts.value #{sort_dir}"
+      end
+
+      def add_sort_join rel, join_field
         rel.joins(
           "LEFT JOIN counts cts " \
           "ON #{join_field} = cts.left_id AND cts.right_id = #{Card::BookmarkersID}"
-        ).order "cts.value #{sort_dir}"
+        )
       end
     end
   end
