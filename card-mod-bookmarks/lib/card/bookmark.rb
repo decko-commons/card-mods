@@ -55,10 +55,7 @@ class Card
         cache.delete CURRENT_BOOKMARKS_KEY
       end
 
-      def sort rel, join_field, sort_dir
-        add_sort_join(rel, join_field).order "cts.value #{sort_dir}"
-      end
-
+      # TODO: move this to wikirate
       def add_sort_join rel, join_field
         rel.joins(
           "LEFT JOIN counts cts " \
