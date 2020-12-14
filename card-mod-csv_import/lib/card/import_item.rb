@@ -123,8 +123,8 @@ class Card
       card = yield
       return card unless card.errors.any?
 
-      card.errors.each do |error_key, msg|
-        error "#{card.name} (#{error_key}): #{msg}"
+      card.errors.each do |error|
+        error "#{card.name} (#{error.attribute}): #{error.message}"
       end
       card.errors.clear
       skip :failed
