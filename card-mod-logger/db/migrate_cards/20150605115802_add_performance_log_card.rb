@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddPerformanceLogCard < Card::Migration::Core
+class AddPerformanceLogCard < Cardio::Migration::Core
   def up
     if card = Card['*performance log']
       card.update! :type_code=>:pointer, :codename=>:performance_log

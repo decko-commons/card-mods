@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddSolidCacheCards < Card::Migration
+class AddSolidCacheCards < Cardio::Migration
   def up
     ensure_card name: "*solid cache",
                 codename: "solid_cache"
