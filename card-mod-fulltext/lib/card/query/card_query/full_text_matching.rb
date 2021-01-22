@@ -1,7 +1,7 @@
 
 class Card
   module Query
-    ATTRIBUTES[:fulltext_match] = :relational
+    attributes[:fulltext_match] = :relational
 
     class CardQuery
       # handle `fulltext_match` condition in card queries
