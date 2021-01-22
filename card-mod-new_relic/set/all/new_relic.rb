@@ -37,10 +37,11 @@ end
 private
 
 def new_relic_transaction_name_parts
-  parts = [@action, new_relic_label]
+  controller = Env[:controller]
+  parts = [controller&.action_name, new_relic_label]
   return parts unless @action == :read
 
-  parts << Env[:controller]&.response_format
+  parts << controller&.response_format
 end
 
 def name_new_relic_transaction name_parts, args={}
