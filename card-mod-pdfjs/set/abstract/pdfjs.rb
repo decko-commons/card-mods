@@ -14,7 +14,7 @@ format :html do
     <<-HTML
       <iframe style="width: 100%"
               id="source-preview-iframe" class="pdfjs-iframe"
-              src= #{args[:viewer_path]}
+              src="#{args[:viewer_path]}"
               security="restricted"
               sandbox="allow-same-origin allow-scripts allow-forms allow-modals
                        allow-top-navigation"
