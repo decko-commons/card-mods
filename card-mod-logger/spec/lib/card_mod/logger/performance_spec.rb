@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-describe Logger::Performance do
+describe CardMod::Logger::Performance do
   def log_method opts
     Logger::Performance.load_config methods: opts
   end
