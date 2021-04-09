@@ -230,12 +230,7 @@ format :html do
   end
 
   def hidden_edit_fields
-    hidden_tags(
-      success: { redirect: true,
-                 view: :open,
-                 typeset: false,
-                 id: '_self' }
-    )
+    hidden_tags success: { redirect: true, view: :open, typeset: false, mark: '_self' }
   end
 
   def standard_frame slot=true

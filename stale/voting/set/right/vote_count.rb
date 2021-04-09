@@ -180,7 +180,7 @@ event :vote, :prepare_to_validate, on: :update, when: :vote_param do
 end
 
 def redirect_to_vote_later
-  path_hash = { action: :update, vote: vote_param, success: "*previous" }
+  path_hash = { action: :update, vote: vote_param, success: { mark: ":previous" } }
   uri = format.path path_hash
   Env.save_interrupted_action uri
   abort success: { redirect: true, mark: ":signin" }
