@@ -2,7 +2,7 @@ include_set Abstract::Pointer
 
 event :validate_listed_by_name, :validate, on: :save, changing: :name do
   if !junction? || !right || right.type_id != Card::CardtypeID
-    errors.add :name, tr(:cardtype_right)
+    errors.add :name, t(:mirror_cardtype_right)
   end
 end
 

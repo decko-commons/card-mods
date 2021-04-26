@@ -1,14 +1,14 @@
 include_set Abstract::Pointer
 
 event :validate_list_name, :validate, on: :save, changed: :name do
-  errors.add :name, tr(:cardtype_right) unless right&.type_id == Card::CardtypeID
+  errors.add :name, t(:mirror_cardtype_right) unless right&.type_id == Card::CardtypeID
 end
 
 event :validate_list_item_type_change, :validate,
       on: :save, changed: :name do
   item_cards.each do |item_card|
     next unless item_card.type_name.key != item_type_name.key
-    errors.add :name, tr(:conflict_item_type)
+    errors.add :name, t(:mirror_conflict_item_type)
   end
 end
 
@@ -16,8 +16,8 @@ event :validate_list_content, :validate,
       on: :save, changed: :content do
   item_cards.each do |item_card|
     next unless item_card.type_name.key != item_type_name.key
-    errors.add :content, tr(
-      :only_type_allowed,
+    errors.add :content, t(
+      :mirror_only_type_allowed,
       cardname: item_card.name,
       cardtype: name.right
     )
