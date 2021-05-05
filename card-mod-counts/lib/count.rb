@@ -53,7 +53,7 @@ class Count < ActiveRecord::Base
     end
 
     def left_id card
-      if card.junction?
+      if card.compound?
         card.left_id || ((l = card.left) && l.id)
       else
         card.id
@@ -61,7 +61,7 @@ class Count < ActiveRecord::Base
     end
 
     def right_id card
-      if card.junction?
+      if card.compound?
         card.right_id || ((r = card.right) && r.id)
       else
         -1
@@ -71,7 +71,7 @@ class Count < ActiveRecord::Base
     def validate_count_card card
       reason = "has to respond to 'recount'" unless card.respond_to? :recount
       reason ||=
-        if card.junction?
+        if card.compound?
           "needs left_id" unless left_id(card)
           "needs right_id" unless right_id(card)
         elsif !card.id

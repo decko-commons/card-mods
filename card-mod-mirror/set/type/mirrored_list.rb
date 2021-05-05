@@ -61,12 +61,11 @@ event :update_related_listed_by_card_on_name_and_type_changes, :finalize,
 end
 
 event :update_related_listed_by_card_on_delete, :finalize,
-      on: :delete, when: proc { |c| c.junction? } do
+      on: :delete, when: :compound? do
   update_listed_by_cache_for item_keys, type_key: @left_type_key
 end
 
-event :cache_type_key, :store,
-      on: :delete, when: proc { |c| c.junction? } do
+event :cache_type_key, :store, on: :delete, when: :compound? do
   @left_type_key = left.type_card.key
 end
 

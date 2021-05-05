@@ -3,7 +3,7 @@ event :set_search_content, after: :set_content do
 end
 
 event :trigger_left_search_content_update, after: :set_search_content do
-  return unless name.junction?
+  return unless name.compound?
   l = left
 
   return unless l&.real? && l.search_content_field_names&.include?(name)
