@@ -19,7 +19,7 @@ class Card
 
       def detect_existing
         if (name = import_hash[:name])
-          @cardid = Card.fetch_id name
+          @cardid = name.card_id
         end
       end
 

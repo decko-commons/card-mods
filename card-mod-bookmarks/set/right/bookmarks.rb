@@ -10,6 +10,6 @@ def followable?
 end
 
 def item_cards_of_type type
-  type_id = Card.fetch_id type
+  type_id = type.card_id
   item_cards.select { |i| i.type_id == type_id }
 end

@@ -11,7 +11,7 @@ class Card
 
       def validate_right right
         raise Card::Error::BadQuery, "sort by cached_count: no right given" unless right
-        unless (@right_id = Card.fetch_id right)
+        unless (@right_id = right.card_id)
           raise Card::Error::BadQuery,
                 "cached count for +#{right}: #{right} does not exist"
         end

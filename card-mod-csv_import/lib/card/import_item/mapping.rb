@@ -11,7 +11,7 @@ class Card
       end
 
       def default_mapping field, value
-        Card.fetch_id value unless validate_field field, value
+        value.card_id unless validate_field field, value
       end
 
       def merge_mapping
