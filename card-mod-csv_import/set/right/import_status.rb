@@ -13,7 +13,7 @@ STATUS_GROUPS = {
 }.freeze
 
 event :reset_importing, :validate, trigger: :required do
-  import_manager.each_item(status.status_indeces(:importing)) do |index, import_item|
+  each_item_with_status :importing do |index, _import_item|
     status.update_item index, status: :ready
   end
   self.content = status.to_json
