@@ -15,7 +15,7 @@ def cached_count
 end
 
 def update_cached_count _changed_card=nil
-  hard_cached_count ::Count.refresh self
+  hard_cached_count ::Count.refresh(self)
 end
 
 def hard_cached_count value
