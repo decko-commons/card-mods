@@ -1,5 +1,5 @@
 class Card
-  # ImportManager coordinates an Car.
+  # ImportManager coordinates imports.
   # It defines the conflict strategy and mapping for item fields.
   class ImportManager
     OPTIONS = { conflict_strategy: :skip, mapping: nil, abort_on_error: false }.freeze
