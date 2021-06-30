@@ -60,12 +60,12 @@ class Card
     def read_csv_from_path path
       raise StandardError, "file does not exist: #{path}" unless File.exist? path
       rescue_encoding_error do
-        CSV.read path, csv_options
+        CSV.read path, **csv_options
       end
     end
 
     def read_csv_from_file_handle file
-      CSV.parse to_utf_8(file.read, force: true), csv_options
+      CSV.parse to_utf_8(file.read, force: true), **csv_options
       # CSV.parse file.read, csv_options
     end
 
