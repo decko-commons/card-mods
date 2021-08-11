@@ -95,30 +95,22 @@ RSpec.describe Card::Set::Type::MirrorList do
       end
 
       context "when the cardtype of Parry Hotter changed" do
-        before do
-          Card["Parry Hotter"].update! type_id: Card::BasicID
-        end
+        before { Card["Parry Hotter"].update! type_id: Card::BasicID }
+
         it { is_expected.to eq ["50 grades of shy"] }
       end
       context "when the name of Parry Hotter changed to Parry Moppins" do
         before do
           Card::Auth.as_bot do
-            Card["Parry Hotter"].update!(
-              name: "Parry Moppins",
-              update_referers: true
-            )
+            Card["Parry Hotter"].update! name: "Parry Moppins"
           end
         end
         it { is_expected.to eq ["50 grades of shy", "Parry Moppins"] }
       end
 
       context "when the name of Darles Chickens changed" do
-        before do
-          Card["Darles Chickens"].update!(
-            name: "Darles Eggs",
-            update_referers: true
-          )
-        end
+        before { Card["Darles Chickens"].update! name: "Darles Eggs" }
+
         subject { Card.fetch("Darles Eggs+books").item_names.sort }
 
         it { is_expected.to eq ["50 grades of shy", "Parry Hotter"] }
