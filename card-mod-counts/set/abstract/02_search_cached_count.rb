@@ -1,5 +1,3 @@
-include_set Type::SearchType
-
 def self.included host_class
   host_class.include_set Abstract::CachedCount
   host_class

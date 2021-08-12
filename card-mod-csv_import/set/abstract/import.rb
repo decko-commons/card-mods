@@ -1,4 +1,4 @@
-include_set Type::File
+include_set Abstract::File
 
 card_accessor :import_status, type: JsonID
 card_accessor :import_map, type: JsonID
