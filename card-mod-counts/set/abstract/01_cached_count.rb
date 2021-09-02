@@ -31,6 +31,7 @@ def recount
   count
 end
 
+
 module ClassMethods
   # @param parts [Array] set parts of changed card
   def recount_trigger *set_parts, &block
@@ -38,6 +39,7 @@ module ClassMethods
     set = ensure_set { set_parts }
     event_name = recount_event_name set, event_args[:on]
     define_recount_event set, event_name, event_args, &block
+    define_field_recount_method set
   end
 
   private
@@ -49,6 +51,12 @@ module ClassMethods
           count_card.update_cached_count self if count_card.respond_to? :recount
         end
       end
+    end
+  end
+
+  def define_field_recount_method set
+    set.define_method :field_recount do |field_card, &block|
+      block.call unless field_card.left&.action&.in? %i[create delete]
     end
   end
 
