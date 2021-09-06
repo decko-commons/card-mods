@@ -12,8 +12,9 @@ format :html do
   view :social_meta_tags do
     return unless card.known?
 
-    meta_tags_for(:og, %w[url site_name type title description image]) +
-      meta_tags_for(:twitter, %w[card site creator title description image])
+    shared = %w[title description image]
+    meta_tags_for(:og, shared + %w[url site_name type]) +
+      meta_tags_for(:twitter, shared + %w[card site creator])
   end
 
   # OPEN GRAPH
@@ -58,11 +59,13 @@ format :html do
 
   # SHARED
 
+  # NOTE: not cache safe
   def social_description
     @social_description ||=
       card.fetch(:description)&.format(:text)&.social_description || super
   end
 
+  # NOTE: not cache safe
   def social_image
     @social_image ||=
       image_source_for(card.fetch :image) || image_source_for(Card[:logo])
