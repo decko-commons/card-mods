@@ -1,5 +1,5 @@
-format do
-  def social_description
+format :text do
+  def text_description
     truncate render_text_without_nests.strip, length: 200, separator: " "
   end
 end
@@ -62,7 +62,7 @@ format :html do
   # NOTE: not cache safe
   def social_description
     @social_description ||=
-      card.fetch(:description)&.format(:text)&.social_description || super
+      text_description_for(card.fetch :description) || text_description_for(card)
   end
 
   # NOTE: not cache safe
@@ -82,6 +82,10 @@ format :html do
       next unless (content = try "#{prefix}_#{property}")
       meta_tag "#{prefix}:#{property}", content
     end.compact
+  end
+
+  def text_description_for card
+    card&.format(:text)&.text_description
   end
 
   def image_source_for card
