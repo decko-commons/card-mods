@@ -23,15 +23,9 @@ def toggle_bookmarks_item
 end
 
 format :html do
-  view :bookmark do
-    wrap do
-      card_form :update, recaptcha: :off, success: { view: :bookmark } do
-        [
-          hidden_tags(card: { trigger: :toggle_bookmark }),
-          nest(card.bookmarkers_card, view: :toggle)
-        ]
-      end
-    end
+  view :bookmark, wrap: :slot do
+    link_to_view :bookmark, field_nest(:bookmarkers, view: :toggle),
+                 path: { action: :update, card: { trigger: :toggle_bookmark } }
   end
 
   view :title_with_bookmark, template: :haml
