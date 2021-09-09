@@ -61,18 +61,24 @@ format :html do
 
   # NOTE: not cache safe
   def social_description
-    @social_description ||=
-      text_description_for(card.fetch :description) || text_description_for(card)
+    @social_description ||= social_description_card&.format(:text)&.text_description
   end
 
   # NOTE: not cache safe
   def social_image
-    @social_image ||=
-      image_source_for(card.fetch :image) || image_source_for(Card[:logo])
+    @social_image ||= social_image_card&.format(:text)&.render_source
   end
 
   def meta_tag property, content
     %{<meta name="#{property}" content="#{content}">}
+  end
+
+  def social_image_card
+    try(:image_card) || card.fetch(:image) || Card[:logo]
+  end
+
+  def social_description_card
+    card.fetch(:description) || card
   end
 
   private
@@ -82,13 +88,5 @@ format :html do
       next unless (content = try "#{prefix}_#{property}")
       meta_tag "#{prefix}:#{property}", content
     end.compact
-  end
-
-  def text_description_for card
-    card&.format(:text)&.text_description
-  end
-
-  def image_source_for card
-    card&.format(:text)&.render_source
   end
 end
