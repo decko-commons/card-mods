@@ -40,6 +40,11 @@ module GraphQL
       def updater
         object.updater_id.card
       end
+
+      # support methods (move to module?)
+      def referers type, field
+        ::Card.search type: type, limit: 10, right_plus: [field, { refer_to: object.id }]
+      end
     end
   end
 end
