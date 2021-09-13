@@ -43,7 +43,7 @@ module GraphQL
 
       # support methods (move to module?)
       def referers type, field
-        ::Card.search type: type, limit: 10, right_plus: [field, { refer_to: object.id }]
+        ::Card.search type: type, limit: 10, right_plus: [field, refer_to: object.card_id]
       end
     end
   end
