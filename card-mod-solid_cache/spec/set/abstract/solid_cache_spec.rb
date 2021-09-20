@@ -3,6 +3,7 @@
 RSpec.describe Card::Set::Abstract::SolidCache do
   context "render core view of a card" do
     # FIXME: wikirate dependency!
+
     let(:core_view) { "Alpha Z[http://wikirate.org/Z]" }
 
     context "with solid cache" do
@@ -25,6 +26,7 @@ RSpec.describe Card::Set::Abstract::SolidCache do
     context "with solid cache disabled" do
       it "ignores solid cache card content", as_bot: true do
         format_subject :base do |format|
+          puts card_subject.singleton_class.ancestors
           card_subject.solid_cache_card.update! content: "cache"
           expect(format._render_core(hide: :solid_cache)).to eq core_view
         end
