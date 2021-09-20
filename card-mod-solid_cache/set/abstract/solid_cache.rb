@@ -10,16 +10,18 @@
 
 card_accessor :solid_cache, type: HtmlID
 
-def self.included host_class
-  host_class.format(host_class.try(:cached_format) || :base) do
-    view :core, cache: :never do
-      return super() if voo.hide? :solid_cache
-      _render_solid_cache
-    end
+class << self
+  def included host_class
+    host_class.format(host_class.try(:cached_format) || :base) do
+      view :core, cache: :never do
+        return super() if voo.hide? :solid_cache
+        _render_solid_cache
+      end
 
-    view :solid_cache, cache: :never do
-      card.with_solid_cache do |cache_card|
-        subformat(cache_card)._render_core
+      view :solid_cache, cache: :never do
+        card.with_solid_cache do |cache_card|
+          subformat(cache_card)._render_core
+        end
       end
     end
   end

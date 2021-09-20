@@ -2,38 +2,30 @@
 
 RSpec.describe Card::Set::Abstract::SolidCache do
   context "render core view of a card" do
-    before do
-      @card = Card["A"]
-    end
-
     # FIXME: wikirate dependency!
     let(:core_view) { "Alpha Z[http://wikirate.org/Z]" }
 
     context "with solid cache" do
       it "saves core view in solid cache card" do
-        @card.format_with_set described_class, &:render_core
+        format_subject :base, &:render_core
         Card::Auth.as_bot do
-          expect(Card["A", :solid_cache]).to be_instance_of(Card)
-          expect(Card["A", :solid_cache].content).to eq(core_view)
+          expect(card_subject.solid_cache_card).to be_instance_of(Card)
+          expect(card_subject.solid_cache_card.content).to eq(core_view)
         end
       end
 
-      it "uses solid cache card content as core view" do
-        @card.format_with_set(described_class) do |format|
-          Card::Auth.as_bot do
-            Card["A"].solid_cache_card.update! content: "cache"
-          end
+      it "uses solid cache card content as core view", as_bot: true do
+        format_subject :base do |format|
+          card_subject.solid_cache_card.update! content: "cache"
           expect(format._render_core).to eq "cache"
         end
       end
     end
 
     context "with solid cache disabled" do
-      it "ignores solid cache card content" do
-        @card.format_with_set(described_class) do |format|
-          Card::Auth.as_bot do
-            Card["A"].solid_cache_card.update! content: "cache"
-          end
+      it "ignores solid cache card content", as_bot: true do
+        format_subject :base do |format|
+          card_subject.solid_cache_card.update! content: "cache"
           expect(format._render_core(hide: :solid_cache)).to eq core_view
         end
       end
