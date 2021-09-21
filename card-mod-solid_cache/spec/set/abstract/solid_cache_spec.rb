@@ -26,7 +26,6 @@ RSpec.describe Card::Set::Abstract::SolidCache do
     context "with solid cache disabled" do
       it "ignores solid cache card content", as_bot: true do
         format_subject :base do |format|
-          puts format.singleton_class.ancestors
           card_subject.solid_cache_card.update! content: "cache"
           expect(format._render_core(hide: :solid_cache)).to eq core_view
         end
