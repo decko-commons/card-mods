@@ -2,8 +2,6 @@
 
 # Cards in this set cache a count in the counts table
 
-include_set Abstract::BsBadge
-
 def self.included host_class
   host_class.extend ClassMethods
   # host_class.card_writer :cached_count, type: :plain_text
