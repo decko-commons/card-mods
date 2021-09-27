@@ -170,7 +170,7 @@ format :html do
   def edit_button
     %{
       <a href="#" class="ui-icon ui-icon-pencil" title="Edit" onClick="javascript: window.location='/#{card.key}?view=split&layout=#{LATEX_EDIT_LAYOUT}'">
-      #{ image_tag('/assets/pdfjs/images/edit.png') }
+      #{ image_tag('/mod/pdfjs/images/edit.png') }
       </a>
     }
   end
@@ -181,7 +181,7 @@ format :html do
     if pdfcard
       %{
       <a href="#" class="ui-icon ui-icon-pencil" title="Edit" onClick="javascript: window.location='/#{card.file.url}'">
-      #{ image_tag('/assets/pdfjs/images/download.png') }
+      #{ image_tag('/mod/pdfjs/images/download.png') }
       </a>
     }
     end
