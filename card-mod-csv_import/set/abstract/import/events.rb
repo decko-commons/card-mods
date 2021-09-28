@@ -37,8 +37,11 @@ end
 #   end
 # end
 
+# TODO:
+#   1. attach each import to the original act
+#   2. come up with a workable solution for when not delaying
 event :import_items, :integrate_with_delay, on: :update, when: :data_import? do
-  Director.clear
+  Director.clear if Cardio.delaying?
   import! item_indeces_from_params
 end
 

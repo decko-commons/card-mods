@@ -52,6 +52,11 @@ def update_items indeces=nil
   save_status
 end
 
+def update_item_and_save index, item
+  status.update_item index, item
+  save_status
+end
+
 def update_items_with_status status_option
   update_items status.status_indeces(status_option)
 end
