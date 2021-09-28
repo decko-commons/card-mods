@@ -24,8 +24,7 @@ def import_manager
 end
 
 def conflict_strategy
-  cs = Env.params[:conflict_strategy]
-  cs ? cs.to_sym : :skip
+  Env.params[:conflict_strategy]&.to_sym || :skip
 end
 
 def mapping

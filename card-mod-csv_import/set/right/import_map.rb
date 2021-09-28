@@ -39,9 +39,8 @@ event :update_import_status, :integrate_with_delay, on: :update, when: :mapping?
   not_ready_items = status_card.status.status_indeces :not_ready
   import_manager.each_item not_ready_items do |index, item|
     status_card.status.update_item index, item.validate!
-    status_card.director.restart
-    status_card.save_status
   end
+  status_card.save_status
 end
 
 def auto_map!

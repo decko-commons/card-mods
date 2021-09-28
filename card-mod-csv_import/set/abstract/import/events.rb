@@ -46,13 +46,10 @@ def import_single_item?
 end
 
 def import! item_indeces
+  Director.clear
   import_manager.each_item item_indeces do |index, import_item|
     # puts "IMPORTING ITEM: #{import_item.input}".red
-    result = import_item.import
-    s = import_status_card
-    s.director.restart
-    s.status.update_item index, result
-    s.save_status
+    import_status_card.update_item_and_save index, import_item.import
   end
 end
 

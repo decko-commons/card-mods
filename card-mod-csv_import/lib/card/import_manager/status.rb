@@ -38,6 +38,11 @@ class Card
         recount
       end
 
+      def update_item_and_save num, update_hash
+        update_item num, update_hash
+        save
+      end
+
       def item_hash num
         with_item_array num do |array|
           (array[EXTRAS_INDEX] || {}).merge simple_item_hash(num)
