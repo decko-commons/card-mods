@@ -38,6 +38,7 @@ end
 # end
 
 event :import_items, :integrate_with_delay, on: :update, when: :data_import? do
+  Director.clear
   import! item_indeces_from_params
 end
 
@@ -46,7 +47,6 @@ def import_single_item?
 end
 
 def import! item_indeces
-  Director.clear
   import_manager.each_item item_indeces do |index, import_item|
     # puts "IMPORTING ITEM: #{import_item.input}".red
     import_status_card.update_item_and_save index, import_item.import
