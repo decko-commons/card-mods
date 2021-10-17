@@ -45,7 +45,8 @@ blocks:
         - name: RSpec
           commands:
             - be decko new platypus --platypus
-            - cp ~/.semaphore/Gemfile platypus
+            - cp .semaphore/Gemfile platypus
+            - cp .semaphore/.rspec platypus
             - cd platypus
             - be decko seed --test
             - be decko rspec

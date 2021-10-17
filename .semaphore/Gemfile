@@ -26,7 +26,7 @@ gem "decko-rspec", group: :test
 # gem "decko-profile", group: :profile, path: "~/dev/decko/gem/support"
 # gem "decko-spring", path: "~/dev/decko/gem/support"
 
-path "~/.semaphore/card-mods" do
+path "~/semaphore/card-mods" do
   gem "card-mod-bookmarks"
   gem "card-mod-csv_import"
   gem "card-mod-fulltext"
