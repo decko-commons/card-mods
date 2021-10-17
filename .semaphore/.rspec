@@ -4,4 +4,4 @@
 \\--format documentation
 \\--default-path "mod"
 \\--require "./spec/spec_helper"
---pattern "{~/semaphore/card-mods/card-mod-*}/spec/**/*_spec.rb"
+--pattern "{~/card-mods/card-mod-*}/spec/**/*_spec.rb"

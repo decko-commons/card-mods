@@ -26,12 +26,11 @@ gem "decko-rspec", group: :test
 # gem "decko-profile", group: :profile, path: "~/dev/decko/gem/support"
 # gem "decko-spring", path: "~/dev/decko/gem/support"
 
-path "~/semaphore/card-mods" do
+path "~/card-mods" do
   gem "card-mod-bookmarks"
   gem "card-mod-csv_import"
   gem "card-mod-fulltext"
   gem "card-mod-logger"
-  gem "card-mod-mirror"
   gem "card-mod-pdfjs"
   gem "card-mod-social"
   gem "card-mod-solid_cache"
@@ -39,7 +38,7 @@ end
 
 # PLATYPUSES
 # This mod is strongly recommended for platypuses – coders working on the decko core
-gem "card-mod-platypus", path: "~/dev/decko/gem/mod"
+gem "card-mod-platypus"
 
 
 # The following allows simple (non-gem) mods to specify gems via a Gemfile.
