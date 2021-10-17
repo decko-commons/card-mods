@@ -35,11 +35,7 @@ blocks:
           - cache store bundle-gems-baseline ~/bundle
 
           - sem-service start mysql
-          - git submodule update card/db/seed
-
-          - sem-service start mysql
-          - git submodule update
-          - cache restore bundle-gems-$(checksum Gemfile.lock)
+          # - git submodule update
 
       jobs:
         - name: RSpec
