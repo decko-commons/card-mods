@@ -40,9 +40,9 @@ blocks:
       jobs:
         - name: RSpec
           commands:
-            - be decko new platypus --platypus
-            - cp .semaphore/Gemfile platypus
-            - cp .semaphore/.rspec platypus
-            - cd platypus
+            - be decko new monkey --monkey
+            - cp .semaphore/Gemfile monkey
+            - cp .semaphore/.rspec monkey
+            - cd monkey
             - be decko seed --test
             - be decko rspec
