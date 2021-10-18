@@ -28,9 +28,9 @@ gem "decko-rspec", group: :test
 
 path "~/card-mods" do
   gem "card-mod-bookmarks"
-  gem "card-mod-csv_import"
+  # gem "card-mod-csv_import"
   gem "card-mod-fulltext"
-  gem "card-mod-logger"
+  # gem "card-mod-logger"
   gem "card-mod-pdfjs"
   gem "card-mod-social"
   gem "card-mod-solid_cache"
