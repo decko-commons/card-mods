@@ -2,6 +2,6 @@
 --profile
 --backtrace
 \\--format documentation
-\\--default-path "mod"
-\\--require "./spec/spec_helper"
---pattern "{~/card-mods/card-mod-*}/spec/**/*_spec.rb"
+--default-path /home/semaphore/card-mods
+--require "./spec/spec_helper"
+--pattern "*/spec/**/*_spec.rb"

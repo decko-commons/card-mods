@@ -1,0 +1,3 @@
+[submodule ".semaphore/decko"]
+	path = .semaphore/decko
+	url = git@github.com:decko-commons/decko.git
