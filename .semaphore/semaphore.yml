@@ -18,6 +18,7 @@ global_job_config:
       - alias be='bundle exec'
       - cp .semaphore/Gemfile .
 
+
 blocks:
   - name: Unit Tests
     task:
@@ -35,7 +36,7 @@ blocks:
           - cache store bundle-gems-baseline ~/bundle
 
           - sem-service start mysql
-          # - git submodule update
+          - git submodule update --init --recursive
 
       jobs:
         - name: RSpec
