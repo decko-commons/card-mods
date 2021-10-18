@@ -17,7 +17,7 @@ global_job_config:
       - sem-version ruby 3.0.1
       - alias be='bundle exec'
       - cp .semaphore/Gemfile .
-
+      - git submodule update --init --recursive
 
 blocks:
   - name: Unit Tests
@@ -29,6 +29,7 @@ blocks:
           value: test
       prologue:
         commands:
+
           - cache restore bundle-gems-baseline
           - cache restore bundle-gems-$(checksum Gemfile.lock)
           - bundle install
@@ -36,7 +37,6 @@ blocks:
           - cache store bundle-gems-baseline ~/bundle
 
           - sem-service start mysql
-          - git submodule update --init --recursive
 
       jobs:
         - name: RSpec
