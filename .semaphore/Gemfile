@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
 gem "decko", path: "~/card-mods/.semaphore/decko"
-gem "card", require: false
+gem "card", require: false, path: "~/card-mods/.semaphore/decko"
 
 gem "mysql2", '~> 0.5'
 gem "thin"
