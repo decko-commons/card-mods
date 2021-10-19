@@ -4,4 +4,5 @@
 \\--format documentation
 --default-path /home/semaphore/card-mods
 --require "./spec/spec_helper"
---pattern "*/spec/**/*_spec.rb"
+\\--pattern "*/spec/**/*_spec.rb"
+--pattern "card-mod-{bookmarks,fulltext,pdfjs,social,solid_cache}/spec/**/*_spec.rb"
