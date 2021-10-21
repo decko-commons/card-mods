@@ -33,6 +33,8 @@ path "~/card-mods" do
   gem "card-mod-pdfjs"
   gem "card-mod-social"
   gem "card-mod-solid_cache"
+  gem "card-mod-graphql"
+  gem "card-mod-mirror"
 end
 
 # PLATYPUSES
