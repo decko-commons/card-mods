@@ -1,0 +1,5 @@
+---
+- :name: "*solid cache"
+  :codename: solid_cache
+- :name: "*solid cache+*right+*read"
+  :content: _left
