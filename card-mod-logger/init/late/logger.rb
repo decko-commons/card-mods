@@ -19,14 +19,12 @@ class Card
     end
   end
 
-  module Set
-    module All::Rules
-      alias original_rule_card rule_card
-      def rule_card setting_code, options={}
-        CardMod::Logger.with_logging :rule, message: setting_code, category: "rule",
-                                     context: name, details: options  do
-          original_rule_card setting_code, options
-        end
+  module Card::Rule::All
+    alias original_rule_card rule_card
+    def rule_card setting_code, options={}
+      CardMod::Logger.with_logging :rule, message: setting_code, category: "rule",
+                                   context: name, details: options  do
+        original_rule_card setting_code, options
       end
     end
   end
