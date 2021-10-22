@@ -18,6 +18,7 @@ describe Cardio::Logger::Request do
     allow(controller).to receive(:status) { 'status' }
     described_class.write_log_entry controller
   end
+
   it 'creates csv file' do
     expect(File.exist? described_class.path).to be_truthy
   end

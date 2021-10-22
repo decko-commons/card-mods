@@ -2,7 +2,7 @@
 
 describe Cardio::Logger::Performance do
   def log_method opts
-    described_class.load_config methods: opts
+    Cardio::Logger::Performance.load_config methods: opts
   end
 
   def expect_logger_to_receive_once message
@@ -28,9 +28,9 @@ describe Cardio::Logger::Performance do
   end
 
   def with_logging
-    described_class.start method: 'test'
+    Cardio::Logger::Performance.start method: 'test'
     yield
-    described_class.stop
+    Cardio::Logger::Performance.stop
   end
 
   it 'creates tree for nested method calls' do
@@ -88,7 +88,8 @@ total: [\d.]+ms\n/
     end
 
     it 'handles method log options' do
-      log_method( {Card::Set::Type::Skin => {:item_names => {:message=>:content, :title=>"skin item names"}}} )
+      log_method({ Card::Set::Type::CustomizedBootswatchSkin =>
+                     {:item_names => {:message=>:content, :title=>"skin item names"}}} )
       expect_logger_to_receive(/skin item names/) do
         Card['classic bootstrap skin'].item_names
         Card['*all+*read'].item_names

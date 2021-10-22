@@ -5,13 +5,13 @@ module Cardio
     class Request
       class << self
         def path
-          path = (Card.paths['request_log'] && Card.paths['request_log'].first) || File.dirname(Card.paths['log'].first)
+          path = Card.paths['request_log']&.first || File.dirname(Card.paths['log'].first)
           filename = "#{Date.today}_#{Rails.env}.csv"
           File.join path, filename
         end
 
         def write_log_entry controller
-          env = controller.request.env
+          env = controller.env
           return if env["REQUEST_URI"] =~ %r{^/files?/}
 
           controller.instance_eval do
@@ -29,7 +29,7 @@ module Cardio
             log << env['HTTP_ACCEPT_LANGUAGE'].to_s.scan(/^[a-z]{2}/).first
             log << env["HTTP_REFERER"]
 
-            File.open(path, "a") do |f|
+            File.open(Request.path, "a") do |f|
               f.write CSV.generate_line(log)
             end
           end
