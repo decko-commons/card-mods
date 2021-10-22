@@ -1,2 +1,1 @@
-require "graphql"
-require "graphiql/rails"
+require "card/mod/graphql"
