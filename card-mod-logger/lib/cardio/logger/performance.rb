@@ -29,13 +29,9 @@
 # Default values are 'Card', ':all'  and { :title => method name, :message => first argument, :details=> remaining arguments }.
 # For example [:fetch] is equivalent to Card => { :all => { :fetch  => { :message=>1, :details=>1..-1 } }
 
-module CardMod
+module Cardio
   class Logger
     class Performance
-      require "card_mod/logger/performance/category_log"
-      require "card_mod/logger/performance/entry"
-      require "card_mod/logger/performance/big_brother"
-
       DEFAULT_CLASS = Card
       DEFAULT_METHOD_TYPE = :all
       DEFAULT_LOG_LEVEL = :info
@@ -129,7 +125,7 @@ module CardMod
           @@context_entries = []
           @@active_entries = []
           @@first_entry = new_entry(args)
-          @@category_log = CardMod::Logger::Performance::CategoryLog.new args[:category]
+          @@category_log = CategoryLog.new args[:category]
         end
 
         def stop
@@ -197,8 +193,7 @@ module CardMod
         def print_log
           if @output == :card && @output_card
             html_log = HtmlFormatter.new(self).output
-            card = @output_card.fetch :performance_log,
-                                      new: { :type_id => Card::PointerID }
+            card = @output_card.fetch :performance_log, new: { type: :pointer }
             card.add_log_entry @@log.first.message, html_log
           elsif @output == :html
             HtmlFormatter.new(self).output
@@ -223,7 +218,7 @@ module CardMod
             @@category_log.start args[:category]
           end
 
-          @@log << CardMod::Logger::Performance::Entry.new(parent, level, args)
+          @@log << Entry.new(parent, level, args)
           @@current_level += 1
           @@active_entries << @@log.last
 
@@ -254,7 +249,7 @@ module CardMod
           end
 
           classes.each do |klass, method_types|
-            klass.extend CardMod::Logger::Performance::BigBrother # add watch methods
+            klass.extend BigBrother # add watch methods
 
             method_types = hashify_and_verify_keys(method_types, DEFAULT_METHOD_TYPE) do |key|
               [:all, :instance, :singleton].include? key

@@ -1,9 +1,9 @@
-module CardMod
+module Cardio
   class Logger
     class Performance
       module BigBrother
         def watch_method method_name, method_type=:all, options={}
-          CardMod::Logger::Performance.enable_method method_name
+          Performance.enable_method method_name
           if !SPECIAL_METHODS.include? method_name
             if method_type == :all || method_type == :singleton
               add_singleton_logging method_name, options
@@ -72,7 +72,7 @@ module CardMod
                               else              value
                               end
             end
-            CardMod::Logger::Performance.with_timer(method_name, log_args) do
+            Performance.with_timer(method_name, log_args) do
               bind_block.call(self, args, &block)
             end
           end

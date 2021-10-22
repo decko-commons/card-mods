@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-describe Logger::Request do
+describe Cardio::Logger::Request do
   before do
     controller = double()
     allow(controller).to receive(:env) do
@@ -16,14 +16,14 @@ describe Logger::Request do
     allow(controller).to receive(:action_name) { 'action_name' }
     allow(controller).to receive(:params) { {'view' => 'view'} }
     allow(controller).to receive(:status) { 'status' }
-    Logger::Request.write_log_entry controller
+    described_class.write_log_entry controller
   end
   it 'creates csv file' do
-    expect(File.exist? Logger::Request.path).to be_truthy
+    expect(File.exist? described_class.path).to be_truthy
   end
 
   describe 'log file' do
-    subject { File.read Logger::Request.path }
+    subject { File.read described_class.path }
 
     it { is_expected.to include 'REMOTE_ADDR' }
     it { is_expected.to include 'REQUEST_METHOD' }

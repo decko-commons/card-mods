@@ -1,12 +1,9 @@
-require "card_mod/logger"
-require "card_mod/logger/performance"
-
 # Not the pefect place. Ideally this should happen after loader.rb#load_mods
 # so that it's possible to log any method.
 # With this approach we can only log methods of mods that get loaded before
 # this mod.
 if Cardio.config.performance_logger
-  CardMod::Logger::Performance.load_config Card.config.performance_logger
+  Cardio::Logger::Performance.load_config Card.config.performance_logger
 end
 
 event :start_performance_logger_on_change, before: :act,
@@ -32,7 +29,7 @@ event :stop_performance_logger_on_read, after: :show_page, on: :read,
 end
 
 event :request_logger, after: :show_page, when: :request_logger? do
-  CardMod::Logger::Request.write_log_entry Env[:controller]
+  Cardio::Logger::Request.write_log_entry Env[:controller]
 end
 
 def request_logger?
@@ -41,7 +38,7 @@ end
 
 def start_performance_logger
   if Env.params[:performance_log]
-    CardMod::Logger::Performance.load_config Env.params[:performance_log]
+    Cardio::Logger::Performance.load_config Env.params[:performance_log]
   end
   if (request = Env[:controller]&.request)
     method = request.env["REQUEST_METHOD"]
@@ -50,13 +47,13 @@ def start_performance_logger
     method = "no request"
     path = "no path"
   end
-  CardMod::Logger::Performance.start method: method, message: path, category: "format"
+  Cardio::Logger::Performance.start method: method, message: path, category: "format"
 end
 
 def stop_performance_logger
-  CardMod::Logger::Performance.stop
+  Cardio::Logger::Performance.stop
   return unless Env.params[:perfomance_log]
-  CardMod::Logger::Performance.load_config(Card.config.performance_logger || {})
+  Cardio::Logger::Performance.load_config(Card.config.performance_logger || {})
 end
 
 def performance_log?

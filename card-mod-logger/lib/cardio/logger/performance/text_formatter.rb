@@ -1,4 +1,4 @@
-module CardMod
+module Cardio
   class Logger
     class Performance
       class TextFormatter

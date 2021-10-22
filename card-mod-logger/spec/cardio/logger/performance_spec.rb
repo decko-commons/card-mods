@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 
-describe CardMod::Logger::Performance do
+describe Cardio::Logger::Performance do
   def log_method opts
-    Logger::Performance.load_config methods: opts
+    described_class.load_config methods: opts
   end
 
   def expect_logger_to_receive_once message
@@ -28,9 +28,9 @@ describe CardMod::Logger::Performance do
   end
 
   def with_logging
-    Logger::Performance.start method: 'test'
+    described_class.start method: 'test'
     yield
-    Logger::Performance.stop
+    described_class.stop
   end
 
   it 'creates tree for nested method calls' do
@@ -144,10 +144,10 @@ total: [\d.]+ms\n/
     end
   end
 
-  describe  Logger::Performance::BigBrother do
+  describe Cardio::Logger::Performance::BigBrother do
     before do
       class TestClass
-        extend Logger::Performance::BigBrother
+        extend Cardio::Logger::Performance::BigBrother
         def inst_m; end
         def self.sing_m; end
       end
