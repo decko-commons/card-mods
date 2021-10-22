@@ -1,0 +1,50 @@
+version: v1.0
+name: Decko Standard
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+global_job_config:
+  env_vars:
+    - name: BUNDLE_PATH
+      value: "~/bundle/"
+  secrets:
+    - name: s3-credentials
+    - name: code-climate
+  prologue:
+    commands:
+      - checkout # semaphore does git checkout and cds into card-mods
+      - sem-version ruby 3.0.1
+      - alias be='bundle exec'
+      - cp .semaphore/Gemfile .
+      - git submodule update --init --recursive
+
+blocks:
+  - name: Unit Tests
+    task:
+      env_vars:
+        - name: COVERAGE
+          value: 'false'
+        - name: RAILS_ENV
+          value: test
+      prologue:
+        commands:
+          - cache restore bundle-gems-baseline
+          - cache restore bundle-gems-$(checksum Gemfile.lock)
+          - bundle install
+          - cache store bundle-gems-$(checksum Gemfile.lock) ~/bundle
+          - cache store bundle-gems-baseline ~/bundle
+
+          - sem-service start mysql
+
+      jobs:
+        - name: RSpec
+          commands:
+            - be decko new monkey --monkey
+            - cp .semaphore/Gemfile monkey
+            - cp .semaphore/.rspec monkey
+            - cd monkey
+            - be decko seed --test
+            - be decko update
+            - env RAILS_ENV=test bundle exec rake card:merge
+            - be decko rspec

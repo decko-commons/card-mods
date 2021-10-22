@@ -2,9 +2,7 @@
 
 RSpec.describe Card::Set::Abstract::SolidCache do
   context "render core view of a card" do
-    # FIXME: wikirate dependency!
-
-    let(:core_view) { "Alpha Z[http://wikirate.org/Z]" }
+    let(:core_view) { "Alpha Z[/Z]" }
 
     context "with solid cache" do
       it "saves core view in solid cache card" do

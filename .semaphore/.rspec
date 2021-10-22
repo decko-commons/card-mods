@@ -1,0 +1,8 @@
+--color
+--profile
+--backtrace
+--format documentation
+--default-path /home/semaphore/card-mods
+--require "./spec/spec_helper"
+\\--pattern "*/spec/**/*_spec.rb"
+--pattern "card-mod-*/spec/**/*_spec.rb"

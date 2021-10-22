@@ -122,6 +122,7 @@ RSpec.describe Card::Set::Type::MirrorList do
           end.to raise_error(ActiveRecord::RecordInvalid, /Type can\'t be changed/)
         end
       end
+
       context "when the name of Darles Chickens+books changed" do
         subject { Card.fetch("Darles Chickens+authors").item_names.sort }
 
@@ -132,9 +133,10 @@ RSpec.describe Card::Set::Type::MirrorList do
         end
         it { is_expected.to eq [] }
       end
+
       context "when the name of the cardtype books changed" do
         before do
-          Card["book"].update! name: "literature"
+          Card::Auth.as_bot { Card["book"].update! name: "literature" }
         end
         subject { Card.fetch("Darles Chickens+literature").item_names.sort }
 

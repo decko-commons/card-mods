@@ -43,6 +43,6 @@ class CardModGem
   end
 
   def depends_on_mod *mods
-    mods.each { |mod| spec.add_runtime_dependency "card-mod-#{mod}", decko_version }
+    mods.each { |mod| spec.add_runtime_dependency "card-mod-#{mod}" }
   end
 end
