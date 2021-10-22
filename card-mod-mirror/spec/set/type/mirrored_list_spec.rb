@@ -119,13 +119,13 @@ RSpec.describe Card::Set::Type::MirroredList do
   end
 
   context "when the name of the cardtype books changed" do
-    before { Card["book"].update! name: "film" }
+    before { Card::Auth.as_bot { Card["book"].update! name: "film" } }
 
     it { is_expected.to eq ["Darles Chickens", "Stam Broker"] }
   end
 
   context "when the name of the cardtype authors changed" do
-    before { Card["author"].update! name: "publisher" }
+    before { Card::Auth.as_bot { Card["author"].update! name: "publisher" } }
 
     specify do
       expect(Card.fetch("Parry Hotter+publisher").item_names)
