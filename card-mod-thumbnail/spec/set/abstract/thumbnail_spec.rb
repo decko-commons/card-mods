@@ -1,7 +1,7 @@
 RSpec.describe Card::Set::Abstract::Thumbnail do
-  def card_subject
-    Card["Death Star"]
-  end
+  # def card_subject
+  #   Card["Death Star"]
+  # end
 
   specify "view thumbnail" do
     expect_view(:thumbnail).to have_tag("div.thumbnail") do

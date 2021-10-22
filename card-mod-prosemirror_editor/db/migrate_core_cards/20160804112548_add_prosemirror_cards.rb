@@ -11,7 +11,7 @@ class AddProsemirrorCards < Cardio::Migration
     ensure_card name: "*ProseMirror", type_id: Card::PlainTextID,
                 codename: "prose_mirror",
                 content: PM_CONFIG
-    create_or_update name: "*ProseMirrorz+*self+*help", content: pm_help
+    create_or_update name: "*ProseMirror+*self+*help", content: pm_help
     ensure_card name: "script: prosemirror", type_id: Card::JavaScriptID,
                 codename: "script_prosemirror"
     ensure_card name: "style: prosemirror", type_id: Card::ScssID,
