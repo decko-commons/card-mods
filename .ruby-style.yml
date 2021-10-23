@@ -1,9 +1,9 @@
 AllCops:
   Exclude:
   - "coverage/**/*"
-  - "card-mod-*/*/{lib,assets}/{style,stylesheets}/*.css"
-  - "card-mod-*/*/{lib,assets}/{script,javascript}/*.js"
-  - "card-mod-*/*/{file,public,vendor}/**/*"
+  - "card-mod-*/{lib,assets}/{style,stylesheets}/*.css"
+  - "card-mod-*/{lib,assets}/{script,javascript}/*.js"
+  - "card-mod-*/{file,public,vendor}/**/*"
 
 Layout/DotPosition:
   EnforcedStyle: leading
