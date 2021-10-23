@@ -1,0 +1,31 @@
+languages:
+  Ruby: true
+  JavaScript: true
+  PHP: false
+  Python: false
+engines:
+  rubocop:
+    enabled: true
+    config: .codeclimate-rubocop.yml
+    checks:
+      Rubocop/Style/SpaceInsideStringInterpolation:
+        enabled: false
+  golint:
+    enabled: false
+  gofmt:
+    enabled: false
+  eslint:
+    enabled: true
+  csslint:
+    enabled: true
+ratings:
+   paths:
+   - "mod/**"
+   - "**.rb"
+   - "**.coffee"
+exclude_paths:
+- "coverage/**/*"
+- "card-mod-*/*/{lib,assets}/{style,stylesheets}/*.css"
+- "card-mod-*/*/{lib,assets}/{script,javascript}/*.js"
+- "card-mod-*/*/{file,public,vendor}/**/*"
+

@@ -1,0 +1,113 @@
+AllCops:
+  Exclude:
+  - "coverage/**/*"
+  - "card-mod-*/*/{lib,assets}/{style,stylesheets}/*.css"
+  - "card-mod-*/*/{lib,assets}/{script,javascript}/*.js"
+  - "card-mod-*/*/{file,public,vendor}/**/*"
+
+Layout/DotPosition:
+  EnforcedStyle: leading
+Layout/SpaceAroundEqualsInParameterDefault:
+  EnforcedStyle: no_space
+Layout/ExtraSpacing:
+  Description: Do not use unnecessary spacing.
+  Enabled: false
+Layout/LineLength:
+  Enabled: true
+  Max: 90
+
+Lint/AssignmentInCondition:
+  Enabled: true
+  AllowSafeAssignment: true
+
+Metrics/MethodLength:
+  Enabled: true
+  CountComments: false
+  Max: 15
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - 'Rakefile'
+    - '**/*.rake'
+    - 'spec/**/*.rb'
+    - '**/*_spec.rb'
+
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/ExampleLength:
+  Description: Checks for long examples.
+  Enabled: true
+  Max: 25
+RSpec/FilePath:
+  Description: Checks that spec file paths are consistent with the test subject.
+  Enabled: true
+  CustomTransform:
+    RuboCop: rubocop
+    RSpec: rspec
+    Card: ""
+  IgnoreMethods: false
+RSpec/NestedGroups:
+  Description: Checks for nested example groups.
+  Enabled: true
+  Max: 5
+
+Style/Encoding:
+  Description: Use UTF-8 as the source file encoding.
+  Enabled: false
+Style/GuardClause:
+  Description: Check for conditionals that can be replaced with guard clauses
+  Enabled: true
+Style/MethodDefParentheses:
+  Description: Checks if the method definitions have or don't have 252
+  Enabled: true
+  EnforcedStyle: require_no_parentheses
+Style/RegexpLiteral:
+  Description: Use %r for regular expressions matching more than
+    `MaxSlashes` '/' characters. Use %r only for regular expressions
+    matching more than `MaxSlashes` '/' character.
+  StyleGuide: https://github.com/bbatsov/ruby-style-guide#percent-r
+  Enabled: true
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+Style/Documentation:
+  Exclude:
+    - '**/migrate*/*.rb'
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/Alias:
+  EnforcedStyle: prefer_alias_method
+Style/EmptyCaseCondition:
+  Enabled: false
+Style/FormatString:
+  EnforcedStyle: percent
+  SupportedStyles:
+    - format
+    - sprintf
+    - percent
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    default: ()
+    '%i': '[]'
+    '%I': '[]'
+    '%r': '{}'
+    '%w': '[]'
+    '%W': '[]'
+Style/CommentAnnotation:
+  Enabled: true
+Style/CollectionMethods:
+  # Mapping from undesired method to desired_method
+  # e.g. to use `detect` over `find`:
+  #
+  # CollectionMethods:
+  #   PreferredMethods:
+  #     find: detect
+  Description: Preferred collection methods.
+  Enabled: false
+  PreferredMethods:
+    collect: 'map'
+    collect!: 'map!'
+    detect: 'find'
+    find_all: 'select'
+    reduce: 'inject'
+Style/BracesAroundHashParameters:
+  EnforcedStyle: context_dependent
