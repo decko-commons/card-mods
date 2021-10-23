@@ -1,5 +1,6 @@
 AllCops:
   Exclude:
+  - "stale/**/*"
   - "coverage/**/*"
   - "card-mod-*/{lib,assets}/{style,stylesheets}/*.css"
   - "card-mod-*/{lib,assets}/{script,javascript}/*.js"
