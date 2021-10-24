@@ -6,5 +6,5 @@ CardModGem.mod "classic" do |s, d|
   s.version = "0.14"
   s.summary = "Classic decko mods"
   s.description = ""
-  d.depends_on_mod :default, :alias, :prosemirror, :google_analytics, :legacy
+  d.depends_on_mod :defaults, :alias, :prosemirror, :google_analytics, :legacy
 end
