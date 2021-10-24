@@ -1,4 +1,4 @@
-include_set Abstract::Pointer
+include_set Abstract::List
 
 event :validate_listed_by_name, :validate, on: :save, changing: :name do
   if !compound? || !right || right.type_id != Card::CardtypeID
@@ -28,7 +28,7 @@ event :update_content_in_list_cards, :prepare_to_validate,
 end
 
 def old_content
-  db_content_before_act.present? ? db_content_before_act : content_cache.read(key)
+  db_content_is_changing? ? db_content_before_act : content_cache.read(key)
 end
 
 def remove_items items
@@ -45,7 +45,7 @@ def add_items items
       lc.add_item name.left
       subcards.add lc
     else
-      subcards.add(name: "#{Card[item].name}+#{left.type_name}",
+      subcards.add(name: [item, left.type_name].cardname,
                    type: "list",
                    content: "[[#{name.left}]]")
     end

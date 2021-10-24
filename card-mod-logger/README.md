@@ -58,3 +58,7 @@ For example `[:fetch]` is equivalent to
 
 ## Request Logger
 
+To use the request logger, set `config.paths[request_log]` to the path you
+want to log to, eg 'log/request.log'.
+
+It should then begin producing a csv output.
