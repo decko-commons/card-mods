@@ -6,6 +6,7 @@ format do
     end
   end
 
+  private
   # This only shows relevance sorting when the page is loaded with an explicit
   # fulltext prefix (:) in the name search. Otherwise "relevance" sorting doesn't
   # make sense.
