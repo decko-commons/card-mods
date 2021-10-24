@@ -4,8 +4,6 @@
 
 def self.included host_class
   host_class.extend ClassMethods
-  # host_class.card_writer :cached_count, type: :plain_text
-  host_class
 end
 
 def cached_count

@@ -1,6 +1,6 @@
 include_set Abstract::FollowOption
 
-restrictive_follow_opts :position=>3
+restrictive_follow_opts position: 3
 
 follower_candidate_ids do |card|
   Card.search({ right_plus: [:bookmarks, { refer_to: card.name }], return: :id },
