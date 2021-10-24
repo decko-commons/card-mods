@@ -14,7 +14,7 @@ def linker_lists
 end
 
 def codename_list_exist?
-  Card::Codename.exists?(:mirrored_list) && Card::Codename.exists?(:mirror_list)
+  Codename.exists?(:mirrored_list) && Codename.exists?(:mirror_list)
 end
 
 event :trunk_cardtype_of_a_list_relation_changed, :finalize,

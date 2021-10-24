@@ -1,11 +1,3 @@
-# Not the pefect place. Ideally this should happen after loader.rb#load_mods
-# so that it's possible to log any method.
-# With this approach we can only log methods of mods that get loaded before
-# this mod.
-if Cardio.config.performance_logger
-  Cardio::Logger::Performance.load_config Card.config.performance_logger
-end
-
 event :start_performance_logger_on_change, before: :act,
                                            when: :performance_log? do
   start_performance_logger
