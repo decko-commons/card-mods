@@ -16,12 +16,6 @@ def currently_bookmarked?
   Card::Bookmark.current_ids.include? id
 end
 
-def toggle_bookmarks_item
-  action = currently_bookmarked? ? :drop : :add
-  Card::Bookmark.current_list_card.send "#{action}_item", name
-  Card::Bookmark.clear
-end
-
 format :html do
   view :bookmark, wrap: :slot do
     link_to_view :bookmark, field_nest(:bookmarkers, view: :toggle),
@@ -37,4 +31,12 @@ format :html do
   view :bar_left do
     render :title_with_bookmark
   end
+end
+
+private
+
+def toggle_bookmarks_item
+  action = currently_bookmarked? ? :drop : :add
+  Card::Bookmark.current_list_card.send "#{action}_item", name
+  Card::Bookmark.clear
 end
