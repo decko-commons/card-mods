@@ -55,7 +55,6 @@ class Card
         cache.delete CURRENT_BOOKMARKS_KEY
       end
 
-      # TODO: move this to wikirate
       def add_sort_join rel, join_field
         rel.joins(
           "LEFT JOIN counts cts " \

@@ -1,7 +1,8 @@
 # cache # of users who have bookmarked this metric/topic/whatever(=left)
-include_set Abstract::TaggedByCachedCount, type_to_count: :user,
-                                           tag_pointer: :bookmarks,
-                                           count_trait: :bookmarkers
+include_set Abstract::ListRefCachedCount,
+            type_to_count: :user,
+            list_field: :bookmarks,
+            count_trait: :bookmarkers
 
 def active?
   left&.currently_bookmarked?
