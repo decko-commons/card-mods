@@ -28,8 +28,8 @@ ActiveSupport.on_load :card do
         # end
 
         module HamlPaths
-          include ::NewRelic::Agent::MethodTracer
-          add_method_tracer :haml_to_html, "Custom/Format/haml_to_html"
+          # include ::NewRelic::Agent::MethodTracer
+          # add_method_tracer :haml_to_html, "Custom/Format/haml_to_html"
         end
       end
     end

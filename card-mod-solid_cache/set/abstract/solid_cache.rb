@@ -55,6 +55,8 @@ module ClassMethods
     )
   end
 
+  private
+
   def define_event_to_update_expired_cached_cards set_of_changed_card, args,
                                                   method_name
     args[:on] ||= %i[create update delete]

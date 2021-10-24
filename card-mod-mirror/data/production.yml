@@ -1,0 +1,7 @@
+---
+- :name: Mirror List
+  :codename: mirror_list
+  :type: cardtype
+- :name: Mirrored List
+  :codename: mirrored_list
+  :type: cardtype

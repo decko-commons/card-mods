@@ -23,6 +23,12 @@ format :html do
     HTML
   end
 
+  view :pdf_preview do
+    wrap_with :div, id: "pdf-preview" do
+      pdfjs_iframe pdf_url: card.file_url
+    end
+  end
+
   view :pdfjs_viewer do
     # TODO: show pdfjs viewer directly without iframe
     # Pdfjs.viewer
