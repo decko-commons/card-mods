@@ -1,4 +1,4 @@
-include_set Abstract::List
+include_set Abstract::Pointer
 
 event :validate_list_name, :validate, on: :save, changed: :name do
   errors.add :name, t(:mirror_cardtype_right) unless right&.type_id == Card::CardtypeID

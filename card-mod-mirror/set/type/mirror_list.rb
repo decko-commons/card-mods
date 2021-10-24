@@ -1,4 +1,4 @@
-include_set Abstract::List
+include_set Abstract::Pointer
 
 event :validate_listed_by_name, :validate, on: :save, changing: :name do
   if !compound? || !right || right.type_id != Card::CardtypeID
