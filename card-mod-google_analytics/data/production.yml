@@ -1,0 +1,4 @@
+---
+- :name: "*google analytics key"
+  :codename: google_analytics_key
+  :type: phrase

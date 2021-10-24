@@ -37,8 +37,7 @@ event :create_listed_by_cards, :prepare_to_validate,
   end
 end
 
-event :update_related_listed_by_card_on_create, :finalize,
-      on: :create do
+event :update_related_listed_by_card_on_create, :finalize, on: :create do
   update_listed_by_cache_for item_keys
 end
 
