@@ -28,7 +28,7 @@ event :update_content_in_list_cards, :prepare_to_validate,
 end
 
 def old_content
-  db_content_is_changing? ? db_content_before_act : content_cache.read(key)
+  db_content_before_act.present? ? db_content_before_act : content_cache.read(key)
 end
 
 def remove_items items
