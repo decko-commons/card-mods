@@ -1,0 +1,9 @@
+---
+- :name: "*ProseMirror"
+  :codename: prose_mirror
+  :type: json
+  :content: |
+    {
+      "menuBar": true,
+      "tooltipMenu": false
+    }
