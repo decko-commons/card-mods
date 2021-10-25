@@ -69,10 +69,6 @@ format :html do
     @social_image ||= social_image_card&.format(:text)&.render_source
   end
 
-  def meta_tag property, content
-    %{<meta name="#{property}" content="#{content}">}
-  end
-
   def social_image_card
     try(:image_card) || card.fetch(:image) || Card[:logo]
   end
@@ -88,5 +84,9 @@ format :html do
       next unless (content = try "#{prefix}_#{property}")
       meta_tag "#{prefix}:#{property}", content
     end.compact
+  end
+
+  def meta_tag property, content
+    %{<meta name="#{property}" content="#{content}">}
   end
 end

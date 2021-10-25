@@ -55,3 +55,7 @@ module ActiveRecord
     end
   end
 end
+
+if (config = Cardio.config.performance_logger)
+  Cardio::Logger::Performance.load_config config
+end

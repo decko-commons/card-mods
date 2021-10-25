@@ -45,7 +45,7 @@ def add_items items
       lc.add_item name.left
       subcards.add lc
     else
-      subcards.add(name: "#{Card[item].name}+#{left.type_name}",
+      subcards.add(name: [item, left.type_name].cardname,
                    type: "list",
                    content: "[[#{name.left}]]")
     end
