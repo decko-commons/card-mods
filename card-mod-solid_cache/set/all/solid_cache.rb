@@ -1,5 +1,6 @@
+# for override
 def solid_cache?
-  respond_to? :solid_cache_card
+  false
 end
 
 module ClassMethods
