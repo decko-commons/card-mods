@@ -1,8 +1,9 @@
 include_set Abstract::Media
 
 format :html do
+  # a linked image with a title and subtitle
   view :thumbnail do
-    voo.show :thumbnail_link
+    # voo.show :thumbnail_link
     thumbnail
   end
 
@@ -17,6 +18,7 @@ format :html do
     thumbnail
   end
 
+  # just an image
   view :thumbnail_image do
     return unless (image = image_card)
 
