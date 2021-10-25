@@ -81,6 +81,10 @@ module ClassMethods
   end
 end
 
+def solid_cache?
+  true
+end
+
 def with_solid_cache
   update_solid_cache if solid_cache_card.new?
   yield solid_cache_card
