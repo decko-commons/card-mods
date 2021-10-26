@@ -2,7 +2,7 @@
 # @title README - mod: logger
 -->
 
-# Logger mod (Experimental)
+# Logger mod (experimental)
 
 This experimental mod has code in support of decko-friendly performance and request 
 logging. It cannot boast the sophistication or support of modern logging tools, but

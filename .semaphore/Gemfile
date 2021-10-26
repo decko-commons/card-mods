@@ -21,22 +21,9 @@ gem "decko-rspec", group: :test, path: "~/card-mods/.semaphore/decko/support"
 # gem "decko-spring", path: "~/dev/decko/gem/support"
 
 path "~/card-mods" do
-  gem "card-mod-alias"
-  gem "card-mod-bookmarks"
-  gem "card-mod-counts"
-  gem "card-mod-csv_import"
-  gem "card-mod-fulltext"
-  gem "card-mod-google_analytics"
-  gem "card-mod-graphql"
-  gem "card-mod-legacy"
-  gem "card-mod-logger"
-  gem "card-mod-lookup"
-  gem "card-mod-mirror"
-  gem "card-mod-new_relic"
-  gem "card-mod-pdfjs"
-  gem "card-mod-prosemirror_editor"
-  gem "card-mod-social"
-  gem "card-mod-solid_cache"
-  gem "card-mod-tabs"
-  gem "card-mod-thumbnail"
+  Dir.chdir "#{Dir.home}/card-mods" do
+    Dir.glob("card-mod-*").each do |mod|
+      gem mod
+    end
+  end
 end
