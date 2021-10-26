@@ -9,7 +9,7 @@ class CountsTable < ActiveRecord::Migration[4.2]
       t.integer :value
     end
 
-    add_index :counts, [:left_id, :right_id], name: "left_id_right_id_index"
+    add_index :counts, %i[left_id right_id], name: "left_id_right_id_index"
   end
 
   def down
