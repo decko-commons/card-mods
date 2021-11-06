@@ -4,7 +4,7 @@ end
 
 # lookup fields are often based on cards' compound names
 event :refresh_lookup, :integrate, changed: :name, on: :update do
-  lookup.refresh
+  lookup ? lookup.refresh : create_lookup
 end
 
 event :delete_lookup, :finalize, on: :delete do
