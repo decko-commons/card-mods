@@ -24,7 +24,7 @@ RSpec.describe Card::Bookmark do
     end
 
     it "is a pointer for Joe User" do
-      expect(list_card.type_code).to eq(:pointer)
+      expect(list_card.type_code).to eq(:list)
     end
 
     it "is a session for anonymous" do
