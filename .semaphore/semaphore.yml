@@ -44,7 +44,7 @@ blocks:
             - cp .semaphore/Gemfile monkey
             - cp .semaphore/.rspec monkey
             - cd monkey
-            - be decko seed --test
+            - env RAILS_ENV=test bundle exec decko seed # --test
             - be decko update
             - env RAILS_ENV=test bundle exec rake card:merge
             - be decko rspec
