@@ -18,6 +18,7 @@ def self.included host_class
                     host_class.type_to_count,
                     host_class.list_field do |changed_card|
       trait_name = host_class.try(:count_trait) || host_class.type_to_count
+
       changed_card.changed_item_names.map do |item_name|
         Card.fetch item_name.to_name.trait(trait_name)
       end
