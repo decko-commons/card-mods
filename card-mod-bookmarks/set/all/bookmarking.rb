@@ -1,1 +1,1 @@
-card_accessor :bookmarkers, type: :search_type
+# card_accessor :bookmarkers, type: :search_type
