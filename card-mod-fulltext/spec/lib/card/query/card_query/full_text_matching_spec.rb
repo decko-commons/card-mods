@@ -1,19 +1,19 @@
 RSpec.describe Card::Query::CardQuery::FullTextMatching do
   def search term, query={}
     query[:fulltext_match] = term
-    Card.search query.reverse_merge(return: :name, sort: :name)
+    Card.search query.reverse_merge(not: { right: {} }, return: :name, sort: :name)
   end
 
   specify "sort: name" do
-    expect(search("superhero")).to eq(["superhero skin", "theme: superhero"])
+    expect(search("permissions")).to eq(["Administrator", "mod: permissions"])
   end
 
   specify "sort: relevance" do
-    expect(search("superhero", sort: :relevance))
-      .to eq(["theme: superhero", "superhero skin"])
+    expect(search("permissions", sort: :relevance))
+      .to eq(["mod: permissions", "Administrator"])
   end
 
   specify "word fragment" do
-    expect(search("superh")).to eq([])
+    expect(search("permiss")).to eq([])
   end
 end

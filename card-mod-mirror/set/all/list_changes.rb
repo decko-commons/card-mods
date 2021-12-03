@@ -13,6 +13,7 @@ def linker_lists
               "lists that link to #{name}")
 end
 
+# FIXME: shouldn't be necessary
 def codename_list_exist?
   Card::Codename.exist?(:mirrored_list) && Card::Codename.exist?(:mirror_list)
 end

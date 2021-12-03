@@ -1,7 +1,7 @@
 include_set Abstract::Pointer
 
 event :validate_list_name, :validate, on: :save, changed: :name do
-  errors.add :name, t(:mirror_cardtype_right) unless right&.type_id == Card::CardtypeID
+  errors.add :name, t(:mirror_cardtype_right) unless right&.type_code == :cardtype
 end
 
 event :validate_list_item_type_change, :validate,
@@ -30,7 +30,7 @@ event :create_listed_by_cards, :prepare_to_validate,
     listed_by_name = "#{item_name}+#{left.type_name}"
     next if director.main_director.card.key == listed_by_name.to_name.key
     if !Card[listed_by_name]
-      add_subcard listed_by_name, type_id: Card::MirrorListID
+      add_subcard listed_by_name, type: :mirror_list
     else
       Card[listed_by_name].update_references_out
     end

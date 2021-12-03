@@ -45,9 +45,7 @@ def add_items items
       lc.add_item name.left
       subcards.add lc
     else
-      subcards.add(name: [item, left.type_name].cardname,
-                   type: "list",
-                   content: "[[#{name.left}]]")
+      subcards.add(name: [item, left.type_name].cardname, type: :list, content: name.left)
     end
   end
 end
@@ -63,9 +61,7 @@ def content
 end
 
 def generate_content
-  listed_by.map do |item|
-    "[[%s]]" % item.to_name.left
-  end.join "\n"
+  listed_by.map { |item| item.to_name.left }.join "\n"
 end
 
 def listed_by

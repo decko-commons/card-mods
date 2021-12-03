@@ -7,11 +7,11 @@ RSpec.describe Card::Set::Type::MirrorList do
     Card::Auth.as_bot do
       #create_mirrored_list "Parry Hotter+authors", "[[Darles Chickens]]"
       Card.create! name: "Parry Hotter+authors",
-                   content: "[[Darles Chickens]]",
-                   type_id: Card::MirroredListID
+                   content: "Darles Chickens",
+                   type: :mirrored_list
       Card.create! name: "50 grades of shy+authors",
-                   content: "[[Darles Chickens]]\n[[Stam Broker]]",
-                   type_id: Card::MirroredListID
+                   content: "Darles Chickens\nStam Broker",
+                   type: :mirrored_list
     end
   end
   it "doesn't allow non-cardtype as right part" do
@@ -39,7 +39,7 @@ RSpec.describe Card::Set::Type::MirrorList do
       context "when Darles Chickens is removed from Parry Hotter's list" do
         before do
           Card["Parry Hotter+authors"].update!(
-            content: "[[Stam Broker]]"
+            content: "Stam Broker"
           )
         end
         it { is_expected.to eq ["50 grades of shy"] }
