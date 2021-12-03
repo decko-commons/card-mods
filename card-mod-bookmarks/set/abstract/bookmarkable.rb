@@ -19,6 +19,7 @@ end
 format :html do
   view :bookmark, wrap: :slot do
     link_to_view :bookmark, field_nest(:bookmarkers, view: :toggle),
+                 class: "slotter _stop_propagation",
                  path: { action: :update, card: { trigger: :toggle_bookmark } }
   end
 

@@ -1,0 +1,7 @@
+{card-mod-*}/{lib,format,chunk}/**/*.rb
+card/tmpsets/set*/**/*.rb
+- card-mod-*/*.md */*.md *.md GPL LICENSE card/VERSION
+# --exclude .*/vendor/.*
+--markup markdown
+--markup-provider=kramdown
+# --load .yard_extensions/yard_extensions.rb
