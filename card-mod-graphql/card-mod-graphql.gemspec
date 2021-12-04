@@ -7,5 +7,5 @@ CardModGem.mod "graphql" do |s, d|
   s.version = "0.1"
   s.summary = "GraphQL for decko cards"
   s.description = ""
-  d.depends_on ["graphql", "~> 1.12"], ["graphiql-rails", "~> 1.7"]
+  d.depends_on ["graphql", "~> 1.12.20"], ["graphiql-rails", "~> 1.7"]
 end
