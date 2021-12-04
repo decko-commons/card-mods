@@ -8,7 +8,7 @@ event :generate_import_map, :finalize, on: :create do
   return unless import_item_class.mapped_column_keys.present?
   map = import_map_card
   map.auto_map!
-  add_subcard map
+  subcard map
 end
 
 event :generate_import_status, :finalize, after: :generate_import_map, on: :create do
