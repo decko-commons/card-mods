@@ -45,10 +45,10 @@ class Card
       end
 
       def to_card_id value
-        if value.is_a?(Array)
-          value.map { |v| Card.fetch_id(v) }
+        if value.is_a? Array
+          value.map(&:card_id)
         else
-          Card.fetch_id(value)
+          value.card_id
         end
       end
 
