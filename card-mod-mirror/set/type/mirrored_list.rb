@@ -30,9 +30,9 @@ event :create_listed_by_cards, :prepare_to_validate,
     listed_by_name = "#{item_name}+#{left.type_name}"
     next if director.main_director.card.key == listed_by_name.to_name.key
     if !Card[listed_by_name]
-      add_subcard listed_by_name, type: :mirror_list
+      subcard listed_by_name, type: :mirror_list
     else
-      Card[listed_by_name].update_references_out
+      listed_by_name.card.update_references_out
     end
   end
 end
