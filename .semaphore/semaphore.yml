@@ -46,4 +46,5 @@ blocks:
             - cd monkey
             - be decko seed
             - be decko update
+            - be card eat
             - be decko rspec
