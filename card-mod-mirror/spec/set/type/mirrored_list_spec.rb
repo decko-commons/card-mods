@@ -38,14 +38,16 @@ RSpec.describe Card::Set::Type::MirroredList do
       before do
         Card["Stam Broker"].delete
       end
-      it { is_expected.to eq ["Darles Chickens", "Stam Broker"] }
+      it do
+        is_expected.to eq ["Darles Chickens"]
+      end
     end
     context "when the cardtype of Stam Broker changed" do
       it "raises an error" do
         @card = Card["Stam Broker"]
         @card.update type_id: Card::BasicID
         expect(@card.errors[:type].first).to match(
-          /can't be changed because .+ is referenced by list/
+          /cannot change type of item in mirrors/
         )
       end
     end
@@ -61,7 +63,10 @@ RSpec.describe Card::Set::Type::MirroredList do
     end
 
     context "when the name of Stam Broker changed to Stam Trader" do
-      before { Card::Auth.as_bot { Card["Stam Broker"].update! name: "Stam Trader" } }
+      before do
+        Card::Auth.as_bot { Card["Stam Broker"].update! name: "Stam Trader" }
+      end
+
 
       it { is_expected.to eq ["Darles Chickens", "Stam Trader"] }
     end
@@ -87,12 +92,15 @@ RSpec.describe Card::Set::Type::MirroredList do
       end
     end
 
-    context "when the cartype of Parry Hotter changed" do
-      before do
-        Card["Parry Hotter"].update! type_id: Card::BasicID
+    context "when the cardtype of Parry Hotter changed" do
+      it "raises error because content is invalid" do
+        expect do
+          Card["Parry Hotter"].update! type_id: Card::BasicID
+        end.to raise_error(ActiveRecord::RecordInvalid,
+                           /cannot change type of item in mirrors/)
       end
-      it { is_expected.to eq ["Darles Chickens", "Stam Broker"] }
     end
+
     context "when Parry Hotter+authors to Parry Hotter+rich_text" do
       it "raises error because content is invalid" do
         expect do
@@ -100,7 +108,7 @@ RSpec.describe Card::Set::Type::MirroredList do
             name: "Parry Hotter+rich_text"
           )
         end.to raise_error(ActiveRecord::RecordInvalid,
-                           /Name name conflicts with list items/)
+                           /Content Darles Chickens has wrong cardtype/)
       end
     end
   end
