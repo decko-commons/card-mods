@@ -10,6 +10,6 @@ end
 
 def search_content_field_names
   search_content_field_codes.map do |code|
-    name.trait_name code
+    name.field_name code
   end
 end
