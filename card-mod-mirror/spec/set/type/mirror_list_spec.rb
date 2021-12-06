@@ -7,11 +7,11 @@ RSpec.describe Card::Set::Type::MirrorList do
     Card::Auth.as_bot do
       #create_mirrored_list "Parry Hotter+authors", "[[Darles Chickens]]"
       Card.create! name: "Parry Hotter+authors",
-                   content: "[[Darles Chickens]]",
-                   type_id: Card::MirroredListID
+                   content: "Darles Chickens",
+                   type: :mirrored_list
       Card.create! name: "50 grades of shy+authors",
-                   content: "[[Darles Chickens]]\n[[Stam Broker]]",
-                   type_id: Card::MirroredListID
+                   content: "Darles Chickens\nStam Broker",
+                   type: :mirrored_list
     end
   end
   it "doesn't allow non-cardtype as right part" do
@@ -39,7 +39,7 @@ RSpec.describe Card::Set::Type::MirrorList do
       context "when Darles Chickens is removed from Parry Hotter's list" do
         before do
           Card["Parry Hotter+authors"].update!(
-            content: "[[Stam Broker]]"
+            content: "Stam Broker"
           )
         end
         it { is_expected.to eq ["50 grades of shy"] }
@@ -76,7 +76,7 @@ RSpec.describe Card::Set::Type::MirrorList do
               name: "Adventures of Buckleharry Finn",
               type: "book",
               subcards: {
-                "+authors" => { content: "[[Stam Broker]]", type: "mirrored list" }
+                "+authors" => { content: "[[Stam Broker]]", type: :mirrored_list }
               }
             )
             Card.fetch("Adventures of Buckleharry Finn+authors")
@@ -94,11 +94,13 @@ RSpec.describe Card::Set::Type::MirrorList do
         end
       end
 
-      context "when the cardtype of Parry Hotter changed" do
-        before { Card["Parry Hotter"].update! type_id: Card::BasicID }
-
-        it { is_expected.to eq ["50 grades of shy"] }
+      it "raises an error when the cardtype of Parry Hotter changed" do
+        expect do
+          Card["Parry Hotter"].update! type: :basic
+        end.to raise_error(ActiveRecord::RecordInvalid,
+                           /cannot change type of item in mirrors/)
       end
+
       context "when the name of Parry Hotter changed to Parry Moppins" do
         before do
           Card::Auth.as_bot do
@@ -115,23 +117,22 @@ RSpec.describe Card::Set::Type::MirrorList do
 
         it { is_expected.to eq ["50 grades of shy", "Parry Hotter"] }
       end
-      context "when the cartype of Darles Chickens changed" do
+
+      context "when the cardtype of Darles Chickens changed" do
         it "raises error" do
           expect do
-            Card["Darles Chickens"].update! type_id: Card::BasicID
-          end.to raise_error(ActiveRecord::RecordInvalid, /Type can\'t be changed/)
+            Card["Darles Chickens"].update! type: :basic
+          end.to raise_error(ActiveRecord::RecordInvalid,
+                             /cannot change type of item in mirrors/)
         end
       end
 
       context "when the name of Darles Chickens+books changed" do
-        subject { Card.fetch("Darles Chickens+authors").item_names.sort }
-
-        before do
-          Card["Darles Chickens+books"].update!(
-            name: "Darles Chickens+authors"
-          )
+        it "raises error" do
+          expect do
+            Card["Darles Chickens+books"].update! name: "Darles Chickens+authors"
+          end.to raise_error(ActiveRecord::RecordInvalid, /wrong cardtype/)
         end
-        it { is_expected.to eq [] }
       end
 
       context "when the name of the cardtype books changed" do
