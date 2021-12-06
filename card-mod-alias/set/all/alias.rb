@@ -1,7 +1,7 @@
 # triggerable event to auto-add an alias upon renaming a card
 event :create_alias_upon_rename, :finalize,
       on: :update, changed: :name, trigger: :required do
-  add_subcard name_before_act, type_code: :alias, content: name
+  subcard name_before_act, type_code: :alias, content: name
 end
 
 # actual aliases override this in narrower sets.
