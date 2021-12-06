@@ -2,7 +2,7 @@
 include_set Abstract::ListRefCachedCount,
             type_to_count: :user,
             list_field: :bookmarks,
-            count_trait: :bookmarkers
+            count_field: :bookmarkers
 
 def active?
   left&.currently_bookmarked?
