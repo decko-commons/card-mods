@@ -51,6 +51,7 @@ RSpec.describe Card::Set::Type::MirroredList do
         )
       end
     end
+
     context "when the name of Parry Hotter changed to Parry Moppins" do
       before do
         Card["Parry Hotter"].update! name: "Parry Moppins"
@@ -66,7 +67,6 @@ RSpec.describe Card::Set::Type::MirroredList do
       before do
         Card::Auth.as_bot { Card["Stam Broker"].update! name: "Stam Trader" }
       end
-
 
       it { is_expected.to eq ["Darles Chickens", "Stam Trader"] }
     end

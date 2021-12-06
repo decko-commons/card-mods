@@ -1,10 +1,12 @@
 include_set Abstract::Pointer
 
 event :validate_mirrorable, :validate, on: :save, changed: :name do
-  errors.add :name, t(:mirror_cardtype_right) unless right&.type_code == :cardtype
+  return if right&.type_code == :cardtype
+
+  errors.add :name, t(:mirror_cardtype_right)
 end
 
-event :validate_mirror_items, :validate, on: :save do # , changed: %i[type_id content] do
+event :validate_mirror_items, :validate, on: :save do
   item_cards.each do |item_card|
     next if item_card.type_id == item_type_id
 
