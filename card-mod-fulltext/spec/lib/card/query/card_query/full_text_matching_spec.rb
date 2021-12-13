@@ -5,12 +5,13 @@ RSpec.describe Card::Query::CardQuery::FullTextMatching do
   end
 
   specify "sort: name" do
-    expect(search("permissions")).to eq(["Administrator", "mod: permissions"])
+    expect(search("permissions"))
+      .to eq(["*account", "Administrator", "mod: permissions", "Role"])
   end
 
   specify "sort: relevance" do
     expect(search("permissions", sort: :relevance))
-      .to eq(["mod: permissions", "Administrator"])
+      .to eq(["*account", "Role", "Administrator", "mod: permissions"])
   end
 
   specify "word fragment" do
