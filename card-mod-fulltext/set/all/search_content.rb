@@ -2,10 +2,8 @@ event :set_search_content, after: :set_content do
   self.search_content = tagless { content_for_search.to_s }
 end
 
-event :trigger_left_search_content_update, after: :set_search_content do
-  return unless name.compound?
+event :trigger_left_search_content_update, after: :set_search_content, when: :compound? do
   l = left
-
   return unless l&.real? && l.search_content_field_names&.include?(name)
 
   l.set_search_content
@@ -25,9 +23,7 @@ def content_for_search
 end
 
 def search_content_cards
-  return [] unless structure && nest_chunks
-
-  nest_chunks.map(&:referee_card).compact
+  structure && nest_chunks ? nest_chunks.map(&:referee_card).compact : []
 end
 
 def search_content_field_names
