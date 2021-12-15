@@ -46,7 +46,8 @@ module ClassMethods
 
   def define_recount_event set, event_name, event_args
     set.class_eval do
-      event event_name, :integrate_with_delay, event_args do
+      event event_name, :after_integrate, event_args do
+        #        event event_name, :integrate_with_delay, event_args do
         Array.wrap(yield(self)).compact.each do |count_card|
           count_card.update_cached_count self if count_card.respond_to? :recount
         end
