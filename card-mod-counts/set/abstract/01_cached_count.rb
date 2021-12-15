@@ -36,6 +36,8 @@ module ClassMethods
     define_recount_event set, event_name, event_args, &block
   end
 
+  # use in cases where both the base card and the field card can trigger counting
+  # (prevents double work)
   def field_recount field_card
     yield unless field_card.left&.action&.in? %i[create delete]
   end
