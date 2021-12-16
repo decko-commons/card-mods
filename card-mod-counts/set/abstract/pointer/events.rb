@@ -10,9 +10,13 @@ Card.action_specific_attributes << :changed_item_names
 
 # make these available in delayed jobs
 event :stash_changed_item_names, :after_integrate do
-  @changed_item_names = changed_item_names
+  @changed_item_names = changed_item_names.map(&:to_s)
 end
 
 def changed_item_names
-  @changed_item_names || dropped_item_names + added_item_names
+  if @changed_item_names
+    @changed_item_names.map(&:to_name)
+  else
+    dropped_item_names + added_item_names
+  end
 end
