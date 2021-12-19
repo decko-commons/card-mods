@@ -29,7 +29,7 @@ end
 
 # cannot delay event without id
 def update_cached_count_when_ready
-  send "update_cached_count#{ '_without_callbacks' if new? }"
+  send "update_cached_count#{'_without_callbacks' if new?}"
 end
 
 module ClassMethods
@@ -52,9 +52,7 @@ module ClassMethods
   def define_recount_event set, event_name, event_args
     set.class_eval do
       event event_name, :after_integrate, event_args do
-        Array.wrap(yield(self)).compact.each do |count_card|
-          count_card.update_cached_count_when_ready
-        end
+        Array.wrap(yield(self)).compact.each(&:update_cached_count_when_ready)
       end
     end
   end
