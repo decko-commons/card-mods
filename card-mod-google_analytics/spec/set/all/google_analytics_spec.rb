@@ -3,13 +3,13 @@ RSpec.describe Card::Set::All::GoogleAnalytics do
 
   after { Cardio.config.google_analytics_key = nil }
 
-  it "instantiates a tracker" do
-    expect(card_subject.tracker).to be_a(Staccato::Tracker)
-  end
+  # it "instantiates a tracker" do
+  #   expect(card_subject.tracker).to be_a(Staccato::Tracker)
+  # end
 
   describe "google_analytics_snippet" do
     it "handles vars" do
-      expect(format_subject.render_google_analytics_snippet)
+      expect(format_subject.render_google_analytics_snippets)
         .to match(/#{Regexp.escape "ga('set', 'anonymizeIp', true)"}/)
     end
   end
