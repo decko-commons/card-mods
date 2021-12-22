@@ -24,7 +24,7 @@
       gtag('js', new Date());
       = "gtag('config', '#{ga_key}');"
 
-  - when /GTM-/
+  - when /^GTM-/
     / Google Tag Manager (gtm.js)
     %script
       (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
