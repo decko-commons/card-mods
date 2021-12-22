@@ -1,0 +1,8 @@
+/ Google Tag Manager (noscript)
+- google_tag_manager_keys.each do |ga_key|
+  %noscript
+    %iframe{ src: "https://www.googletagmanager.com/ns.html?id=#{ga_key}",
+             height: "0",
+             width: "0",
+             style: "display:none;visibility:hidden" }
+/ End Google Tag Manager (noscript)
