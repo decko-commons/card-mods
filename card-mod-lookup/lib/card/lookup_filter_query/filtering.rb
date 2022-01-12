@@ -65,8 +65,9 @@ class Card
 
       def restrict_by_cql col, cql
         cql.reverse_merge! return: :id, limit: 0
-        new_cond = "#{filter_table col}.#{col} = c0.#{cql[:return]}"
-        @conditions << "EXISTS (#{Card::Query.new(cql).sql} AND #{new_cond})"
+        restrict_to_ids col, Card.search(cql)
+        # new_cond = "#{filter_table col}.#{col} = c0.#{cql[:return]}"
+        # @conditions << "EXISTS (#{Card::Query.new(cql).sql} AND #{new_cond})"
       end
 
       def filter field, value, operator=nil
