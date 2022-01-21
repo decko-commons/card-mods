@@ -28,6 +28,7 @@ event :update_cached_count, :integrate_with_delay, trigger: :required  do
 end
 
 # cannot delay event without id
+# TODO: fix or explain better
 def update_cached_count_when_ready
   send "update_cached_count#{'_without_callbacks' if new?}"
 end
