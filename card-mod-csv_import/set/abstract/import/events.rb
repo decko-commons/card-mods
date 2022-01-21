@@ -42,6 +42,7 @@ end
 #   2. come up with a workable solution for when not delaying
 event :import_items, :integrate_with_delay, on: :update, when: :data_import? do
   Director.clear if Cardio.delaying?
+  # Rails.logger.info "#{item_indeces_from_params}\n\n#{Env.params}\n\n"
   import! item_indeces_from_params
 end
 
@@ -51,7 +52,7 @@ end
 
 def import! item_indeces
   import_manager.each_item item_indeces do |index, import_item|
-    # puts "IMPORTING ITEM: #{import_item.input}".red
+    # Rails.logger.info "IMPORTING ITEM: #{import_item.input}".red
     import_status_card.update_item_and_save index, import_item.import
   end
 end
