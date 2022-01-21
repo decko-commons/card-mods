@@ -21,7 +21,7 @@ event :stop_performance_logger_on_read, after: :show_page, on: :read,
 end
 
 event :request_logger, after: :show_page, when: :request_logger? do
-  Cardio::Logger::Request.write_log_entry Env[:controller]
+  Cardio::Logger::Request.write_log_entry Env.controller
 end
 
 def request_logger?
@@ -32,7 +32,7 @@ def start_performance_logger
   if Env.params[:performance_log]
     Cardio::Logger::Performance.load_config Env.params[:performance_log]
   end
-  if (request = Env[:controller]&.request)
+  if (request = Env.controller&.request)
     method = request.env["REQUEST_METHOD"]
     path   = request.env["PATH_INFO"]
   else

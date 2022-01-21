@@ -147,7 +147,6 @@ format :html do
     url = path(:action=>url) if Symbol===url
     opts = { :url=>url, :remote=>false, :html=>other_html }
     opts[:html][:class] = classes + ' slotter'
-    opts[:html][:recaptcha] = 'on' if Env[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
     opts
   end
 
