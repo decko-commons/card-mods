@@ -65,7 +65,7 @@ class Card
 
       def restrict_by_cql col, cql
         cql.reverse_merge! return: :id, limit: 0
-        restrict_to_ids col, Card.search(cql)
+        @conditions << "#{filter_table col}.#{col} IN (#{Card::Query.new(cql).sql})"
       end
 
       def filter field, value, operator=nil

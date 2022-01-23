@@ -132,6 +132,7 @@ class Card
 
     def major_error error
       error error.message
+      Rails.logger.info "import failed: #{error.message} (see import log)"
       ImportLog.debug "import failed: #{error.message}"
       ImportLog.debug error.backtrace.join "\n"
       skip :failed
