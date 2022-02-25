@@ -63,9 +63,15 @@ class Card
         @restrict_to_ids[col] = existing ? (existing & ids) : ids
       end
 
-      def restrict_by_cql col, cql
-        cql.reverse_merge! return: :id, limit: 0
-        @conditions << "#{filter_table col}.#{col} IN (#{Card::Query.new(cql).sql})"
+      def restrict_by_cql suffix, col, cql
+        q = Card::Query.new cql.merge(table_suffix: suffix)
+        on = "#{filter_table col}.#{col} = #{q.table_alias}.#{cql[:return] || :id}"
+        @joins << "JOIN cards #{q.table_alias} ON #{on}"
+        @joins << q.sql_statement.joins
+        @conditions << q.sql_statement.where(explicit=false)
+
+        # cql.reverse_merge! return: :id, limit: 0
+        # @conditions << "#{filter_table col}.#{col} IN (#{Card::Query.new(cql).sql})"
 
         # original strat: list of ids. slightly slower than IN. uglier SQL
         # restrict_to_ids col, Card.search(cql)
