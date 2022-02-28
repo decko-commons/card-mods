@@ -68,7 +68,7 @@ class Card
         on = "#{filter_table col}.#{col} = #{q.table_alias}.#{cql[:return] || :id}"
         @joins << "JOIN cards #{q.table_alias} ON #{on}"
         @joins << q.sql_statement.joins
-        @conditions << q.sql_statement.where(explicit=false)
+        @conditions << q.sql_statement.where(false)
 
         # cql.reverse_merge! return: :id, limit: 0
         # @conditions << "#{filter_table col}.#{col} IN (#{Card::Query.new(cql).sql})"
