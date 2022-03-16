@@ -21,7 +21,8 @@ class Card
     end
 
     def lookup_query
-      q = lookup_class.where(lookup_conditions).distinct
+      select = ["#{lookup_table}.*", sort_fields].flatten.compact
+      q = lookup_class.where(lookup_conditions).select(select).distinct
       q = q.joins(@joins.uniq) if @joins.present?
       q
     end
@@ -83,6 +84,12 @@ class Card
       @sort_joins = []
       @sort_hash = @sort_args.each_with_object({}) do |(by, dir), h|
         h[sort_by(by)] = sort_dir(dir)
+      end
+    end
+
+    def sort_fields
+      @sort_hash.keys.map do |key|
+        key.match?(/_bookmarkers$/) ? "cts.value" : key
       end
     end
 
