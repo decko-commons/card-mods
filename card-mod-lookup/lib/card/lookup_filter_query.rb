@@ -56,6 +56,7 @@ class Card
 
     # @return [Array]
     def count
+      # we need the id because some joins distort the count
       @empty_result ? 0 : main_query.select("#{lookup_table}.id").distinct.count
     end
 
