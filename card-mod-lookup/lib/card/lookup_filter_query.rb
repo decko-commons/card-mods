@@ -94,7 +94,7 @@ class Card
 
     def sort_fields
       @sort_hash.keys.map do |key|
-        key.match?(/_bookmarkers$/) ? "cts.value" : key
+        key.match?(/_bookmarkers$/) ? "bookmarkers" : key
       end
     end
 
