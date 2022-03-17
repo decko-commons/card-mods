@@ -22,6 +22,8 @@ class Card
 
     def lookup_query
       q = lookup_class.where lookup_conditions
+
+
       q = q.joins(@joins.uniq) if @joins.present?
       q
     end
@@ -54,7 +56,8 @@ class Card
 
     # @return [Array]
     def count
-      @empty_result ? 0 : main_query.count
+      # we need the id because some joins distort the count
+      @empty_result ? 0 : main_query.select("#{lookup_table}.id").distinct.count
     end
 
     def limit
@@ -75,7 +78,10 @@ class Card
     def sort_and_page
       relation = yield
       @sort_joins.uniq.each { |j| relation = relation.joins(j) }
-
+      if @sort_hash.present?
+        select = ["#{lookup_table}.*", sort_fields].flatten.compact
+        relation = relation.select(select).distinct
+      end
       relation.sort(@sort_hash).paging(@paging_args)
     end
 
@@ -83,6 +89,12 @@ class Card
       @sort_joins = []
       @sort_hash = @sort_args.each_with_object({}) do |(by, dir), h|
         h[sort_by(by)] = sort_dir(dir)
+      end
+    end
+
+    def sort_fields
+      @sort_hash.keys.map do |key|
+        key.match?(/_bookmarkers$/) ? "bookmarkers" : key
       end
     end
 
