@@ -49,6 +49,7 @@ class GraphqlController < ActionController::Base
   end
 
   def handle_error_in_development e
+    e.report
     logger.error e.message
     logger.error e.backtrace.join("\n")
 
