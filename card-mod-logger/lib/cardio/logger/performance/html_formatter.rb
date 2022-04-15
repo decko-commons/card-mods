@@ -66,7 +66,7 @@ module Cardio
             end
             <<-HTML
               #{cat_sum}
-              <span class="float-right">
+              <span class="float-end">
                 <a class="toggle-fast-items">hide < 100ms</a>
               </span>
             HTML

@@ -32,7 +32,8 @@ event :update_import_mapping, :validate, on: :update, when: :mapping? do
   self.content = map.to_json
 end
 
-event :update_import_status, :integrate_with_delay, on: :update, when: :mapping? do
+event :update_import_status, :integrate_with_delay,
+      priority: 8, on: :update, when: :mapping? do
   Director.clear
   @already_mapping = true
   auto_add_items

@@ -1,5 +1,5 @@
 def import_act?
-  act_card&.import_file? || Env.params[:importing].present?
+  act_card&.import_file? || Env.params[:import_rows].present?
 end
 
 # for override
