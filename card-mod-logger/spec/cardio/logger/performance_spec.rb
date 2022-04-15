@@ -87,14 +87,6 @@ total: [\d.]+ms\n/
       end
     end
 
-    it 'handles method log options' do
-      log_method({ Card::Set::Type::CustomizedBootswatchSkin =>
-                     {:item_names => {:message=>:content, :title=>"skin item names"}}} )
-      expect_logger_to_receive(/skin item names/) do
-        Card['classic bootstrap skin'].item_names
-      end
-    end
-
     # it 'uses default method log options' do
     #   log_method [:fetch]
     #   expect_logger_to_receive( /fetch: all/ ) do
