@@ -15,6 +15,7 @@ global_job_config:
     commands:
       - checkout # semaphore does git checkout and cds into card-mods
       - sem-version ruby 3.0.1
+      - gem install bundler:2.3.11
       - alias be='bundle exec'
       - cp .semaphore/Gemfile .
       - git submodule update --init --recursive
@@ -47,4 +48,8 @@ blocks:
             - be decko seed
             - be decko update
             - be card eat
-            - be decko rspec
+            - be decko rspec -s -- --format RspecJunitFormatter --out junit.xml --format documentation
+      epilogue:
+        always:
+          commands:
+            - test-results publish junit.xml
