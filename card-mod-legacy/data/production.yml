@@ -1,0 +1,4 @@
+---
+- :name: "*table of contents"
+  :type: :setting
+  :codename: :table_o
