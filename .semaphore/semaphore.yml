@@ -47,6 +47,7 @@ blocks:
             - cp .semaphore/Gemfile monkey
             - cp .semaphore/.rspec monkey
             - cd monkey
+            - bundle update
             - be decko seed
             - be decko update
             - be card eat
