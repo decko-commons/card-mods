@@ -15,6 +15,7 @@ global_job_config:
     commands:
       - checkout # semaphore does git checkout and cds into card-mods
       - sem-version ruby 3.0.1
+      - gem install bundler:2.3.11
       - alias be='bundle exec'
       - cp .semaphore/Gemfile .
       - git submodule update --init --recursive
@@ -30,9 +31,11 @@ blocks:
       prologue:
         commands:
           - cache restore bundle-gems-baseline
-          - cache restore bundle-gems-$(checksum Gemfile.lock)
+          - bundle lock
+          - GLCHECK=`checksum Gemfile.lock`
+          - cache restore bundle-gems-$GLCHECK
           - bundle update
-          - cache store bundle-gems-$(checksum Gemfile.lock) ~/bundle
+          - cache store bundle-gems-$GLCHECK ~/bundle
           - cache store bundle-gems-baseline ~/bundle
 
           - sem-service start mysql
@@ -47,4 +50,14 @@ blocks:
             - be decko seed
             - be decko update
             - be card eat
-            - be decko rspec
+            - be decko rspec -s -- --format RspecJunitFormatter --out junit.xml --format documentation
+      epilogue:
+        always:
+          commands:
+            - test-results publish junit.xml
+after_pipeline:
+  task:
+    jobs:
+      - name: Publish Results
+        commands:
+          - test-results gen-pipeline-report

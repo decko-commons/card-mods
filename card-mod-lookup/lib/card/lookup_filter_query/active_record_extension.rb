@@ -36,7 +36,8 @@ class Card
       end
 
       def sort_by_bookmarkers type, rel
-        [Card::Bookmark.add_sort_join(rel, "#{table.name}.#{type}_id"), "cts.value"]
+        [Card::Bookmark.add_sort_join(rel, "#{table.name}.#{type}_id"),
+         "bookmarkers"]
       end
     end
   end
