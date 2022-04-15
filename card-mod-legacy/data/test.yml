@@ -1,0 +1,13 @@
+---
+- :name: OnneHeading
+  :content: |-
+    <h1>This is one heading</h1>\r\n<p>and some text</p>
+- :name: TwwoHeading
+  :content: |-
+    <h1>One Heading</h1>\r\n<p>and some text</p>
+    <h2>And a Subheading</h2>\r\n<p>and more text</p>
+- :name: ThreeHeading
+  :content: |- 
+    <h1>A Heading</h1>\r\n<p>and text</p>
+    <h2>And Subhead</h2>\r\n<p>text</p>
+    <h1>And another top Heading</h1>
