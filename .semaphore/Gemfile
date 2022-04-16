@@ -3,15 +3,22 @@ source "http://rubygems.org"
 path "~/card-mods/.semaphore/decko" do
   gem "decko"
   gem "card", require: false
+  gem "cardname"
 end
 
 gem "mysql2", '~> 0.5'
 gem "thin"
 
+def card_mods_in dir
+  Dir.chdir "#{Dir.home}/#{dir}" do
+    Dir.glob("card-mod-*").each do |mod|
+      gem mod
+    end
+  end
+end
+
 path "~/card-mods/.semaphore/decko/mod" do
-  gem "card-mod-defaults"
-  gem "card-mod-monkey"
-  gem "card-mod-platypus"
+  card_mods_in "card-mods/.semaphore/decko/mod"
 end
 
 gem "decko-rspec", group: :test, path: "~/card-mods/.semaphore/decko/support"
@@ -21,9 +28,5 @@ gem "decko-rspec", group: :test, path: "~/card-mods/.semaphore/decko/support"
 # gem "decko-spring", path: "~/dev/decko/gem/support"
 
 path "~/card-mods" do
-  Dir.chdir "#{Dir.home}/card-mods" do
-    Dir.glob("card-mod-*").each do |mod|
-      gem mod
-    end
-  end
+  card_mods_in "card-mods"
 end
