@@ -65,6 +65,7 @@ format :html do
   end
 
   def mapped_link id, text=nil
+    binding.pry
     text ||= Card.fetch_name id
     modal_link text, path: { mark: id, view: :expanded_bar }, size: :large
   end
