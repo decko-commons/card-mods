@@ -50,7 +50,8 @@ blocks:
             - bundle update
             - be decko setup
             - be decko update
-            - be card eat
+            - be rake card:eat -- -e production
+            - be rake card:eat
             - be decko rspec -s -- --format RspecJunitFormatter --out junit.xml --format documentation
       epilogue:
         always:
