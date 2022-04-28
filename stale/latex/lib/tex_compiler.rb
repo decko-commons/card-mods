@@ -51,7 +51,7 @@ class TexCompiler
       raise   TexTypesetError, parse_logfile
     end
 
-    if log and File.exists? @tex_card.log_path
+    if log and File.exist? @tex_card.log_path
       @tex_card.update_log_card File.read(@tex_card.log_path)
     end
   end

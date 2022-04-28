@@ -12,7 +12,7 @@ format :html do
   end
 
   view :filtered_results_footer do
-    try :no_results? ? "" : render_export_links
+    try(:no_results?) ? "" : render_export_links
   end
 
   def export_format_links
