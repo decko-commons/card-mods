@@ -8,7 +8,7 @@
 # The cache expiration can be controlled with the cache_update_trigger and
 # cache_expire_trigger methods.
 
-card_accessor :solid_cache, type: HtmlID
+card_accessor :solid_cache, type: :html
 
 class << self
   def included host_class
