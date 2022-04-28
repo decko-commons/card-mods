@@ -38,11 +38,7 @@ format :html do
     unmapped = total - map.values.compact.count
     title = type.cardname.vary :plural
     title = "(#{unmapped}) #{title}" if unmapped.positive?
-    wrapped_tab_title title, total_badge(type, total)
-  end
-
-  def total_badge type, count
-    tab_badge count, mapped_icon_tag(type), klass: "RIGHT-#{type.cardname.key}"
+    super title, count: total, klass: "RIGHT-#{type.cardname.key}"
   end
 
   def export_link type
