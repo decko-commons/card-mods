@@ -13,7 +13,7 @@ module LatexDocument
 
   def pdf_exists?
     ensure_home
-    File.exists?( final_pdf_path )
+    File.exist?( final_pdf_path )
   end
 
   def tex_compiler
@@ -178,7 +178,7 @@ module LatexDocument
   end
 
   def save_pdf
-    if File.exists? preview_pdf_path
+    if File.exist? preview_pdf_path
       FileUtils.cp(preview_pdf_path, final_pdf_path)
       update_pdf_card
     end
@@ -217,14 +217,14 @@ module LatexDocument
   # Create new format file if non-existent
   # Return path to format file (without ending) relative to tex document folder
   def ensure_fmtfile
-    if not File.exists? fmt_path
+    if not File.exist? fmt_path
       write_format_file
       tex_compiler.initex
     end
   end
 
   def ensure_bibfile
-    File.open(bib_path, "w") {} unless File.exists? bib_path
+    File.open(bib_path, "w") {} unless File.exist? bib_path
   end
 
   def ensure_home
@@ -233,7 +233,7 @@ module LatexDocument
 
   def get_cited_biblabels
     labels = []
-    if File.exists?(aux_path)
+    if File.exist?(aux_path)
       File.open(aux_path) do |f|
         f.each_line do |line|
           /\\citation\{(?<label>[^}]+)\}/.match(line) { |m| labels << m[:label] }
