@@ -11,10 +11,8 @@ format :html do
     end
   end
 
-  view :filtered_results do
-    class_up "card-slot", "_filter-result-slot"
-
-    wrap { [render_core, render_export_links] }
+  view :filtered_results_footer do
+    try(:no_results?) ? "" : render_export_links
   end
 
   def export_format_links

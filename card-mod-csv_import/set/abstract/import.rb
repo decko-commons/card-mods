@@ -1,5 +1,5 @@
-card_accessor :import_status, type: JsonID
-card_accessor :import_map, type: JsonID
+card_accessor :import_status, type: :json
+card_accessor :import_map, type: :json
 
 def import_file?
   true

@@ -1,0 +1,7 @@
+---
+- :name: Alias
+  :codename: alias
+  :type: cardtype
+- :name: "*csv structure"
+  :type: :setting
+  :codename: :csv_structure
