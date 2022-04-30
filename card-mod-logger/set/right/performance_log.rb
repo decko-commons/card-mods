@@ -29,7 +29,7 @@ def add_log_entry request, html_log
 end
 
 def add_csv_entry page, wbench_data, runs
-  if !File.exist? csv_path
+  unless File.exist? csv_path
     File.open(csv_path, 'w') { |f| f.puts "page, render time, dom loading time, connection time, date"}
   end
   browser = wbench_data.browser
