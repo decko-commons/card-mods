@@ -1,0 +1,7 @@
+---
+- :name: "*table of contents"
+  :type: :setting
+  :codename: :table_of_contents
+- :name: "*default html view"
+  :type: :setting
+  :codename: :default_html_view

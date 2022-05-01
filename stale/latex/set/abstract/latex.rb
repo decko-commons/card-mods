@@ -77,9 +77,9 @@ def typesetting_preview?
 end
 
 def create_default_subcards
-  subfield 'references'
-  subfield 'discussion'
-  subfield 'preview', content: default_tex_card.content
+  field 'references'
+  field 'discussion'
+  field 'preview', content: default_tex_card.content
 end
 
 def create_default_preview
