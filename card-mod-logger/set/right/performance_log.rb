@@ -29,7 +29,7 @@ def add_log_entry request, html_log
 end
 
 def add_csv_entry page, wbench_data, runs
-  if !File.exists? csv_path
+  unless File.exist? csv_path
     File.open(csv_path, 'w') { |f| f.puts "page, render time, dom loading time, connection time, date"}
   end
   browser = wbench_data.browser
@@ -56,7 +56,7 @@ format :html do
     wagn_data =
       card.item_names.map do |item|
         path = card.log_path item
-        if File.exists? path
+        if File.exist? path
           File.read(path)
         end
       end.compact.join "\n"

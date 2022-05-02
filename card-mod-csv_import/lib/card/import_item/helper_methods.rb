@@ -10,7 +10,7 @@ class Card
         value.gsub "\n", "<br>\n"
       end
 
-      def prep_subfields hash
+      def prep_fields hash
         hash = select_present hash
         hash.each_key do |field|
           hash[field] = { content: value_array(field) } if separator(field)

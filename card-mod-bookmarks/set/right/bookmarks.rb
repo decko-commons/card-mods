@@ -1,5 +1,6 @@
-include_set Type::List
 include_set Abstract::IdPointer
+
+assign_type :list
 
 def history?
   false

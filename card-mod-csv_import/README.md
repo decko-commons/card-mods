@@ -37,7 +37,7 @@ class AnimalCSV < CSVRow
   # what to do with the value of a row in the csv file
   def import
     import_card name: animal, type: :basic,
-                subfields: {
+                fields: {
                   "legs" => legs,
                   "fondle" => { type: :toggle, content: !dangerous }
                 }
