@@ -9,12 +9,6 @@ format :html do
 
   view :filter_items, unknown: true, wrap: :slot, template: :haml
 
-  view :select_item, cache: :never, wrap: :slot, template: :haml
-
-  before :select_item do
-    class_up "card-slot", "_filter-result-slot"
-  end
-
   # for override
   def allow_duplicates?
     false

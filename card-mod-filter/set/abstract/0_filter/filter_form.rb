@@ -28,6 +28,12 @@ format :html do
   view :open_filter_button, template: :haml
   view :selectable_filtered_content, template: :haml, cache: :never
 
+  view :select_item, cache: :never, wrap: :slot, template: :haml
+
+  before :select_item do
+    class_up "card-slot", "_filter-result-slot"
+  end
+
   # for override
   view(:filtered_results_footer) { "" }
 
