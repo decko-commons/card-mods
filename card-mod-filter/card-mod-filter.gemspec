@@ -1,0 +1,10 @@
+# -*- encoding : utf-8 -*-
+
+require "../card_mod_gem"
+
+CardModGem.mod "filter" do |s, d|
+  s.version = "0.1"
+  s.summary = "filter"
+  s.description = ""
+  d.depends_on_mod :search
+end
