@@ -9,9 +9,7 @@ format :html do
     super << :social_meta_tags
   end
 
-  view :social_meta_tags do
-    return unless card.known?
-
+  view :social_meta_tags, unknown: :blank do
     shared = %w[title description image]
     meta_tags_for(:og, shared + %w[url site_name type]) +
       meta_tags_for(:twitter, shared + %w[card site creator])
