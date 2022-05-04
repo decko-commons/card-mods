@@ -2,9 +2,9 @@
 
 require "../card_mod_gem"
 
-CardModGem.mod "lookup" do |s, d|
+CardModGem.mod "filter" do |s, d|
   s.version = "0.1"
-  s.summary = "lookup"
+  s.summary = "filter"
   s.description = ""
-  d.depends_on :filter
+  d.depends_on_mod :search
 end
