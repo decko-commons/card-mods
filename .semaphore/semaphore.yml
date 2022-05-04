@@ -20,42 +20,63 @@ global_job_config:
       - cp .semaphore/Gemfile .
       - git submodule update --init --recursive
 
+      - cache restore bundle-gems
+      #          - bundle lock
+      #          - GLCHECK=`checksum Gemfile.lock`
+      #          - cache restore bundle-gems-$GLCHECK
+
+      - bundle update
+      #          - cache store bundle-gems-$GLCHECK ~/bundle
+      - cache store bundle-gems ~/bundle # -baseline ~/bundle
+      #          - cache store bundle-config .bundle
+
+      - sem-service start mysql
+
+      - be decko new monkey --monkey
+      - cp .semaphore/Gemfile monkey
+      - cp .semaphore/.rspec monkey
+      - cd monkey
+      - bundle update
+      - be decko setup
+      - be decko update
+      - be rake card:eat -- -t all
+
 blocks:
-  - name: Unit Tests
+#  - name: Unit Tests
+#    task:
+#      env_vars:
+#        - name: COVERAGE
+#          value: 'false'
+#        - name: RAILS_ENV
+#          value: test
+#
+#      jobs:
+#        - name: RSpec
+#          commands:
+#
+#            - be decko rspec -s -- --format RspecJunitFormatter --out junit.xml --format documentation
+#      epilogue:
+#        always:
+#          commands:
+#            - test-results publish junit.xml
+
+  - name: Integration Tests
     task:
-      env_vars:
-        - name: COVERAGE
-          value: 'false'
-        - name: RAILS_ENV
-          value: test
-      prologue:
-        commands:
-          - cache restore bundle-gems-baseline
-          - bundle lock
-          - GLCHECK=`checksum Gemfile.lock`
-          - cache restore bundle-gems-$GLCHECK
-          - bundle update
-          - cache store bundle-gems-$GLCHECK ~/bundle
-          - cache store bundle-gems-baseline ~/bundle
-
-          - sem-service start mysql
-
       jobs:
-        - name: RSpec
+        - name: Cypress
           commands:
-            - be decko new monkey --monkey
-            - cp .semaphore/Gemfile monkey
-            - cp .semaphore/.rspec monkey
-            - cd monkey
-            - bundle update
-            - be decko setup
-            - be decko update
-            - be rake card:eat -- -t all
-            - be decko rspec -s -- --format RspecJunitFormatter --out junit.xml --format documentation
+            - cp ~/.semaphore/package.json .
+            - RAILS_ENV=cypress bundle exec decko server -p 5002 &
+            - nvm use 12.18.2
+            - yarn install
+            # - yarn run cypress run --record --key ffd8ff95-9033-4fd3-bcee-fc13cd67b3b7 --reporter junit --reporter-options "mochaFile=/home/semaphore/reports/cypress-output-[hash].xml"
+            - yarn run cypress run --reporter junit --reporter-options "mochaFile=/home/semaphore/reports/cypress-output-[hash].xml"
+
       epilogue:
         always:
           commands:
-            - test-results publish junit.xml
+            - test-results publish /home/semaphore/reports/*.xml
+
 after_pipeline:
   task:
     jobs:
