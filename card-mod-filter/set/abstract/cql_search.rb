@@ -1,3 +1,7 @@
+# needs to be included here because Abstract::Search does not have Abstract::Filter
+# when Abstract::CqlSearch includes Abstract::Search.
+include_set Abstract::Filter
+
 format do
   def search_params
     super.merge filter_and_sort_cql
