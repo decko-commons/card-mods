@@ -42,29 +42,30 @@ global_job_config:
       - be rake card:eat -- -t all
 
 blocks:
-  - name: Unit Tests
-    task:
-      env_vars:
-        - name: COVERAGE
-          value: 'false'
-        - name: RAILS_ENV
-          value: test
-
-      jobs:
-        - name: RSpec
-          commands:
-
-            - be decko rspec -s -- --format RspecJunitFormatter --out junit.xml --format documentation
-      epilogue:
-        always:
-          commands:
-            - test-results publish junit.xml
+#  - name: Unit Tests
+#    task:
+#      env_vars:
+#        - name: COVERAGE
+#          value: 'false'
+#        - name: RAILS_ENV
+#          value: test
+#
+#      jobs:
+#        - name: RSpec
+#          commands:
+#
+#            - be decko rspec -s -- --format RspecJunitFormatter --out junit.xml --format documentation
+#      epilogue:
+#        always:
+#          commands:
+#            - test-results publish junit.xml
 
   - name: Integration Tests
     task:
       jobs:
         - name: Cypress
           commands:
+            - cp ~/.semaphore/package.json .
             - RAILS_ENV=cypress bundle exec decko server -p 5002 &
             - nvm use 12.18.2
             - yarn install
