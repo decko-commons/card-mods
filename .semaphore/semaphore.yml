@@ -20,6 +20,27 @@ global_job_config:
       - cp .semaphore/Gemfile .
       - git submodule update --init --recursive
 
+      - cache restore bundle-gems
+      #          - bundle lock
+      #          - GLCHECK=`checksum Gemfile.lock`
+      #          - cache restore bundle-gems-$GLCHECK
+
+      - bundle update
+      #          - cache store bundle-gems-$GLCHECK ~/bundle
+      - cache store bundle-gems ~/bundle # -baseline ~/bundle
+      #          - cache store bundle-config .bundle
+
+      - sem-service start mysql
+
+      - be decko new monkey --monkey
+      - cp .semaphore/Gemfile monkey
+      - cp .semaphore/.rspec monkey
+      - cd monkey
+      - bundle update
+      - be decko setup
+      - be decko update
+      - be rake card:eat -- -t all
+
 blocks:
   - name: Unit Tests
     task:
@@ -28,29 +49,11 @@ blocks:
           value: 'false'
         - name: RAILS_ENV
           value: test
-      prologue:
-        commands:
-          - cache restore bundle-gems-baseline
-          - bundle lock
-          - GLCHECK=`checksum Gemfile.lock`
-          - cache restore bundle-gems-$GLCHECK
-          - bundle update
-          - cache store bundle-gems-$GLCHECK ~/bundle
-          - cache store bundle-gems-baseline ~/bundle
-
-          - sem-service start mysql
 
       jobs:
         - name: RSpec
           commands:
-            - be decko new monkey --monkey
-            - cp .semaphore/Gemfile monkey
-            - cp .semaphore/.rspec monkey
-            - cd monkey
-            - bundle update
-            - be decko setup
-            - be decko update
-            - be rake card:eat -- -t all
+
             - be decko rspec -s -- --format RspecJunitFormatter --out junit.xml --format documentation
       epilogue:
         always:
@@ -59,16 +62,7 @@ blocks:
 
   - name: Integration Tests
     task:
-      prologue:
-        commands:
-          - cache restore bundle-config
-          - cache restore gems-$(checksum Gemfile.lock)
-          - be decko setup
-          - be decko update
-          - be rake card:eat -- -t all
-
       jobs:
-
         - name: Cypress
           commands:
             - RAILS_ENV=cypress bundle exec decko server -p 5002 &
