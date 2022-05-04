@@ -75,7 +75,3 @@ format do
     end
   end
 end
-
-format :html do
-
-end
