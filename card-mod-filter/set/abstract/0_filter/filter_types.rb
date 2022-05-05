@@ -13,7 +13,7 @@ format :html do
   def text_filter field, default=nil, opts=nil
     opts ||= {}
     value = filter_param(field) || default
-    text_filter_with_name_and_value filter_name(field), value, opts
+    text_filter_with_name_and_value filter_input_name(field), value, opts
   end
 
   def text_filter_with_name_and_value name, value, opts
@@ -55,7 +55,7 @@ format :html do
   end
 
   def select_filter_tag field, default, options, html_options={}
-    name = filter_name field, html_options[:multiple]
+    name = filter_input_name field, html_options[:multiple]
     options = options_for_select options, (filter_param(field) || default)
     normalize_select_filter_tag_html_options field, html_options
     select_tag name, options, html_options

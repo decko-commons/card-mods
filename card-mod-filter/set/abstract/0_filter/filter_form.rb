@@ -11,7 +11,11 @@ format :html do
   view :compact_quick_filters, cache: :never, template: :haml
 
 
-  view :overlay_filter_form, cache: :never, template: :haml
+  view :overlay_filters do
+    "hi mom"
+  end
+
+  # view :overlay_filter_form, cache: :never, template: :haml
 
   # ~~~~ FILTER RESULTS
 
@@ -36,10 +40,6 @@ format :html do
   before(:select_item) { class_up "card-slot", "_filter-result-slot" }
   view :select_item, cache: :never, wrap: :slot, template: :haml
 
-
-
-
-
   def compact_filter_form_args
     {
       action: path,
@@ -55,9 +55,9 @@ format :html do
     @inline_filter_form_fileds ||=
       all_filter_keys.map do |key|
         { key: key,
-          label: filter_label(cat),
-          input_field: filter_input_field(cat),
-          active: active_filter?(cat) }
+          label: filter_label(key),
+          input_field: filter_input_field(key),
+          active: active_filter?(key) }
       end
   end
 
@@ -94,13 +94,5 @@ format :html do
     else
       default_filter_hash.key? field
     end
-  end
-
-  def filter_label field
-    filter_config(field)[:label] || filter_label_from_name(field)
-  end
-
-  def filter_label_from_name field
-    Card.fetch_name(field) { field.to_s.sub(/^\*/, "").titleize }
   end
 end
