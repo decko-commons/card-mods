@@ -1,0 +1,7 @@
+{
+  "baseUrl": "http://localhost:5002",
+  "defaultCommandTimeout": 10000,
+  "watchForFileChanges": false,
+  "integrationFolder": "../",
+  "testFiles": "*/cypress/**/*spec.coffee"
+}
