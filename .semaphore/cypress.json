@@ -3,6 +3,5 @@
   "defaultCommandTimeout": 10000,
   "watchForFileChanges": false,
   "integrationFolder": "../",
-  "testFiles": "*/cypress/**/*spec.coffee",
-  "supportFile": "/home/semaphore/card-mods/.semaphore/decko/decko/spec/cypress/support/index.js"
+  "testFiles": "*/cypress/**/*spec.coffee"
 }
