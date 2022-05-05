@@ -3,5 +3,5 @@
   "defaultCommandTimeout": 10000,
   "watchForFileChanges": false,
   "integrationFolder": "../",
-  "testFiles": "*/cypress/**/*spec.coffee"
+  "testFiles": "card-mod-*/cypress/**/*spec.coffee"
 }

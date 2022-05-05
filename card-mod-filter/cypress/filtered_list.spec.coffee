@@ -3,6 +3,8 @@ input = (content) ->
   cy.ensure "friends+*right+*input_type", type: "phrase", content: content
 
 describe 'editing filtered list', () ->
+  before ->
+    cy.login()
 
   specify 'create with filtered list input', () ->
     input "filtered list"
