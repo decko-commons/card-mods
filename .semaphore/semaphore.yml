@@ -20,6 +20,21 @@ global_job_config:
       - cp .semaphore/Gemfile .
       - git submodule update --init --recursive
 
+      - cache restore bundle-gems
+      - bundle update # note: gem updates can cause failures
+      - cache store bundle-gems ~/bundle
+
+      - sem-service start mysql
+
+      - be decko new monkey --monkey
+      - cp .semaphore/Gemfile monkey
+      - cp .semaphore/.rspec monkey
+      - cd monkey
+      - bundle lock # new Gemfile.lock in deck (gems are already installed above)
+      - be decko setup
+      - be decko update
+      - be rake card:eat -- -t all
+
 blocks:
   - name: Unit Tests
     task:
@@ -28,34 +43,42 @@ blocks:
           value: 'false'
         - name: RAILS_ENV
           value: test
-      prologue:
-        commands:
-          - cache restore bundle-gems-baseline
-          - bundle lock
-          - GLCHECK=`checksum Gemfile.lock`
-          - cache restore bundle-gems-$GLCHECK
-          - bundle update
-          - cache store bundle-gems-$GLCHECK ~/bundle
-          - cache store bundle-gems-baseline ~/bundle
-
-          - sem-service start mysql
 
       jobs:
         - name: RSpec
           commands:
-            - be decko new monkey --monkey
-            - cp .semaphore/Gemfile monkey
-            - cp .semaphore/.rspec monkey
-            - cd monkey
-            - bundle update
-            - be decko setup
-            - be decko update
-            - be rake card:eat -- -t all
+
             - be decko rspec -s -- --format RspecJunitFormatter --out junit.xml --format documentation
       epilogue:
         always:
           commands:
             - test-results publish junit.xml
+
+  - name: Integration Tests
+    task:
+      env_vars:
+        - name: RAILS_ENV
+          value: cypress
+      prologue:
+        commands:
+          - cp ../.semaphore/cypress.json .
+          - cp ../.semaphore/decko/decko/spec/package.json .
+          - cp -R ../.semaphore/decko/decko/spec/cypress .
+          - be decko server -p 5002 &
+          - nvm use 12.18.2
+          - yarn install
+
+      jobs:
+        - name: Cypress
+          commands:
+            # - yarn run cypress run --record --key NEEDKEY --reporter junit --reporter-options "mochaFile=/home/semaphore/reports/cypress-output-[hash].xml"
+            - yarn run cypress run --reporter junit --reporter-options "mochaFile=/home/semaphore/reports/cypress-output-[hash].xml"
+
+      epilogue:
+        always:
+          commands:
+            - test-results publish /home/semaphore/reports/*.xml
+
 after_pipeline:
   task:
     jobs:
