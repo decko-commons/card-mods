@@ -1,3 +1,4 @@
 def input_type_content_options
-  super << "filtered list"
+  # TODO: need to make super work here somehow
+  %w[multiselect checkbox list] << "filtered list"
 end

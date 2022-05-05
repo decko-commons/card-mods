@@ -1,4 +1,5 @@
 format :html do
+
   def filter_name_type
     :text
   end
