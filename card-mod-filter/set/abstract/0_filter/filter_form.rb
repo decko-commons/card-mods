@@ -8,6 +8,26 @@ format :html do
     "hi mom"
   end
 
+  view :filter_bars, cache: :never do
+    filter_map.map do |item|
+      if item.is_a?(Hash) && item[:type] == :group
+        filter_bar_group item
+      else
+        filter_bar item
+      end
+    end
+  end
+
+  def filter_bar item
+    item = item[:key] if item.is_a? Hash
+    haml :filter_bar, item: item
+  end
+
+  def filter_bar_group item
+    haml :filter_bar_group, item: item
+  end
+
+
   # ~~~~ Compact (inline) sort and filter ui
 
   # filter form, including prototypes, filters, sorting, "More", and reset
@@ -57,7 +77,7 @@ format :html do
       all_filter_keys.map do |key|
         { key: key,
           label: filter_label(key),
-          input_field: filter_input_field(key),
+          input_field: (key),
           active: active_filter?(key) }
       end
   end
