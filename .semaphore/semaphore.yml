@@ -56,7 +56,7 @@ blocks:
   - name: Integration Tests
     task:
       secrets:
-        - name: card-mods-cypress
+        - name: cardmods-cypress
       env_vars:
         - name: RAILS_ENV
           value: cypress

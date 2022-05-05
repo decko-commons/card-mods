@@ -1,17 +1,19 @@
 format :html do
-  # sort and filter ui
-  view :filter_form, cache: :never do
-    filter_fields slot_selector: "._filter-result-slot",
-                  sort_field: _render(:sort_formgroup)
-  end
 
-  view :quick_filters, cache: :never do
-    return "" unless quick_filter_list.present?
-
-    haml :quick_filters, filter_list: normalized_quick_filter_list
-  end
-
+  # offcanvas filter form + filtered results
   view :filtered_content, template: :haml, wrap: :slot
+
+  # ~~~~ Compact (inline) sort and filter ui
+
+  # filter form, including prototypes, filters, sorting, "More", and reset
+  view :compact_filter_form, cache: :never, template: :haml
+  view :compact_filter_sort_dropdown, cache: :never, template: :haml
+  view :compact_quick_filters, cache: :never, template: :haml
+
+
+  view :overlay_filter_form, cache: :never, template: :haml
+
+  # ~~~~ FILTER RESULTS
 
   view :filtered_results do
     class_up "card-slot", "_filter-result-slot"
@@ -25,36 +27,42 @@ format :html do
   end
 
   view :filtered_results_header, template: :haml
-  view :open_filter_button, template: :haml
-  view :selectable_filtered_content, template: :haml, cache: :never
-
-  view :select_item, cache: :never, wrap: :slot, template: :haml
-
-  before :select_item do
-    class_up "card-slot", "_filter-result-slot"
-  end
-
-  view :sort_formgroup, cache: :never do
-    options = sort_options
-    current = current_sort
-    select_tag "sort",
-               options_for_select(options, current),
-               class: "pointer-select _filter-sort form-control",
-               include_blank: ("--" unless options.values.include? current),
-               "data-minimum-results-for-search": "Infinity"
-  end
-
   # for override
   view(:filtered_results_footer) { "" }
 
-  def offcanvas_filter_id
-    "#{card.name.safe_key}-offCanvasFilters"
+  view :open_filter_button, template: :haml
+  view :selectable_filtered_content, template: :haml, cache: :never
+
+  before(:select_item) { class_up "card-slot", "_filter-result-slot" }
+  view :select_item, cache: :never, wrap: :slot, template: :haml
+
+
+
+
+
+  def compact_filter_form_args
+    {
+      action: path,
+      class: "slotter",
+      method: "get",
+      "accept-charset": "UTF-8",
+      "data-remote": true,
+      "data-slot-selector": "._filter-result-slot"
+    }
   end
 
-  def normalized_quick_filter_list
-    quick_filter_list.map do |hash|
-      quick_filter_item hash.clone, hash.keys.first
-    end
+  def compact_filter_form_fields
+    @inline_filter_form_fileds ||=
+      all_filter_keys.map do |key|
+        { key: key,
+          label: filter_label(cat),
+          input_field: filter_input_field(cat),
+          active: active_filter?(cat) }
+      end
+  end
+
+  def offcanvas_filter_id
+    "#{card.name.safe_key}-offCanvasFilters"
   end
 
   def reset_filter_data
@@ -80,56 +88,12 @@ format :html do
     ""
   end
 
-  # @param data [Hash] the filter categories. The hash needs for every category
-  #   a hash with a label and a input_field entry.
-  def filter_form data={}, sort_input_field=nil, form_args={}
-    haml :filter_form, categories: data,
-                       sort_input_field: sort_input_field,
-                       form_args: form_args
-  end
-
-  def filter_fields slot_selector: nil, sort_field: nil
-    form_args = { action: filter_action_path, class: "slotter" }
-    form_args["data-slot-selector"] = slot_selector if slot_selector
-    filter_form filter_form_data, sort_field, form_args
-  end
-
-  def filter_form_data
-    all_filter_keys.each_with_object({}) do |cat, h|
-      h[cat] = { label: filter_label(cat),
-                 input_field: filter_input_field(cat),
-                 active: active_filter?(cat) }
-    end
-  end
-
-  def filter_input_field category, default=nil
-    fc = filter_config category
-    send "#{fc[:type]}_filter", category, (default || fc[:default]), fc[:options]
-  end
-
-  def filter_config category
-    @filter_config ||= {}
-    @filter_config[category] ||=
-      %i[type default options label].each_with_object({}) do |trait, hash|
-        method = "filter_#{category}_#{trait}"
-        if respond_to? method
-          hash[trait] = send method
-        elsif trait == :type
-          raise "expected #{method} method"
-        end
-      end
-  end
-
   def active_filter? field
     if filter_keys_from_params.present?
       filter_hash.key? field
     else
-      default_filter? field
+      default_filter_hash.key? field
     end
-  end
-
-  def default_filter? field
-    default_filter_hash.key? field
   end
 
   def filter_label field
@@ -138,9 +102,5 @@ format :html do
 
   def filter_label_from_name field
     Card.fetch_name(field) { field.to_s.sub(/^\*/, "").titleize }
-  end
-
-  def filter_action_path
-    path
   end
 end
