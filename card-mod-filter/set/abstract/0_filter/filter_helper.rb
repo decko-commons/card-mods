@@ -79,11 +79,9 @@ format :html do
   end
 
   def filter_options raw
-    raw.is_a?(Array) ? raw : option_hash_to_array(raw)
-  end
+    return raw if raw.is_a? Array
 
-  def option_hash_to_array hash
-    hash.each_with_object([]) do |(key, value), array|
+    raw.each_with_object([]) do |(key, value), array|
       array << [key, value.to_s]
       array
     end
