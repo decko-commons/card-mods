@@ -47,7 +47,6 @@ format :html do
   # for override
   view(:filtered_results_footer) { "" }
 
-
   def offcanvas_filter_id
     "#{card.name.safe_key}-offCanvasFilters"
   end
