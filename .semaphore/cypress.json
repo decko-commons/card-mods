@@ -1,7 +1,10 @@
 {
+  "projectId": "3teyqm",
   "baseUrl": "http://localhost:5002",
   "defaultCommandTimeout": 10000,
   "watchForFileChanges": false,
   "integrationFolder": "../",
-  "testFiles": "card-mod-*/cypress/**/*spec.coffee"
+  "testFiles": "card-mod-*/cypress/**/*spec.coffee",
+  "reporterOptions": "mochaFile=/home/semaphore/reports/cypress-output-[hash].xml",
+  "reporter": "junit"
 }
