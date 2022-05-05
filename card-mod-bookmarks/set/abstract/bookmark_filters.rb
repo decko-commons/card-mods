@@ -1,7 +1,3 @@
-def filter_keys
-  [:bookmark]
-end
-
 format :html do
   def filter_bookmark_type
     :select
