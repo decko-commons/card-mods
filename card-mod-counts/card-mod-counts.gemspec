@@ -6,5 +6,5 @@ CardModGem.mod "counts" do |s, d|
   s.version = "0.1"
   s.summary = "caching of counts"
   s.description = ""
-  d.depends_on_mod :search
+  d.depends_on_mod :search, :filter
 end

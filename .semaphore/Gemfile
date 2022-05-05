@@ -21,9 +21,12 @@ path "~/card-mods/.semaphore/decko/mod" do
   card_mods_in "card-mods/.semaphore/decko/mod"
 end
 
-gem "decko-rspec", group: :test, path: "~/card-mods/.semaphore/decko/support"
-# gem "decko-cucumber", group: :cucumber, path: "~/dev/decko/gem/support"
-# gem "decko-cypress", group: :cypress, path: "~/dev/decko/gem/support"
+path "~/card-mods/.semaphore/decko/support" do
+  gem "decko-rspec", group: :test
+  gem "decko-cypress", group: :cypress
+end
+
+  # gem "decko-cucumber", group: :cucumber, path: "~/dev/decko/gem/support"
 # gem "decko-profile", group: :profile, path: "~/dev/decko/gem/support"
 # gem "decko-spring", path: "~/dev/decko/gem/support"
 
