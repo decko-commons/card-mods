@@ -3,7 +3,7 @@ format do
     Card::FilterQuery
   end
 
-  def filter_keys
+  def filter_map
     [:name]
   end
 
@@ -49,6 +49,20 @@ format do
   def safe_sql_param key
     param = Env.params[key]
     param.blank? ? nil : Card::Query.safe_sql(param)
+  end
+
+  def filter_keys
+    filter_keys_from_map_list(filter_map).flatten.compact
+  end
+
+  def filter_keys_from_map_list list
+    list.map do |item|
+      if item.is_a? Symbol
+        item
+      elsif item.is_a? Hash
+        item[:filters] ? filter_keys_from_map_list(item[:filters]) : item[:key]
+      end
+    end
   end
 
   def filter_keys_with_values
