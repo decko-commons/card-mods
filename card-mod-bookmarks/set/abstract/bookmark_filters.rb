@@ -1,6 +1,6 @@
 format :html do
   def filter_bookmark_type
-    :select
+    :radio
   end
 
   def filter_bookmark_options

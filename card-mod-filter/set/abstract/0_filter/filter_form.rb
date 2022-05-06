@@ -73,11 +73,11 @@ format :html do
   end
 
   def compact_filter_form_fields
-    @inline_filter_form_fileds ||=
+    @compact_filter_form_fileds ||=
       all_filter_keys.map do |key|
         { key: key,
           label: filter_label(key),
-          input_field: filter_input_field(key),
+          input_field: filter_input_field(key, compact: true),
           active: active_filter?(key) }
       end
   end

@@ -1,11 +1,14 @@
 format :html do
-  private
+  COMPACT_FILTER_TYPES = { radio: :select, check: :multiselect }
 
-  def filter_input_field category, default=nil
-    fc = filter_config category
+  def filter_input_field field, default: nil, compact: false
+    fc = filter_config field
     default ||= fc[:default]
-    send "#{fc[:type]}_filter", category, default, fc[:options]
+    filter_type = compact && COMPACT_FILTER_TYPES[fc[:type]] || fc[:type]
+    send "#{filter_type}_filter", field, default, fc[:options]
   end
+
+  private
 
   def select_filter field, default, options, multiple: false
     options = filter_options options
@@ -13,7 +16,7 @@ format :html do
     select_filter_tag field, default, options, multiple
   end
 
-  def multi_filter field, default, options
+  def multiselect_filter field, default, options
     select_filter field, default, options, multiple: true
   end
 
@@ -22,8 +25,8 @@ format :html do
                options_for_select(options, (filter_param(field) || default)),
                id: "filter-input-#{unique_id}",
                multiple: multiple,
-               class: "_filter_input_field _no-select2 form-control filter-input"
-                      "filter-input-#{field} pointer-#{'multi' if multiple}select"
+               class: "_filter_input_field _no-select2 form-control filter-input" \
+                      "filter-input-#{field} pointer-#{ 'multi' if multiple }select"
                       # _no-select2 because select is initiated after filter is opened.
   end
 
