@@ -1,16 +1,33 @@
 format :html do
-  def select_filter field, default=nil, options=nil
+  private
+
+  def filter_input_field category, default=nil
+    fc = filter_config category
+    default ||= fc[:default]
+    send "#{fc[:type]}_filter", category, default, fc[:options]
+  end
+
+  def select_filter field, default, options, multiple: false
     options = filter_options options
     options = [["--", ""]] + options unless default
-    select_filter_tag field, default, options
+    select_filter_tag field, default, options, multiple
   end
 
-  def multi_filter field, default=nil, options=nil
-    options ||= filter_options field
-    multiselect_filter_tag field, default, options
+  def multi_filter field, default, options
+    select_filter field, default, options, multiple: true
   end
 
-  def text_filter field, default=nil, opts=nil
+  def select_filter_tag field, default, options, multiple
+    select_tag filter_input_name(field, multiple),
+               options_for_select(options, (filter_param(field) || default)),
+               id: "filter-input-#{unique_id}",
+               multiple: multiple,
+               class: "_filter_input_field _no-select2 form-control filter-input"
+                      "filter-input-#{field} pointer-#{'multi' if multiple}select"
+                      # _no-select2 because select is initiated after filter is opened.
+  end
+
+  def text_filter field, default, opts
     opts ||= {}
     value = filter_param(field) || default
     text_filter_with_name_and_value filter_input_name(field), value, opts
@@ -49,24 +66,7 @@ format :html do
                 "data-options-card": options_card
   end
 
-  def multiselect_filter_tag field, default, options, html_options={}
-    html_options[:multiple] = true
-    select_filter_tag field, default, options, html_options
-  end
-
-  def select_filter_tag field, default, options, html_options={}
-    name = filter_input_name field, html_options[:multiple]
-    options = options_for_select options, (filter_param(field) || default)
-    normalize_select_filter_tag_html_options field, html_options
-    select_tag name, options, html_options
-  end
-
-  # alters html_options hash
-  def normalize_select_filter_tag_html_options field, html_options
-    pointer_suffix = html_options[:multiple] ? "multiselect" : "select"
-    add_class html_options, "pointer-#{pointer_suffix} filter-input #{field} " \
-                            "_filter_input_field _no-select2 form-control"
-    # _no-select2 because select is initiated after filter is opened.
-    html_options[:id] = "filter-input-#{unique_id}"
+  def filter_input_name field, multi=false
+    "filter[#{field}]#{'[]' if multi}"
   end
 end

@@ -72,7 +72,8 @@ blocks:
       jobs:
         - name: Cypress
           commands:
-            - yarn run cypress run --record
+            # --key should not be necessary. secrets not working
+            - yarn run cypress run --record --key 8854bd4e-ad0c-4f67-82dd-d90cbc43b96f
 
       epilogue:
         always:

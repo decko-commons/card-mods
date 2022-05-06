@@ -77,7 +77,7 @@ format :html do
       all_filter_keys.map do |key|
         { key: key,
           label: filter_label(key),
-          input_field: (key),
+          input_field: filter_input_field(key),
           active: active_filter?(key) }
       end
   end

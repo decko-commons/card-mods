@@ -1,21 +1,4 @@
 format :html do
-  def filter_name_type
-    :text
-  end
-
-  def filter_input_field category, default=nil
-    fc = filter_config category
-    send "#{fc[:type]}_filter", category, (default || fc[:default]), fc[:options]
-  end
-
-  def filter_label field
-    filter_config(field)[:label] || filter_label_from_name(field)
-  end
-
-  def filter_label_from_name field
-    Card.fetch_name(field) { field.to_s.sub(/^\*/, "").titleize }
-  end
-
   def filter_config category
     @filter_config ||= {}
     @filter_config[category] ||=
@@ -29,8 +12,16 @@ format :html do
       end
   end
 
-  def filter_input_name field, multi=false
-    "filter[#{field}]#{'[]' if multi}"
+  def filter_name_type
+    :text
+  end
+
+  def filter_label field
+    filter_config(field)[:label] || filter_label_from_name(field)
+  end
+
+  def filter_label_from_name field
+    Card.fetch_name(field) { field.to_s.sub(/^\*/, "").titleize }
   end
 
   def filter_options raw
