@@ -10,6 +10,21 @@ format :html do
 
   private
 
+  def check_filter *args
+    check_or_radio_filter :check_filter, *args
+  end
+
+  def radio_filter *args
+    check_or_radio_filter :radio_filter, *args
+  end
+
+  def check_or_radio_filter check_or_radio, field, default, options
+    haml check_or_radio,
+         input_name: filter_input_name(field),
+         options: filter_options(options),
+         default: default
+  end
+
   def select_filter field, default, options, multiple: false
     options = filter_options options
     options = [["--", ""]] + options unless default

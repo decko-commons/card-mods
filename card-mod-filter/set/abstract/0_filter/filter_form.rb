@@ -8,11 +8,13 @@ format :html do
   end
 
   view :filter_bars, cache: :never do
-    filter_map.map do |item|
-      if item.is_a?(Hash) && item[:type] == :group
-        filter_bar_group item
-      else
-        filter_bar item
+    wrap_with :div, class: "filter-form accordion" do
+      filter_map.map do |item|
+        if item.is_a?(Hash) && item[:type] == :group
+          filter_bar_group item
+        else
+          filter_bar item
+        end
       end
     end
   end
@@ -30,7 +32,7 @@ format :html do
 
   # filter form, including prototypes, filters, sorting, "More", and reset
   view :compact_filter_form, cache: :never, template: :haml
-  view :compact_filter_sort_dropdown, cache: :never, template: :haml
+  view :filter_sort_dropdown, cache: :never, template: :haml
   view :compact_quick_filters, cache: :never, template: :haml
 
   # view :overlay_filter_form, cache: :never, template: :haml

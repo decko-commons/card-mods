@@ -1,0 +1,10 @@
+%div.filter-radio-list
+  - options.each do |label, value|
+    - value ||= label
+    - id = "filter-radio-#{value.to_name.key}"
+    %div.filter-radio-item.radio
+      %label{ for: id }<
+        = label
+      = radio_button_tag input_name, value, (value == default),
+                         id: id, class: "filter-radio-button _submit-on-change"
+

@@ -1,0 +1,10 @@
+%div.filter-check-list
+  - options.each do |label, value|
+    - value ||= label
+    - id = "filter-check-#{value.to_name.key}"
+    %div.filter-check-item.radio
+      %label{ for: id }<
+        = label
+      = check_box_tag input_name, value, (value == default),
+                      id: id, class: "filter-check-button _submit-on-change"
+
