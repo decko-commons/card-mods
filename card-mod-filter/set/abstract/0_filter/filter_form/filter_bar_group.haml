@@ -1,0 +1,12 @@
+- panel_id = "#{card.name.safe_key}-#{item[:key]}-filter-group"
+.accordion-item.filter-bar-group
+  %h2.accordion-header
+    %button.accordion-button.collapsed{ type: "button",
+                                        "data-bs-toggle": "collapse",
+                                        "data-bs-target": "##{panel_id}" }
+      = filter_label_from_name item[:key]
+  .accordion-collapse.collapse{ id: panel_id }
+    .accordion-body
+      .accordion
+        - item[:filters].each do |subitem|
+          = filter_bar subitem

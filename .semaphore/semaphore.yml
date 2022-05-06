@@ -47,8 +47,7 @@ blocks:
       jobs:
         - name: RSpec
           commands:
-
-            - be decko rspec -s -- --format RspecJunitFormatter --out junit.xml --format documentation
+            - be decko rspec -s
       epilogue:
         always:
           commands:
@@ -56,6 +55,8 @@ blocks:
 
   - name: Integration Tests
     task:
+      secrets:
+        - name: cardmods-cypress
       env_vars:
         - name: RAILS_ENV
           value: cypress
@@ -65,14 +66,13 @@ blocks:
           - cp ../.semaphore/decko/decko/spec/package.json .
           - cp -R ../.semaphore/decko/decko/spec/cypress .
           - be decko server -p 5002 &
-          - nvm use 12.18.2
+          - nvm use 16.0.0
           - yarn install
 
       jobs:
         - name: Cypress
           commands:
-            # - yarn run cypress run --record --key NEEDKEY --reporter junit --reporter-options "mochaFile=/home/semaphore/reports/cypress-output-[hash].xml"
-            - yarn run cypress run --reporter junit --reporter-options "mochaFile=/home/semaphore/reports/cypress-output-[hash].xml"
+            - yarn run cypress run --record
 
       epilogue:
         always:
