@@ -5,10 +5,10 @@
       %h5.offcanvas-title Filters
       %button.btn.btn-close{ "data-bs": { dismiss: "offcanvas" } }
     .offcanvas-body
-      .full-filter-form
-        .accordion
-          = render_filter_bars
-
-  // = render_compact_filter_form
+      .filter-form
+        = render_compact_filter_form
+      //      .full-filter-form
+      //      .accordion
+      //        = render_filter_bars
   .filtered-results
     = render_filtered_results home_view: :filtered_results
