@@ -1,13 +1,16 @@
 RSpec.describe Card::Set::Abstract::Filter do
   subject do
-    search_card = Card.new type: "Search"
-    search_card.format.filter_form a: { input_field: "<input id='a'/>", label: "A" },
-                                   b: { input_field: "<select id='b'/>", label: "B" },
-                                   c: { input_field: "<select id='c'/>", label: "C",
-                                        active: true }
+    search_format = Card.fetch("a", :creator).format # (any known search card)
+    allow(search_format)
+      .to(receive(:compact_filter_form_fields)
+            .and_return([{ key: :a, input_field: "<input id='a'/>", label: "A" },
+                         { key: :b, input_field: "<select id='b'/>", label: "B" },
+                         { key: :c, input_field: "<select id='c'/>", label: "C",
+                           active: true }]))
+    search_format.render_compact_filter_form
   end
 
-  specify "#filter_form" do
+  specify "#filter_form view" do
     is_expected.to have_tag "._filter-widget" do
       with_tag "div._filter-input-field-prototypes" do
         with_tag "div._filter-input-a" do
