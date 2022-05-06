@@ -57,12 +57,15 @@ format do
 
   def filter_keys_from_map_list list
     list.map do |item|
-      if item.is_a? Symbol
-        item
-      elsif item.is_a? Hash
-        item[:filters] ? filter_keys_from_map_list(item[:filters]) : item[:key]
+      case item
+      when Symbol then item
+      when Hash then filter_keys_from_map_hash item
       end
     end
+  end
+
+  def filter_keys_from_map_hash item
+    item[:filters] ? filter_keys_from_map_list(item[:filters]) : item[:key]
   end
 
   def filter_keys_with_values

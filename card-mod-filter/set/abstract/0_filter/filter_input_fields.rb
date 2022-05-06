@@ -1,5 +1,5 @@
 format :html do
-  COMPACT_FILTER_TYPES = { radio: :select, check: :multiselect }
+  COMPACT_FILTER_TYPES = { radio: :select, check: :multiselect }.freeze
 
   def filter_input_field field, default: nil, compact: false
     fc = filter_config field
@@ -26,8 +26,8 @@ format :html do
                id: "filter-input-#{unique_id}",
                multiple: multiple,
                class: "_filter_input_field _no-select2 form-control filter-input" \
-                      "filter-input-#{field} pointer-#{ 'multi' if multiple }select"
-                      # _no-select2 because select is initiated after filter is opened.
+                      "filter-input-#{field} pointer-#{'multi' if multiple}select"
+    # _no-select2 because select is initiated after filter is opened.
   end
 
   def text_filter field, default, opts
@@ -66,7 +66,7 @@ format :html do
   def autocomplete_filter type_code, _default, options_card=nil
     options_card ||= Card::Name[type_code, :type, :by_name]
     text_filter type_code, "", class: "#{type_code}_autocomplete",
-                "data-options-card": options_card
+                               "data-options-card": options_card
   end
 
   def filter_input_name field, multi=false

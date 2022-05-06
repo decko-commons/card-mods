@@ -1,5 +1,4 @@
 format :html do
-
   # offcanvas filter form + filtered results
   view :filtered_content, template: :haml, wrap: :slot
 
@@ -27,14 +26,12 @@ format :html do
     haml :filter_bar_group, item: item
   end
 
-
   # ~~~~ Compact (inline) sort and filter ui
 
   # filter form, including prototypes, filters, sorting, "More", and reset
   view :compact_filter_form, cache: :never, template: :haml
   view :compact_filter_sort_dropdown, cache: :never, template: :haml
   view :compact_quick_filters, cache: :never, template: :haml
-
 
   # view :overlay_filter_form, cache: :never, template: :haml
 
