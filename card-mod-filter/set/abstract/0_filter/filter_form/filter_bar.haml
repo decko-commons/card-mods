@@ -1,0 +1,10 @@
+- panel_id = "#{card.name.safe_key}-#{item}-filter-group"
+.accordion-item.filter-bar
+  %h2.accordion-header
+    %button.accordion-button.collapsed{ type: "button",
+                                        "data-bs-toggle": "collapse",
+                                        "data-bs-target": "##{panel_id}" }
+      = filter_label item
+  .accordion-collapse.collapse{ id: panel_id }
+    .accordion-body
+      = filter_input_field item

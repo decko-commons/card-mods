@@ -4,28 +4,19 @@
     ._filter-widget
       // FILTERING PROTOTYPES
       ._filter-input-field-prototypes.d-none
-        - categories.each do |key, category|
-          = haml_partial :filter_input, key: key, category: category
-
+        - compact_filter_form_fields.each do |field|
+          = haml_partial :filter_input, field: field
 
       // FORM
-      %form._filter-form{form_args, "accept-charset": "UTF-8",
-                                    "data-remote": "true",
-                                    method: "get"}
-        - not_ids = params.dig :filter, :not_ids
+      %form._filter-form{ compact_filter_form_args }
         %input{ type: :hidden,
                 name: "filter[not_ids]",
                 class: "_not-ids",
-                value: not_ids }
-        = render_quick_filters
+                value: params.dig(:filter, :not_ids) }
+        = render_compact_quick_filters
         .filter-and-sort.d-flex.flex-wrap
-          - if sort_input_field.present?
-            // SORTING
-            .sort-in-filter-form
-              %i.fa.fa-sort.filter-section-icon
-              .input-group.input-group-sm.flex-nowrap.sort-input-group.mb-2.me-2
-                %span.input-group-text.text-muted Sort
-                = sort_input_field
+          = render_compact_filter_sort_dropdown
+
 
           // FILTERING
           .filter-in-filter-form
@@ -41,13 +32,13 @@
                                                                                 type: "button" }
                   More Filters
                 .dropdown-menu
-                  - categories.each do |key, category|
+                  - compact_filter_form_fields.each do |field|
                     %a{ class: "dropdown-item _filter-category-select",
                         href: "#",
-                        "data-category": key,
-                        "data-label": category[:label],
-                        "data-active": ("true" if category[:active])}
-                      = category[:label]
+                        "data-category": field[:key],
+                        "data-label": field[:label],
+                        "data-active": ("true" if field[:active])}
+                      = field[:label]
 
               // RESET BUTTON
               ._reset-filter{ "data-reset": reset_filter_data }
