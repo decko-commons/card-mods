@@ -2,16 +2,16 @@
 
 # el can be any element inside widget
 decko.filter = (el) ->
-  closest_widget = $(el).closest "._filter-widget"
+  closest_widget = $(el).closest "._compact-filter"
   @widget =
     if closest_widget.length
       closest_widget
     else
-      $(el).closest("._filtered-content").find "._filter-widget"
+      $(el).closest("._filtered-content").find "._compact-filter"
 
 
   # the filter form includes the below
-  @form = @widget.find "._filter-form"
+  @form = @widget.find "._compact-filter-form"
 
   # one-click filter links
   @quickFilter = @widget.find "._quick-filter"
@@ -116,38 +116,18 @@ decko.filter = (el) ->
       @removeField category
     @update()
 
-  # triggers update
-  @setInputVal = (field, value) ->
-    select = field.find "select"
-    if select.length
-      @setSelect2Val select, value
-    else
-      @setTextInputVal field.find("input"), value
-
-  # this triggers change, which updates form
-  # if we just use simple "val", the display doesn't update correctly
-  @setSelect2Val = (select, value) ->
-    value = [value] if select.attr("multiple") && !Array.isArray(value)
-    select.select2.val(value)
-
-  @setTextInputVal = (input, value) ->
-    input.val value
-    @update()
-
-  @updateLastVals = ()->
-    @activeFields().find("input, select").each ()->
-      $(this).data "lastVal", $(this).val()
-
   @updateUrlBar = () ->
-    return if @widget.closest('._noFilterUrlUpdates')[0]
-    window.history.pushState "filter", "filter", '?' + @form.serialize()
+
 
   @update = ()->
-    @updateLastVals()
-    @updateQuickLinks()
     @form.submit()
+    @updateQuickLinks()
     @updateUrlBar()
 
+  @updateIfPresent = (category)->
+    val = @activeField(category).find("input, select").val()
+    @update() if val && val.length > 0
+    
   @updateQuickLinks = ()->
     widget = this
     links = @quickFilter.find "._filter-link"
@@ -164,17 +144,5 @@ decko.filter = (el) ->
       arr = [arr].flat()
       link.removeClass "active" if $.inArray(value, arr) > -1
 
-  @updateIfChanged = ()->
-    @update() if @changedSinceLastVal()
-
-  @updateIfPresent = (category)->
-    val = @activeField(category).find("input, select").val()
-    @update() if val && val.length > 0
-
-  @changedSinceLastVal = () ->
-    changed = false
-    @activeFields().find("input, select").each ()->
-      changed = true if $(this).val() != $(this).data("lastVal")
-    changed
 
   this

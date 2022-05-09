@@ -85,7 +85,7 @@ class FilterItemsBox
   updateOnSelect:->
     unless @duplicatesOk()
       @trackSelectedIds()
-      f = new decko.filter @box.find('._filter-widget')
+      f = new decko.filter @box.find('._compact-filter')
       f.update()
       @updateUnselectedCount()
     @updateSelectedCount()

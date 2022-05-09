@@ -6,8 +6,6 @@ format :html do
         method = "filter_#{category}_#{trait}"
         if respond_to? method
           hash[trait] = send method
-        elsif trait == :type
-          raise "expected #{method} method"
         end
       end
   end
