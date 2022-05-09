@@ -12,11 +12,11 @@ format :html do
   private
 
   def check_filter *args
-    check_or_radio_filter :check_filter, *args
+    check_or_radio_filter :check, *args
   end
 
   def radio_filter *args
-    check_or_radio_filter :radio_filter, *args
+    check_or_radio_filter :radio, *args
   end
 
   def check_or_radio_filter check_or_radio, field, default, options
