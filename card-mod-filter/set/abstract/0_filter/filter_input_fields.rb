@@ -4,6 +4,7 @@ format :html do
   def filter_input_field field, default: nil, compact: false
     fc = filter_config field
     default ||= fc[:default]
+    @compact_inputs = compact
     filter_type = compact && COMPACT_FILTER_TYPES[fc[:type]] || fc[:type]
     send "#{filter_type}_filter", field, default, fc[:options]
   end
@@ -19,7 +20,8 @@ format :html do
   end
 
   def check_or_radio_filter check_or_radio, field, default, options
-    haml check_or_radio,
+    haml :check_filter,
+         field_type: check_or_radio,
          input_name: filter_input_name(field),
          options: filter_options(options),
          default: default
@@ -36,13 +38,15 @@ format :html do
   end
 
   def select_filter_tag field, default, options, multiple
+    klasses = "_filter_input_field filter-input filter-input-#{field} " \
+              "_submit-on-change form-control " \
+              "pointer-#{'multi' if multiple}select"
+    # not sure form-control does much here?
+    klasses <<  " _no-select2" if @compact_inputs # select2 initiated once active
+
     select_tag filter_input_name(field, multiple),
                options_for_select(options, (filter_param(field) || default)),
-               id: "filter-input-#{unique_id}",
-               multiple: multiple,
-               class: "_filter_input_field _no-select2 form-control filter-input" \
-                      "filter-input-#{field} pointer-#{'multi' if multiple}select"
-    # _no-select2 because select is initiated after filter is opened.
+               id: "filter-input-#{unique_id}", multiple: multiple, class: klasses
   end
 
   def text_filter field, default, opts
@@ -53,7 +57,7 @@ format :html do
 
   def text_filter_with_name_and_value name, value, opts
     opts[:class] ||= "simple-text"
-    add_class opts, "form-control"
+    add_class opts, "form-control _submit-after-typing"
     text_field_tag name, value, opts
   end
 

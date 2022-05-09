@@ -2,31 +2,7 @@ format :html do
   # offcanvas filter form + filtered results
   view :filtered_content, template: :haml, wrap: :slot
 
-
-  view :overlay_filters do
-    "hi mom"
-  end
-
-  view :filter_bars, cache: :never do
-    wrap_with :div, class: "filter-form accordion" do
-      filter_map.map do |item|
-        if item.is_a?(Hash) && item[:type] == :group
-          filter_bar_group item
-        else
-          filter_bar item
-        end
-      end
-    end
-  end
-
-  def filter_bar item
-    item = item[:key] if item.is_a? Hash
-    haml :filter_bar, item: item
-  end
-
-  def filter_bar_group item
-    haml :filter_bar_group, item: item
-  end
+  view :filter_bars, cache: :never, template: :haml
 
   # ~~~~ Compact (inline) sort and filter ui
 
@@ -60,7 +36,7 @@ format :html do
   before(:select_item) { class_up "card-slot", "_filter-result-slot" }
   view :select_item, cache: :never, wrap: :slot, template: :haml
 
-  def compact_filter_form_args
+  def filter_form_args
     {
       action: path,
       class: "slotter",
@@ -79,6 +55,11 @@ format :html do
           input_field: filter_input_field(key, compact: true),
           active: active_filter?(key) }
       end
+  end
+
+  def filter_bar item
+    item = { key: item } unless item.is_a? Hash
+    haml :filter_bar, item: item
   end
 
   def offcanvas_filter_id

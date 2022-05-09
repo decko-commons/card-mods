@@ -1,14 +1,14 @@
 
 .card.w-100.nodblclick
   .card-body
-    ._filter-widget
+    ._compact-filter
       // FILTERING PROTOTYPES
       ._filter-input-field-prototypes.d-none
         - compact_filter_form_fields.each do |field|
           = haml_partial :compact_filter_input, field: field
 
       // FORM
-      %form._filter-form{ compact_filter_form_args }
+      %form._compact-filter-form._filter-form{ filter_form_args }
         %input{ type: :hidden,
                 name: "filter[not_ids]",
                 class: "_not-ids",
