@@ -202,9 +202,8 @@
       if (slot[0] === $(this).slot()[0]) {
         filter = new decko.filter(this);
         filter.showWithStatus("active");
-        filter.updateLastVals();
         filter.updateQuickLinks();
-        return filter.find("form").on("submit", function() {
+        return filter.form.on("submit", function() {
           return filter.updateQuickLinks();
         });
       }
