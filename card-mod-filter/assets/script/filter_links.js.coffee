@@ -3,10 +3,9 @@ decko.slotReady (slot) ->
     if slot[0] == $(this).slot()[0]
       filter = new decko.filter this
       filter.showWithStatus "active"
-      filter.updateLastVals()
       filter.updateQuickLinks()
 
-      filter.find("form").on "submit", ->
+      filter.form.on "submit", ->
         filter.updateQuickLinks()
 
 $(window).ready ->
