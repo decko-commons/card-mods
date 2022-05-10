@@ -9,7 +9,7 @@ format :html do
   end
 
   def filtering selector=nil
-    selector ||= "._filter-widget:visible"
+    selector ||= "._compact-filter:visible"
     wrap_with :div, yield, class: "_filtering", "data-filter-selector": selector
   end
 end
