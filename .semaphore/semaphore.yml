@@ -32,8 +32,8 @@ global_job_config:
       - cd monkey
       - bundle lock # new Gemfile.lock in deck (gems are already installed above)
       - be decko setup
-      - be decko update
       - be rake card:eat -- -t all
+      - be decko update
 
 blocks:
   - name: Unit Tests
