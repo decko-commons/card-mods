@@ -42,7 +42,7 @@ format :html do
               "_submit-on-change form-control " \
               "pointer-#{'multi' if multiple}select"
     # not sure form-control does much here?
-    klasses <<  " _no-select2" if @compact_inputs # select2 initiated once active
+    klasses << " _no-select2" if @compact_inputs # select2 initiated once active
 
     select_tag filter_input_name(field, multiple),
                options_for_select(options, (filter_param(field) || default)),
