@@ -36,21 +36,21 @@ global_job_config:
       - be rake card:eat -- -t all
 
 blocks:
-#  - name: Unit Tests
-#    task:
-#      env_vars:
-#        - name: COVERAGE
-#          value: 'false'
-#
-#
-#      jobs:
-#        - name: RSpec
-#          commands:
-#            - be decko rspec -s
-#      epilogue:
-#        always:
-#          commands:
-#            - test-results publish junit.xml
+  - name: Unit Tests
+    task:
+      env_vars:
+        - name: COVERAGE
+          value: 'false'
+
+
+      jobs:
+        - name: RSpec
+          commands:
+            - be decko rspec -s
+      epilogue:
+        always:
+          commands:
+            - test-results publish junit.xml
 
   - name: Integration Tests
     task:
