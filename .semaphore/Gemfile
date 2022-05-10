@@ -1,6 +1,18 @@
 source "http://rubygems.org"
 
-path "~/card-mods/.semaphore/decko" do
+CARD_MODS_REPO_DIR = "#{Dir.home}/card-mods"
+DECKO_REPO_DIR = "#{CARD_MODS_REPO_DIR}/.semaphore/decko"
+
+def card_mods_in dir, glob
+  Dir.chdir dir do
+    Dir.glob(glob).each do |mod|
+      mod = "card-mod-#{mod}" unless mod.match?(/^card-mod/)
+      gem mod
+    end
+  end
+end
+
+path DECKO_REPO_DIR do
   gem "decko"
   gem "card", require: false
   gem "cardname"
@@ -9,27 +21,15 @@ end
 gem "mysql2", '~> 0.5'
 gem "thin"
 
-def card_mods_in dir
-  Dir.chdir "#{Dir.home}/#{dir}" do
-    Dir.glob("card-mod-*").each do |mod|
-      gem mod
-    end
-  end
+path "#{DECKO_REPO_DIR}/mod" do
+  card_mods_in "#{DECKO_REPO_DIR}/mod", "*"
 end
 
-path "~/card-mods/.semaphore/decko/mod" do
-  card_mods_in "card-mods/.semaphore/decko/mod"
-end
-
-path "~/card-mods/.semaphore/decko/support" do
+path "#{DECKO_REPO_DIR}/support" do
   gem "decko-rspec", group: :test
   gem "decko-cypress", group: :cypress
 end
 
-# gem "decko-cucumber", group: :cucumber, path: "~/dev/decko/gem/support"
-# gem "decko-profile", group: :profile, path: "~/dev/decko/gem/support"
-# gem "decko-spring", path: "~/dev/decko/gem/support"
-
-path "~/card-mods" do
-  card_mods_in "card-mods"
+path CARD_MODS_REPO_DIR do
+  card_mods_in CARD_MODS_REPO_DIR, "card-mod-*"
 end

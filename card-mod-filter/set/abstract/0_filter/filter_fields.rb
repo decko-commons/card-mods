@@ -4,11 +4,7 @@ format :html do
     @filter_config[category] ||=
       %i[type default options label].each_with_object({}) do |trait, hash|
         method = "filter_#{category}_#{trait}"
-        if respond_to? method
-          hash[trait] = send method
-        elsif trait == :type
-          raise "expected #{method} method"
-        end
+        hash[trait] = send method if respond_to? method
       end
   end
 
