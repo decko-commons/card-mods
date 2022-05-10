@@ -32,26 +32,25 @@ global_job_config:
       - cd monkey
       - bundle lock # new Gemfile.lock in deck (gems are already installed above)
       - be decko setup
-      - be rake card:eat -- -t all
       - be decko update
+      - be rake card:eat -- -t all
 
 blocks:
-  - name: Unit Tests
-    task:
-      env_vars:
-        - name: COVERAGE
-          value: 'false'
-        - name: RAILS_ENV
-          value: test
-
-      jobs:
-        - name: RSpec
-          commands:
-            - be decko rspec -s
-      epilogue:
-        always:
-          commands:
-            - test-results publish junit.xml
+#  - name: Unit Tests
+#    task:
+#      env_vars:
+#        - name: COVERAGE
+#          value: 'false'
+#
+#
+#      jobs:
+#        - name: RSpec
+#          commands:
+#            - be decko rspec -s
+#      epilogue:
+#        always:
+#          commands:
+#            - test-results publish junit.xml
 
   - name: Integration Tests
     task:
