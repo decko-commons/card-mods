@@ -28,4 +28,4 @@ exclude_paths:
 - "coverage/**/*"
 - "card-mod-*/{lib,assets}/{style,stylesheets}/*.css"
 - "card-mod-*/{lib,assets}/{script,javascript}/*.js"
-- "card-mod-*/{file,public,vendor}/**/*"
+- "card-mod-*/{data,public,vendor}/**/*"

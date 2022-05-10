@@ -41,8 +41,7 @@ blocks:
       env_vars:
         - name: COVERAGE
           value: 'false'
-        - name: RAILS_ENV
-          value: test
+
 
       jobs:
         - name: RSpec

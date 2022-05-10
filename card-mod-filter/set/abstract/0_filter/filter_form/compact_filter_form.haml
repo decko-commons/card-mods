@@ -1,28 +1,28 @@
 
 .card.w-100.nodblclick
   .card-body
-    ._filter-widget
+    ._compact-filter
       // FILTERING PROTOTYPES
       ._filter-input-field-prototypes.d-none
         - compact_filter_form_fields.each do |field|
-          = haml_partial :filter_input, field: field
+          = haml_partial :compact_filter_input, field: field
 
       // FORM
-      %form._filter-form{ compact_filter_form_args }
+      %form._compact-filter-form._filter-form{ filter_form_args }
         %input{ type: :hidden,
                 name: "filter[not_ids]",
                 class: "_not-ids",
                 value: params.dig(:filter, :not_ids) }
         = render_compact_quick_filters
         .filter-and-sort.d-flex.flex-wrap
-          = render_compact_filter_sort_dropdown
+          = render_filter_sort_dropdown
 
 
           // FILTERING
           .filter-in-filter-form
             %i.fa.fa-filter.filter-section-icon
             ._filter-container.d-flex.flew-row.flex-wrap
-              // FILTERS inserted here
+              // FILTERS inserted here dynamically from prototypes
 
               // ADD FILTER DROPDOWN
               .dropdown._add-filter-dropdown.me-2

@@ -1,10 +1,12 @@
 decko.slotReady (slot) ->
-  slot.find("._filter-widget").each ->
+  slot.find("._compact-filter").each ->
     if slot[0] == $(this).slot()[0]
       filter = new decko.filter this
       filter.showWithStatus "active"
-      filter.updateLastVals()
       filter.updateQuickLinks()
+
+      filter.form.on "submit", ->
+        filter.updateQuickLinks()
 
 $(window).ready ->
   filterFor = (el) ->
@@ -37,13 +39,6 @@ $(window).ready ->
   $("body").on "change", onchangers, ->
     return if weirdoSelect2FilterBreaker this
     filterFor(this).update()
-
-  # update filter result after typing in text box
-  keyupTimeout = null
-  $("body").on "keyup", "._filter-input input.simple-text", ->
-    clearTimeout keyupTimeout
-    filter = filterFor this
-    keyupTimeout = setTimeout ( -> filter.updateIfChanged() ), 333
 
   # remove filter
   $("body").on "click", "._delete-filter-input", ->
