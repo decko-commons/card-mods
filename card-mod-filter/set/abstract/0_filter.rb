@@ -80,6 +80,12 @@ format do
     {}
   end
 
+  def removable_filters
+    filter_hash_from_params&.reject do |key, value|
+      !value.present? || filter_config(key)[:default] == value
+    end
+  end
+
   def extra_paging_path_args
     super.merge filter_and_sort_hash
   end
