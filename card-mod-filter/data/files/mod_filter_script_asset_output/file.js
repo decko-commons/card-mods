@@ -207,7 +207,8 @@
       if (ocbody.html() === "") {
         path = decko.path(ocbody.data("path") + "/filter_bars?" + $.param(ocbody.data("query")));
         return $.get(path, function(data) {
-          return ocbody.html(data);
+          ocbody.html(data);
+          return ocbody.slot().trigger("slotReady");
         });
       }
     });

@@ -73,4 +73,3 @@ $(window).ready ->
 
   inactiveQuickfilter = (link) ->
     !link.hasClass("active") && link.closest(".quick-filter").length > 0
-
