@@ -1,6 +1,4 @@
 format :html do
-  # offcanvas filter form + filtered results
-  view :filtered_content, template: :haml, wrap: :slot
 
   view :filter_bars, cache: :never, template: :haml
 
@@ -15,22 +13,30 @@ format :html do
 
   # ~~~~ FILTER RESULTS
 
-  view :filtered_results do
-    class_up "card-slot", "_filter-result-slot"
-    wrap do
+  view :filtered_content do
+    wrap true, class: "_filtered-content nodblclick" do
       [
-        render_filtered_results_header,
-        render_core,
-        render_filtered_results_footer
+        render_offcanvas_filters,
+        render_filtered_results(home_view: :filtered_results)
       ]
     end
   end
 
+  view :filtered_results do
+    wrap true, class: "_filter-result-slot" do
+      [render_filtered_results_header, render_core, render_filtered_results_footer]
+    end
+  end
+
+  view :offcanvas_filters, template: :haml, cache: :never
   view :filtered_results_header, template: :haml
+  view :filtered_results_stats do
+    labeled_badge count_with_params, "results"
+  end
+
   # for override
   view(:filtered_results_footer) { "" }
 
-  view :open_filter_button, template: :haml
   view :selectable_filtered_content, template: :haml, cache: :never
 
   before(:select_item) { class_up "card-slot", "_filter-result-slot" }
@@ -74,7 +80,7 @@ format :html do
     {
       text: (hash.delete(:text) || hash[filter_key]),
       class: css_classes(hash.delete(:class),
-                         "_filter-link quick-filter-by-#{filter_key}"),
+                         "_compact-filter-link quick-filter-by-#{filter_key}"),
       filter: JSON(hash[:filter] || hash)
     }
   end
