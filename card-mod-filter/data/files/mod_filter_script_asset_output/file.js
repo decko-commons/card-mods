@@ -137,7 +137,7 @@
     this.updateQuickLinks = function() {
       var links, widget;
       widget = this;
-      links = this.quickFilter.find("._filter-link");
+      links = this.quickFilter.find("._compact-filter-link");
       links.addClass("active");
       return links.each(function() {
         var key, link, opts, results;
@@ -167,17 +167,18 @@
 
 // filter_form.js.coffee
 (function() {
+  var resetOffCanvas, updateUrlBarWithFilter;
+
   $(window).ready(function() {
     $("body").on("submit", "._filter-form", function() {
-      var query;
-      if (!$(this).closest('._noFilterUrlUpdates')[0]) {
-        query = $(this).serializeArray().filter(function(i) {
-          return i.value;
-        });
-        return window.history.pushState("filter", "filter", '?' + $.param(query));
-      }
+      var el, query;
+      el = $(this);
+      query = el.serializeArray().filter(function(i) {
+        return i.value;
+      });
+      return updateUrlBarWithFilter(el, query);
     });
-    return $("body").on("click", "._show-more-filter-options a", function(e) {
+    $("body").on("click", "._show-more-filter-options a", function(e) {
       var a, items;
       a = $(this);
       items = a.closest("._filter-list").find("._more-filter-option");
@@ -190,7 +191,40 @@
       }
       return e.preventDefault();
     });
+    $("body").on("click", "._filter-closers a", function(e) {
+      var filters, link, url;
+      link = $(this);
+      filters = link.data();
+      url = decko.path(link.closest("form").attr("action") + "?" + $.param(filters));
+      link.reloadSlot(url);
+      updateUrlBarWithFilter(link, filters);
+      resetOffCanvas(link, filters);
+      return e.preventDefault();
+    });
+    return $("body").on("show.bs.offcanvas", "._offcanvas-filter", function() {
+      var ocbody, path;
+      ocbody = $(this).find(".offcanvas-body");
+      if (ocbody.html() === "") {
+        path = decko.path(ocbody.data("path") + "/filter_bars?" + $.param(ocbody.data("query")));
+        return $.get(path, function(data) {
+          return ocbody.html(data);
+        });
+      }
+    });
   });
+
+  resetOffCanvas = function(el, query) {
+    var ocbody;
+    ocbody = el.closest("._filtered-content").find(".offcanvas-body");
+    ocbody.empty();
+    return ocbody.data("query", query);
+  };
+
+  updateUrlBarWithFilter = function(el, query) {
+    if (!el.closest('._noFilterUrlUpdates')[0]) {
+      return window.history.pushState("filter", "filter", '?' + $.param(query));
+    }
+  };
 
 }).call(this);
 
@@ -202,9 +236,8 @@
       if (slot[0] === $(this).slot()[0]) {
         filter = new decko.filter(this);
         filter.showWithStatus("active");
-        filter.updateLastVals();
         filter.updateQuickLinks();
-        return filter.find("form").on("submit", function() {
+        return filter.form.on("submit", function() {
           return filter.updateQuickLinks();
         });
       }
@@ -265,7 +298,7 @@
         return e.stopPropagation();
       }
     });
-    $('body').on('click', '._filter-link', function(e) {
+    $('body').on('click', '._compact-filter-link', function(e) {
       var f, filter_data, link;
       f = filterFor(this);
       link = $(this);
