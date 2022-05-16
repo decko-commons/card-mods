@@ -1,3 +1,7 @@
+
+
+include_set Abstract::BsBadge
+
 format do
   def filter_class
     Card::FilterQuery

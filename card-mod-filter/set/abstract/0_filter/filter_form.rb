@@ -1,5 +1,4 @@
 format :html do
-
   view :filter_bars, cache: :never, template: :haml
 
   # ~~~~ Compact (inline) sort and filter ui
