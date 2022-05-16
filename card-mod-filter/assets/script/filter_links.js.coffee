@@ -59,7 +59,7 @@ $(window).ready ->
       e.preventDefault()
       e.stopPropagation()
 
-  $('body').on 'click', '._filter-link', (e) ->
+  $('body').on 'click', '._compact-filter-link', (e) ->
     f = filterFor this
     link = $(this)
     filter_data = link.data "filter"

@@ -130,7 +130,7 @@ decko.filter = (el) ->
     
   @updateQuickLinks = ()->
     widget = this
-    links = @quickFilter.find "._filter-link"
+    links = @quickFilter.find "._compact-filter-link"
     links.addClass "active"
     links.each ->
       link = $(this)
