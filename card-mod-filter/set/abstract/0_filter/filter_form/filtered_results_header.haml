@@ -1,9 +1,9 @@
 .filtered-results-header.d-flex.justify-content-between.py-2
   .filter-controls.d-flex
-    %button._filters-button.btn.btn-sm.btn-primary.m-2{ "data-bs": {
-      toggle: "offcanvas", target: "##{offcanvas_filter_id}" }
-    }
-      Filter
+    ._filters-button
+      %button.btn.btn-sm.btn-primary.m-2{ "data-bs":
+        { toggle: "offcanvas", target: "##{offcanvas_filter_id}" }
+      } Filter
     - if (removables = removable_filters)
       %form._filter-closer-form{ filter_form_args }
         .filter-badges._filter-closers
@@ -11,7 +11,7 @@
             - filter = filter_hash_without key, value
             %a.btn.btn-sm.btn-outline-secondary.m-2{ "data-filter": JSON(filter),
                                               class: "close-filter-#{key}" }
-              = "#{filter_label key}: #{value}"
+              = "#{filter_label key}: #{filter_closer_value value}"
               = fa_icon :times, class: "ms-2"
           - if removables.size > 1
             %a.clear-filters.ms-2{ "data-filter": "{}", href: "#" }

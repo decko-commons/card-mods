@@ -101,14 +101,32 @@ format do
   end
 
   def removable_filters
-    filter_hash&.each_with_object([]) do |(key, value), array|
-      next unless value.present? && filter_config(key)[:default] != value
-      case value
-      when Array
+    each_removable_filter do |key, value, array|
+      if value.is_a? Array
         value.each { |v| array << [key, v] }
-      else
+      elsif !empty_filter_value_hash? value
         array << [key, value]
       end
+    end
+  end
+
+  def empty_filter_value_hash? value
+    value.is_a?(Hash) && value.values.present? && !value.values.select(&:present?).any?
+  end
+
+  def each_removable_filter
+    filter_hash&.each_with_object([]) do |(key, val), arr|
+      yield key, val, arr if val.present? && filter_config(key)[:default] != val
+    end
+  end
+
+  def filter_closer_value value
+    if value.is_a? Hash
+      # TODO: generalize.
+      # This makes sense with range but perhaps not other use cases
+      value.map { |k, v| "#{k} #{v}" if v.present? }.compact.join " "
+    else
+      value
     end
   end
 

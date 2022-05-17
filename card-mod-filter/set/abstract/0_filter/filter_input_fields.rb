@@ -65,10 +65,12 @@ format :html do
     opts ||= {}
     add_class opts, "simple-text range-filter-field"
     default ||= {}
-    output [range_sign(:from),
-            sub_text_filter(field, :from, default, opts),
-            range_sign(:to),
-            sub_text_filter(field, :to, default, opts)]
+    wrap_with :div, class: "input-group" do
+      [range_sign(:from),
+       sub_text_filter(field, :from, default, opts),
+       range_sign(:to),
+       sub_text_filter(field, :to, default, opts)]
+    end
   end
 
   def range_sign side
