@@ -89,9 +89,26 @@ format do
     {}
   end
 
+  def filter_hash_without key, value
+    filter_hash.clone.tap do |hash|
+      case hash[key]
+      when Array
+        hash[key] = hash[key] - Array.wrap(value)
+      else
+        hash.delete key
+      end
+    end
+  end
+
   def removable_filters
-    filter_hash&.reject do |key, value|
-      !value.present? || filter_config(key)[:default] == value
+    filter_hash&.each_with_object([]) do |(key, value), array|
+      next unless value.present? && filter_config(key)[:default] != value
+      case value
+      when Array
+        value.each { |v| array << [key, v] }
+      else
+        array << [key, value]
+      end
     end
   end
 
