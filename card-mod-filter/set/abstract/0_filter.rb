@@ -1,3 +1,7 @@
+
+
+include_set Abstract::BsBadge
+
 format do
   def filter_class
     Card::FilterQuery
@@ -37,9 +41,14 @@ format do
   end
 
   def filter_hash_from_params
-    return unless Env.params[:filter].present?
-
-    Env.hash(Env.params[:filter]).deep_symbolize_keys
+    param = Env.params[:filter]
+    if param.blank?
+      nil
+    elsif param.to_s == "empty"
+      {}
+    else
+      Env.hash(param).deep_symbolize_keys
+    end
   end
 
   def sort_param
@@ -78,6 +87,29 @@ format do
   # initial values for filtered search
   def default_filter_hash
     {}
+  end
+
+  def filter_hash_without key, value
+    filter_hash.clone.tap do |hash|
+      case hash[key]
+      when Array
+        hash[key] = hash[key] - Array.wrap(value)
+      else
+        hash.delete key
+      end
+    end
+  end
+
+  def removable_filters
+    filter_hash&.each_with_object([]) do |(key, value), array|
+      next unless value.present? && filter_config(key)[:default] != value
+      case value
+      when Array
+        value.each { |v| array << [key, v] }
+      else
+        array << [key, value]
+      end
+    end
   end
 
   def extra_paging_path_args

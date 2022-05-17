@@ -22,9 +22,9 @@ format :html do
   def check_or_radio_filter check_or_radio, field, default, options
     haml :check_filter,
          field_type: check_or_radio,
-         input_name: filter_input_name(field),
+         input_name: filter_input_name(field, (check_or_radio == :check)),
          options: filter_options(options),
-         default: default
+         default: Array.wrap(filter_param(field) || default)
   end
 
   def select_filter field, default, options, multiple: false
