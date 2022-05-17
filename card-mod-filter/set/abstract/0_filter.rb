@@ -41,9 +41,14 @@ format do
   end
 
   def filter_hash_from_params
-    return unless Env.params[:filter].present?
-
-    Env.hash(Env.params[:filter]).deep_symbolize_keys
+    param = Env.params[:filter]
+    if param.blank?
+      nil
+    elsif param.to_s == "empty"
+      {}
+    else
+      Env.hash(param).deep_symbolize_keys
+    end
   end
 
   def sort_param
@@ -85,7 +90,7 @@ format do
   end
 
   def removable_filters
-    filter_hash_from_params&.reject do |key, value|
+    filter_hash&.reject do |key, value|
       !value.present? || filter_config(key)[:default] == value
     end
   end

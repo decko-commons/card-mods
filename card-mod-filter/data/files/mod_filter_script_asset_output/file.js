@@ -195,6 +195,9 @@
       var filters, link, url;
       link = $(this);
       filters = link.data();
+      if ($.isEmptyObject(filters.filter)) {
+        filters.filter = "empty";
+      }
       url = decko.path(link.closest("form").attr("action") + "?" + $.param(filters));
       link.reloadSlot(url);
       updateUrlBarWithFilter(link, filters);

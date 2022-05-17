@@ -18,6 +18,7 @@ $(window).ready ->
   $("body").on "click", "._filter-closers a", (e) ->
     link = $(this)
     filters = link.data()
+    filters.filter = "empty" if $.isEmptyObject filters.filter
     url = decko.path link.closest("form").attr("action") + "?" + $.param(filters)
     link.reloadSlot url
     updateUrlBarWithFilter link, filters
