@@ -2,13 +2,11 @@ format :html do
   view :filter_bars, cache: :never, template: :haml
 
   # ~~~~ Compact (inline) sort and filter ui
+  # including prototypes, filters, sorting, "More", and reset
 
-  # filter form, including prototypes, filters, sorting, "More", and reset
   view :compact_filter_form, cache: :never, template: :haml
   view :filter_sort_dropdown, cache: :never, template: :haml
   view :compact_quick_filters, cache: :never, template: :haml
-
-  # view :overlay_filter_form, cache: :never, template: :haml
 
   # ~~~~ FILTER RESULTS
 
@@ -21,15 +19,15 @@ format :html do
     end
   end
 
-  view :filtered_results do
+  view :filtered_results, cache: :never do
     wrap true, class: "_filter-result-slot" do
       [render_filtered_results_header, render_core, render_filtered_results_footer]
     end
   end
 
   view :offcanvas_filters, template: :haml, cache: :never
-  view :filtered_results_header, template: :haml
-  view :filtered_results_stats do
+  view :filtered_results_header, template: :haml, cache: :never
+  view :filtered_results_stats, cache: :never do
     labeled_badge count_with_params, "results"
   end
 
