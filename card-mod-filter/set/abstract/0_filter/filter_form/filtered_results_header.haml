@@ -11,7 +11,16 @@
             - filter = filter_hash_without key, value
             %a.btn.btn-sm.btn-outline-secondary.m-2{ "data-filter": JSON(filter),
                                               class: "close-filter-#{key}" }
-              = "#{filter_label key}: #{filter_closer_value value}"
+              = "#{filter_label key}: "
+              - if value.is_a? Hash
+                // TODO: generalize.
+                // This makes some sense with range but perhaps not other use cases
+                - value.each do |k, v|
+                  - next unless v.present?
+                  = "#{k} #{v}"
+              - else
+                = value
+
               = fa_icon :times, class: "ms-2"
           - if removables.size > 1
             %a.clear-filters.ms-2{ "data-filter": "{}", href: "#" }

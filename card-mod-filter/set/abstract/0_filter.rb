@@ -120,13 +120,6 @@ format do
     end
   end
 
-  def filter_closer_value value
-    return value unless value.is_a? Hash
-    # TODO: generalize.
-    # This makes some sense with range but perhaps not other use cases
-    value.map { |k, v| "#{k} #{v}" if v.present? }.compact.join " "
-  end
-
   def extra_paging_path_args
     super.merge filter_and_sort_hash
   end
