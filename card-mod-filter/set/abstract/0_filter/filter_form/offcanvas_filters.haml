@@ -1,0 +1,7 @@
+._offcanvas-filter.offcanvas.offcanvas-start{ id: offcanvas_filter_id,
+                                              "data-bs": { scroll: "true", backdrop: "false" } }
+  .offcanvas-header
+    %h5.offcanvas-title Filters
+    %button.btn.btn-close{ "data-bs": { dismiss: "offcanvas" } }
+  .offcanvas-body{ data: { path: path, query: JSON(filter: filter_hash) } }
+

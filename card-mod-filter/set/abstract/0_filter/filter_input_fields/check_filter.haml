@@ -6,7 +6,7 @@
     .form-check{ class: ("_more-filter-option" if index > 10) }
       %label.form-check-label{ for: id }<
         = label
-      = send tag_method, input_name, value, (value == default),
+      = send tag_method, input_name, value, value.in?(default),
                          id: id, class: "form-check-input _submit-on-change"
   - if options.size > 10
     ._show-more-filter-options.show-more-filter-options
