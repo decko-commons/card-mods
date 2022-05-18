@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
-CARD_MODS_REPO_DIR = "#{Dir.home}/card-mods"
-DECKO_REPO_DIR = "#{CARD_MODS_REPO_DIR}/.semaphore/decko"
+CARD_MODS_REPO_DIR = "#{Dir.home}/card-mods".freeze
+DECKO_REPO_DIR = "#{CARD_MODS_REPO_DIR}/.semaphore/decko".freeze
 
 def card_mods_in dir, glob
   Dir.chdir dir do
