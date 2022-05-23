@@ -62,7 +62,21 @@ format :html do
 
   def filter_bar item
     item = { key: item } unless item.is_a? Hash
-    haml :filter_bar, item: item
+    body = filter_bar_content item
+    title = filter_label item[:key]
+    accordion_item title, body: body, open: item[:open]
+  end
+
+  def filter_bar_content item
+    if item[:type] == :group
+      accordion do
+        item[:filters].map do |subitem|
+          filter_bar subitem
+        end.join
+      end
+    else
+      filter_input_field item[:key]
+    end
   end
 
   def offcanvas_filter_id
