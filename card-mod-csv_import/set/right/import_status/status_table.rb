@@ -66,7 +66,7 @@ format :html do
 
   def mapped_link id, text=nil
     text ||= Card.fetch_name id
-    modal_link text, path: { mark: id, view: :expanded_bar }, size: :large
+    modal_link text, path: { mark: id, view: :accordion_bar }, size: :large
   end
 
   # def table_row_hash columns, hash, index

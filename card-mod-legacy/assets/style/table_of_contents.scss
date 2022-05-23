@@ -1,0 +1,17 @@
+
+.table-of-contents {
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  padding: 4px;
+  margin: 5px 20px 20px 20px;
+  h5 {
+    margin: 0 0 0 40px;
+  }
+  ol {
+    list-style-type: upper-roman;
+    ol {
+      list-style-type: upper-alpha;
+      padding-left: 25px
+    }
+  }
+}
