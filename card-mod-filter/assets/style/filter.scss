@@ -56,3 +56,32 @@
 h2.accordion-header {
   margin-top: 0 !important;
 }
+
+
+._compact-filter {
+  .input-group.sort-input-group, ._filter-container > .input-group {
+    width: auto !important;
+  }
+  select {
+    min-width: 30%;
+    max-width: 100%;
+  }
+}
+
+._filtering ._filterable {
+  cursor: pointer;
+  &:hover {
+    background-color: $gray-100;
+  }
+}
+._filter-link {
+  cursor: pointer;
+}
+
+.pointer-radio-list, .filtered-list-review {
+  list-style-type: none;
+}
+
+._filter_container .input-group-btn .btn {
+  height: 100%;
+}
