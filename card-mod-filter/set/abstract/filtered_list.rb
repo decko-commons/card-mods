@@ -34,7 +34,7 @@ format :html do
                class: "btn btn-sm btn-outline-secondary _add-item-link",
                path: {
                  view: :filter_items_modal,
-                 slot: { hide: [:modal_footer] },
+                 slot: filter_items_modal_slot,
                  filter: filter_items_default_filter,
                  # each key value below is there to help support new cards configured
                  # by type_plus_right sets. do not remove without testing that case
@@ -61,6 +61,10 @@ format :html do
     %i[view wrap duplicable].each_with_object({}) do |key, hash|
       hash[key] = params.dig(:filter_items, key) || send("filtered_item_#{key}")
     end
+  end
+
+  def filter_items_modal_slot
+    { hide: [:modal_footer] }
   end
 
   def filtered_item_duplicable
