@@ -30,7 +30,7 @@ format :html do
 
   def add_item_modal_link text=nil
     modal_link (text || "Add Item"),
-               size: :large,
+               size: :xl,
                class: "btn btn-sm btn-outline-secondary _add-item-link",
                path: {
                  view: :filter_items_modal,
