@@ -6,7 +6,7 @@ RSpec.describe Card::Query::CardQuery::FullTextMatching do
 
   specify "sort: name" do
     expect(search("permissions"))
-      .to eq(["*account", "Administrator", "mod: permissions", "Role"])
+      .to eq(["*account", "Administrator", "mod: permissions", "Role", "style: mods"])
   end
 
   xspecify "sort: relevance" do
