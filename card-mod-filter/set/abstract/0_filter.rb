@@ -8,7 +8,7 @@ format do
   end
 
   def filter_map
-    [:name]
+    [{ key: :name, open: true }]
   end
 
   def filter_keys_from_params
