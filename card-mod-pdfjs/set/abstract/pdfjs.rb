@@ -5,7 +5,7 @@ format :html do
 
   def default_pdfjs_iframe_args args
     args[:pdf_url] ||= card.file.url if card.respond_to?(:file)
-    args[:viewer_path] ||= "/mod/pdfjs/web/viewer.html"
+    args[:viewer_path] ||= card_path "/mod/pdfjs/web/viewer.html"
     args[:viewer_path] << "?file=#{args[:pdf_url]}" if args[:pdf_url]
   end
 

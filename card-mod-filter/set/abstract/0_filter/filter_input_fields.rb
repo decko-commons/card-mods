@@ -5,7 +5,7 @@ format :html do
     fc = filter_config field
     default ||= fc[:default]
     @compact_inputs = compact
-    filter_type = compact && COMPACT_FILTER_TYPES[fc[:type]] || fc[:type]
+    filter_type = (compact && COMPACT_FILTER_TYPES[fc[:type]]) || fc[:type] || :text
     send "#{filter_type}_filter", field, default, fc[:options]
   end
 
