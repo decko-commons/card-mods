@@ -18,6 +18,11 @@ format :html do
     thumbnail
   end
 
+  view :thumbnail_no_subtitle do
+    voo.hide :thumbnail_subtitle
+    thumbnail
+  end
+
   # just an image
   view :thumbnail_image do
     return unless (image = image_card)
