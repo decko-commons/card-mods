@@ -40,14 +40,12 @@ def track_page_from_server?
 end
 
 format :html do
+  basket[:head_views].unshift :google_analytics_snippets
+
   delegate :google_analytics_keys, to: :card
 
   def body_tag klasses=""
     super { "#{render(:google_analytics_noscript)}\n\n#{yield}" }
-  end
-
-  def views_in_head
-    super.unshift :google_analytics_snippets
   end
 
   view :google_analytics_snippets, unknown: true, perms: :none do

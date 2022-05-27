@@ -5,9 +5,7 @@ format :text do
 end
 
 format :html do
-  def views_in_head
-    super << :social_meta_tags
-  end
+  basket[:head_views] << :social_meta_tags
 
   view :social_meta_tags, unknown: :blank do
     shared = %w[title description image]
