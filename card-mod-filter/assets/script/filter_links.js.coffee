@@ -1,4 +1,4 @@
-decko.slotReady (slot) ->
+decko.slot.ready (slot) ->
   slot.find("._compact-filter").each ->
     if slot[0] == $(this).slot()[0]
       filter = new decko.filter this
