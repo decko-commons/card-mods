@@ -1,10 +1,6 @@
-decko.addEditor(
-  '.prosemirror-editor',
-  ->
-    decko.initProseMirror @[0].id,
-  ->
-    prosemirrorContent @[0].id
-)
+decko.editors.add ".prosemirror-editor",
+  -> decko.initProseMirror @[0].id,
+  -> prosemirrorContent @[0].id
 
 $.extend decko,
   setProseMirrorConfig: (string) ->
