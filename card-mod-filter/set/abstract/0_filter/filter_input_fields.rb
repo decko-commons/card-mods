@@ -34,7 +34,7 @@ format :html do
   def autocomplete_filter type_code, _default, options_card=nil
     options_card ||= Card::Name[type_code, :type, :by_name]
     text_filter type_code, "", class: "#{type_code}_autocomplete",
-                "data-options-card": options_card
+                               "data-options-card": options_card
   end
 
   def text_filter field, default, opts
@@ -43,10 +43,10 @@ format :html do
     text_filter_with_name_and_value filter_input_name(field), value, opts
   end
 
-  def range_filter field, default={}, opts
+  def range_filter field, default, opts
     opts ||= {}
-    add_class opts, "simple-text range-filter-field"
     default ||= {}
+    add_class opts, "simple-text range-filter-field"
     wrap_with :div, class: "input-group" do
       [range_sign(:from),
        sub_text_filter(field, :from, default, opts),
@@ -60,7 +60,7 @@ format :html do
   def check_or_radio_filter check_or_radio, field, default, options
     haml :check_filter,
          field_type: check_or_radio,
-         input_name: filter_input_name(field, (check_or_radio == :check)),
+         input_name: filter_input_name(field, multi: (check_or_radio == :check)),
          options: filter_options(options),
          default: Array.wrap(filter_param(field) || default)
   end
@@ -78,7 +78,7 @@ format :html do
     # not sure form-control does much here?
     klasses << " _no-select2" if @compact_inputs # select2 initiated once active
 
-    select_tag filter_input_name(field, multiple),
+    select_tag filter_input_name(field, multi: multiple),
                options_for_select(options, (filter_param(field) || default)),
                id: "filter-input-#{unique_id}", multiple: multiple, class: klasses
   end
@@ -89,12 +89,20 @@ format :html do
   end
 
   def sub_text_filter field, subfield, default={}, opts={}
-    name = "filter[#{field}][#{subfield}]"
+    name = filter_input_name field, subfield: subfield
     value = filter_hash.dig(field, subfield) || default[subfield]
     text_filter_with_name_and_value name, value, opts
   end
 
-  def filter_input_name field, multi=false
-    "filter[#{field}]#{'[]' if multi}"
+  def filter_input_name field, subfield: nil, multi: false
+    parts = [filter_prefix, "[#{field}]"]
+    parts << "[#{subfield}]" if subfield
+    parts << "[]" if multi
+    parts.join
+  end
+
+  # for override
+  def filter_prefix
+    "filter"
   end
 end
