@@ -2,11 +2,13 @@
 # (fancy pointer ui)
 
 $.extend decko,
+  # singular
   itemAdded: (func)->
     $('document').ready ->
       $('body').on 'itemAdded', '._filtered-list-item', (e) ->
         func.call this, $(this)
 
+  # plural
   itemsAdded: (func)->
     $('document').ready ->
       $('body').on 'itemsAdded', '.card-slot', (e) ->
@@ -40,8 +42,6 @@ $(window).ready ->
     $(this).closest('li').remove()
 
 filterBox = (el) -> new FilterItemsBox el
-
-
 
 class FilterItemsBox
   constructor: (el) ->

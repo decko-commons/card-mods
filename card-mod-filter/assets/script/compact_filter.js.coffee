@@ -9,7 +9,6 @@ decko.filter = (el) ->
     else
       $(el).closest("._filtered-content").find "._compact-filter"
 
-
   # the filter form includes the below
   @form = @widget.find "._compact-filter-form"
 
@@ -127,7 +126,7 @@ decko.filter = (el) ->
   @updateIfPresent = (category)->
     val = @activeField(category).find("input, select").val()
     @update() if val && val.length > 0
-    
+
   @updateQuickLinks = ()->
     widget = this
     links = @quickFilter.find "._compact-filter-link"
@@ -143,6 +142,5 @@ decko.filter = (el) ->
     $.map [@form.find("#{sel} input, #{sel} select").val()], (arr) ->
       arr = [arr].flat()
       link.removeClass "active" if $.inArray(value, arr) > -1
-
 
   this
