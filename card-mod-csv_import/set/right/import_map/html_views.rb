@@ -50,16 +50,14 @@ format :html do
     haml :map_ui, type: type, name_in_file: name_in_file
   end
 
-  def suggest_link type, name, input_selector
+  def suggest_link type, name
     klass = card.import_item_class
     return unless (mark = klass.try "#{type}_suggestion_filter_mark")
     filter_key = klass.try("#{type}_suggestion_filter_key") || :name
     modal_link "Suggest",
-               class: "btn btn-sm btn-secondary _suggest-link",
+               class: "btn btn-sm btn-secondary _suggest-link _selectable-filter-link",
                path: { view: :selectable_filtered_content,
                        mark: mark,
-                       # slot: { items: { hide: :full_page_link } },
-                       input_selector: input_selector,
                        filter: { filter_key => name } }
   end
 

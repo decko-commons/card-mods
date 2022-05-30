@@ -12,10 +12,13 @@ format :html do
 
   view :filtered_content do
     wrap true, class: "_filtered-content nodblclick" do
-      [
-        render_offcanvas_filters,
-        render_filtered_results(home_view: :filtered_results)
-      ]
+      [render_offcanvas_filters, render_filtered_results(home_view: :filtered_results)]
+    end
+  end
+
+  view :compact_filtered_content do
+    wrap true, class: "_filtered-content nodblclick" do
+      [render_compact_filter_form, render_filtered_results(home_view: :filtered_results)]
     end
   end
 
