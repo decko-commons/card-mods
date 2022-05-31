@@ -1,4 +1,7 @@
 $(window).ready ->
+  $('body').on "ajax:beforeSend", "._selectable-filter-link", (_event, _xhr, opt)->
+    opt.noSlotParams = true
+
   $("body").on "ajax:success", "._selectable-filter-link", ->
     $("._selectable-filtered-content").data "source-link", $(this)
 
