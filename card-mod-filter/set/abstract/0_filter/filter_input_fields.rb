@@ -4,7 +4,6 @@ format :html do
   def filter_input_field field, default: nil, compact: false
     fc = filter_config field
     default ||= fc[:default]
-    @compact_inputs = compact
     filter_type = (compact && COMPACT_FILTER_TYPES[fc[:type]]) || fc[:type] || :text
     send "#{filter_type}_filter", field, default, fc[:options]
   end
@@ -76,7 +75,7 @@ format :html do
               "_submit-on-change form-control " \
               "pointer-#{'multi' if multiple}select"
     # not sure form-control does much here?
-    klasses << " _no-select2" if @compact_inputs # select2 initiated once active
+    klasses << " _no-select2" if @compact_filter_form # select2 initiated once active
 
     select_tag filter_input_name(field, multi: multiple),
                options_for_select(options, (filter_param(field) || default)),
