@@ -43,6 +43,10 @@
       padding: 1rem 0 0.5rem 0;
     }
   }
+
+  &.accordion .accordion-body {
+    padding: 1rem 0.75rem;
+  }
 }
 
 .filtered_results-view {
@@ -56,7 +60,6 @@
 h2.accordion-header {
   margin-top: 0 !important;
 }
-
 
 ._compact-filter {
   .input-group.sort-input-group, ._filter-container > .input-group {

@@ -4,7 +4,6 @@ format :html do
   def filter_input_field field, default: nil, compact: false
     fc = filter_config field
     default ||= fc[:default]
-    @compact_inputs = compact
     filter_type = (compact && COMPACT_FILTER_TYPES[fc[:type]]) || fc[:type] || :text
     send "#{filter_type}_filter", field, default, fc[:options]
   end
@@ -24,7 +23,7 @@ format :html do
   def select_filter field, default, options, multiple: false
     options = filter_options options
     options = [["--", ""]] + options unless default
-    select_filter_tag field, default, options, multiple
+    select_filter_tag field, default, options, multiple: multiple
   end
 
   def multiselect_filter field, default, options
@@ -71,16 +70,19 @@ format :html do
     text_field_tag name, value, opts
   end
 
-  def select_filter_tag field, default, options, multiple
+  def select_filter_tag field, default, options, multiple: false, disabled: false
     klasses = "_filter_input_field filter-input filter-input-#{field} " \
               "_submit-on-change form-control " \
               "pointer-#{'multi' if multiple}select"
     # not sure form-control does much here?
-    klasses << " _no-select2" if @compact_inputs # select2 initiated once active
+    klasses << " _no-select2" if @compact_filter_form # select2 initiated once active
 
     select_tag filter_input_name(field, multi: multiple),
                options_for_select(options, (filter_param(field) || default)),
-               id: "filter-input-#{unique_id}", multiple: multiple, class: klasses
+               id: "filter-input-#{unique_id}",
+               multiple: multiple,
+               class: klasses,
+               disabled: disabled
   end
 
   def range_sign side
