@@ -23,7 +23,7 @@ format :html do
   def select_filter field, default, options, multiple: false
     options = filter_options options
     options = [["--", ""]] + options unless default
-    select_filter_tag field, default, options, multiple
+    select_filter_tag field, default, options, multiple: multiple
   end
 
   def multiselect_filter field, default, options
@@ -70,7 +70,7 @@ format :html do
     text_field_tag name, value, opts
   end
 
-  def select_filter_tag field, default, options, multiple
+  def select_filter_tag field, default, options, multiple: false, disabled: false
     klasses = "_filter_input_field filter-input filter-input-#{field} " \
               "_submit-on-change form-control " \
               "pointer-#{'multi' if multiple}select"
@@ -79,7 +79,10 @@ format :html do
 
     select_tag filter_input_name(field, multi: multiple),
                options_for_select(options, (filter_param(field) || default)),
-               id: "filter-input-#{unique_id}", multiple: multiple, class: klasses
+               id: "filter-input-#{unique_id}",
+               multiple: multiple,
+               class: klasses,
+               disabled: disabled
   end
 
   def range_sign side
