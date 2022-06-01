@@ -31,7 +31,7 @@ format :html do
   view :offcanvas_filters, template: :haml, cache: :never
   view :filtered_results_header, template: :haml, cache: :never
   view :filtered_results_stats, cache: :never do
-    labeled_badge count_with_params, "results"
+    labeled_badge count_with_params, "Results"
   end
 
   # for override
