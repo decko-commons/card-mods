@@ -54,7 +54,7 @@ format :html do
   end
 
   def compact_filter_form_fields
-    @compact_filter_form_fileds ||=
+    @compact_filter_form_fields ||=
       all_filter_keys.map do |key|
         { key: key,
           label: filter_label(key),
