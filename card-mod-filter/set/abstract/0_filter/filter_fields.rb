@@ -20,6 +20,10 @@ format :html do
     Card.fetch_name(field) { field.to_s.sub(/^\*/, "").titleize }
   end
 
+  def filter_closer_value field, value
+    try("filter_#{field}_closer_value", value) || value
+  end
+
   def filter_options raw
     return raw if raw.is_a? Array
 

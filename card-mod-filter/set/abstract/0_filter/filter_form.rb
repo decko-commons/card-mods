@@ -12,10 +12,13 @@ format :html do
 
   view :filtered_content do
     wrap true, class: "_filtered-content nodblclick" do
-      [
-        render_offcanvas_filters,
-        render_filtered_results(home_view: :filtered_results)
-      ]
+      [render_offcanvas_filters, render_filtered_results(home_view: :filtered_results)]
+    end
+  end
+
+  view :compact_filtered_content do
+    wrap true, class: "_filtered-content nodblclick" do
+      [render_compact_filter_form, render_filtered_results(home_view: :filtered_results)]
     end
   end
 
@@ -51,7 +54,7 @@ format :html do
   end
 
   def compact_filter_form_fields
-    @compact_filter_form_fileds ||=
+    @compact_filter_form_fields ||=
       all_filter_keys.map do |key|
         { key: key,
           label: filter_label(key),
