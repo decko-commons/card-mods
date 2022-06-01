@@ -2,11 +2,10 @@
 - options = sort_options
 - current = current_sort
 .sort-in-filter-form
-  %i.fa.fa-sort.filter-section-icon
   .input-group.input-group-sm.flex-nowrap.sort-input-group.mb-2.me-2
     %span.input-group-text.text-muted Sort
     = select_tag "sort",
                  options_for_select(options, current),
-                 class: "pointer-select _filter-sort form-control",
+                 class: "pointer-select _filter-sort form-control _submit-on-change",
                  include_blank: ("--" unless options.values.include? current),
                  "data-minimum-results-for-search": "Infinity"

@@ -18,6 +18,7 @@ $(window).ready ->
   $("body").on "click", "._filter-closers a", (e) ->
     link = $(this)
     filters = link.data()
+    # "empty" prevents use of default filters but may have other side effects?
     filters.filter = "empty" if $.isEmptyObject filters.filter
     url = decko.path link.closest("form").attr("action") + "?" + $.param(filters)
     link.reloadSlot url

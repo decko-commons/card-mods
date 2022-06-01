@@ -9,20 +9,7 @@ decko.slot.ready (slot) ->
         filter.updateQuickLinks()
 
 $(window).ready ->
-  filterFor = (el) ->
-    new decko.filter el
 
-  # sometimes this element shows up as changed and breaks the filter.
-  weirdoSelect2FilterBreaker = (el) ->
-    $(el).hasClass "select2-search__field"
-
-  filterableData = (filterable) ->
-    f = $(filterable)
-    f.data("filter") || f.find("._filterable").data("filter")
-
-  targetFilter = (filterable) ->
-    selector = $(filterable).closest("._filtering").data("filter-selector")
-    filterFor (selector || this)
 
   # Add Filter
   $("body").on "click", "._filter-category-select", (e) ->
@@ -35,7 +22,9 @@ $(window).ready ->
 
   # Update filter results based on filter value changes
   onchangers =
-    "._filter-input input:not(.simple-text), ._filter-input select, ._filter-sort"
+    "._compact-filter-form ._filter-input input:not(.simple-text), " +
+    "._compact-filter-form ._filter-input select, " +
+    "._compact-filter-form ._filter-sort"
   $("body").on "change", onchangers, ->
     return if weirdoSelect2FilterBreaker this
     filterFor(this).update()
@@ -71,5 +60,20 @@ $(window).ready ->
     e.preventDefault()
     e.stopPropagation()
 
-  inactiveQuickfilter = (link) ->
-    !link.hasClass("active") && link.closest(".quick-filter").length > 0
+filterFor = (el) ->
+  new decko.filter el
+
+# sometimes this element shows up as changed and breaks the filter.
+weirdoSelect2FilterBreaker = (el) ->
+  $(el).hasClass "select2-search__field"
+
+filterableData = (filterable) ->
+  f = $(filterable)
+  f.data("filter") || f.find("._filterable").data("filter")
+
+targetFilter = (filterable) ->
+  selector = $(filterable).closest("._filtering").data("filter-selector")
+  filterFor (selector || this)
+
+inactiveQuickfilter = (link) ->
+  !link.hasClass("active") && link.closest(".quick-filter").length > 0
