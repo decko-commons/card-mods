@@ -20,7 +20,9 @@
               %a.clear-filters.ms-2{ "data-filter": "{}", href: "#" }
                 Clear All
 
-      .filter-result-stats
+      .filtered-results-stats
         = render_filtered_results_stats
+    .filtered-results-visualization
+      = render_filtered_results_visualization
     .filtered-content-controls.d-flex.justify-content-end
       = render_filter_sort_dropdown
