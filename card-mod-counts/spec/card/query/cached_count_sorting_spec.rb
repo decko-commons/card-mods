@@ -1,10 +1,10 @@
 RSpec.describe Card::Query::CachedCountSorting do
   subject do
-    Card::Query.run @query.reverse_merge return: :name, sort: :name
+    Card::Query.run @query.reverse_merge return: :name, sort_by: :name
   end
 
   def sort args
-    Card::Query.new return: :name, sort: args
+    Card::Query.new return: :name, sort_by: args
   end
 
   describe "sql" do
