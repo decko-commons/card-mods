@@ -7,7 +7,7 @@ class Card
         count_join = CachedCountJoin.new self, val[:right]
         joins << count_join
         @mods[:sort_as] = "integer"
-        @mods[:sort] = "#{count_join.to_alias}.value"
+        @mods[:sort_by] = "#{count_join.to_alias}.value"
       end
     end
   end

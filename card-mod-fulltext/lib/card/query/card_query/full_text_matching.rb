@@ -28,7 +28,7 @@ class Card
         # the default ordering is by relevance, so we just need to
         # make sure there is no explicit order by clause
         def order
-          super unless @mods[:sort] == "relevance"
+          super unless "relevance".in? [@mods[:sort_by], @mods[:sort]]
         end
 
         # Note: the more explicit route (which will be necessary if we want to support
