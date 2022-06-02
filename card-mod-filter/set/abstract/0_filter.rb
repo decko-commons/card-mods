@@ -1,5 +1,3 @@
-
-
 include_set Abstract::BsBadge
 
 format do
@@ -29,7 +27,8 @@ format do
   end
 
   def default_sort_option
-    card.cql_content[:sort]
+    cql = card.cql_content || {}
+    cql[:sort_by] || cql[:sort]
   end
 
   def filter_param field
@@ -52,7 +51,7 @@ format do
   end
 
   def sort_param
-    @sort_param ||= safe_sql_param :sort
+    @sort_param ||= safe_sql_param :sort_by
   end
 
   def safe_sql_param key
@@ -126,7 +125,7 @@ format do
 
   def filter_and_sort_hash
     { filter: filter_hash }.tap do |hash|
-      hash[:sort] = sort_param if sort_param
+      hash[:sort_by] = sort_param if sort_param
     end
   end
 end
