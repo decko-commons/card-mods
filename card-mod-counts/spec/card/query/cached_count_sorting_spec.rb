@@ -1,6 +1,6 @@
 RSpec.describe Card::Query::CachedCountSorting do
   subject do
-    Card::Query.run @query.reverse_merge return: :name, sort: :name
+    sort(right: "A", item: "cached_count", return: "count").sql
   end
 
   def sort args
@@ -8,7 +8,6 @@ RSpec.describe Card::Query::CachedCountSorting do
   end
 
   describe "sql" do
-    subject { sort(right: "A", item: "cached_count", return: "count").sql }
 
     it "joins with cached counts table" do
       is_expected.to include(
