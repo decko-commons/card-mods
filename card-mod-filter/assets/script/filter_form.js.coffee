@@ -33,7 +33,7 @@ $(window).ready ->
         $.param(ocbody.data("query"))
       $.get path, (data) ->
         ocbody.html data
-        ocbody.slot().trigger "slot.ready"
+        ocbody.slot().trigger "slot:ready"
 
 resetOffCanvas = (el, query) ->
   ocbody = el.closest("._filtered-content").find ".offcanvas-body"
