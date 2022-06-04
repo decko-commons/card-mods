@@ -85,7 +85,8 @@ format do
   end
 
   def sort_by_from_param
-    safe_sql_param(:sort_by)&.to_sym
+    # :sort is DEPRECATED
+    safe_sql_param(:sort_by)&.to_sym || safe_sql_param(:sort)&.to_sym
   end
 
   def default_limit
