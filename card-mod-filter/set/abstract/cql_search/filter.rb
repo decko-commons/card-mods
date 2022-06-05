@@ -23,7 +23,7 @@ format do
   end
 
   def sort_cql
-    { sort: current_sort }
+    { sort_by: current_sort }
   end
 
   def blocked_id_cql
