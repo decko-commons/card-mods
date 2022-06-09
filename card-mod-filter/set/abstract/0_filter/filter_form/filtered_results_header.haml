@@ -3,9 +3,9 @@
     .filter-controls-and-stats.d-flex.justify-content-between.py-2
       .filter-controls.d-flex
         ._filters-button
-          %button.btn.btn-sm.btn-primary.m-2{ "data-bs":
-            { toggle: "offcanvas", target: "##{offcanvas_filter_id}" }
-          } Filter
+          %button.btn.btn-sm.btn-primary.m-2{ type: "button",
+            "data-bs": { toggle: "offcanvas", target: "##{offcanvas_filter_id}" } }
+            Filter
         - if (removables = removable_filters)
           .filter-badges._filter-closers
             - removables.each do |key, value|

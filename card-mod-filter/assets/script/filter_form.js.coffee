@@ -21,7 +21,7 @@ $(window).ready ->
     # "empty" prevents use of default filters but may have other side effects?
     filters.filter = "empty" if $.isEmptyObject filters.filter
     url = decko.path link.closest("form").attr("action") + "?" + $.param(filters)
-    link.reloadSlot url
+    link.slotReload url
     updateUrlBarWithFilter link, filters
     resetOffCanvas link, filters
     e.preventDefault()
@@ -33,7 +33,7 @@ $(window).ready ->
         $.param(ocbody.data("query"))
       $.get path, (data) ->
         ocbody.html data
-        ocbody.slot().trigger "slot.ready"
+        ocbody.slot().trigger "decko.slot.ready"
 
 resetOffCanvas = (el, query) ->
   ocbody = el.closest("._filtered-content").find ".offcanvas-body"
