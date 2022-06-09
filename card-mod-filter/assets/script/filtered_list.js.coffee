@@ -39,7 +39,7 @@ $(window).ready ->
 
   # this is inside the list, not the filter box.  move elsewhere?
   $('body').on 'click', '._filtered-list-item-delete', ->
-    $(this).closest('li').remove()
+    $(this).closest('._filtered-list-item').remove()
 
 filterBox = (el) -> new FilterItemsBox el
 

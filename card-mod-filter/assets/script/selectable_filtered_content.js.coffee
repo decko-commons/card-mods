@@ -8,7 +8,7 @@ $(window).ready ->
   $("body").on "click", "._selectable-filtered-content .search-result-item", (e) ->
     item = $(this)
     source_link = item.closest("._selectable-filtered-content").data "source-link"
-    source_link.trigger "filter:selection", item
+    source_link.trigger "decko.filter.selection", item
     item.closest(".modal").modal "hide"
     e.preventDefault()
     e.stopPropagation()
