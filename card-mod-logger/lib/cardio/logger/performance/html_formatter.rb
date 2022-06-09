@@ -47,7 +47,7 @@ module Cardio
         def panel_heading entry, collapse_id
           <<-HTML
             <h4 class="panel-title">
-              <a data-toggle="collapse" data-parent="#accordion-#{collapse_id}" href="##{collapse_id}" aria-expanded="true" aria-controls="#{collapse_id}" class="show-fast-items">
+              <a data-bs-toggle="collapse" data-parent="#accordion-#{collapse_id}" href="##{collapse_id}" aria-expanded="true" aria-controls="#{collapse_id}" class="show-fast-items">
                 <span title='#{entry.details}'>
                   #{entry.message}
                 </span>
