@@ -11,10 +11,10 @@ $active-bookmark-color: $info !default;
   display: flex;
   align-items: center;
   white-space: nowrap;
-  color: $gray-500;
+  color: $secondary;
   .fa {
     cursor: pointer;
-    font-size: x-large;
+    font-size: large;
   }
   .bookmark-count {
     display: inline-block;
