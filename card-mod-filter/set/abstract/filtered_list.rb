@@ -24,7 +24,7 @@ format :html do
 
   def filtered_list_input
     with_nest_mode :normal do
-      haml :filtered_list_input
+      wrap { haml :filtered_list_input }
     end
   end
 

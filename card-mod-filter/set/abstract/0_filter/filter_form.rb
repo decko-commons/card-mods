@@ -67,7 +67,7 @@ format :html do
   def filter_bar item
     item = { key: item } unless item.is_a? Hash
     body = filter_bar_content item
-    title = filter_label item[:key]
+    title = filter_label (item[:label] || item[:key])
     accordion_item title, body: body, open: item[:open]
   end
 
