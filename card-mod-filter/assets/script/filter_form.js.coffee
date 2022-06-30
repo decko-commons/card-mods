@@ -1,3 +1,12 @@
+decko.filter =
+  refilter: (form, data) ->
+    data.filter = "empty" if $.isEmptyObject data.filter
+    url = decko.path form.attr("action") + "?" + $.param(data)
+    form.slot().slotReload url
+    updateUrlBarWithFilter form, data
+    resetOffCanvas form, data
+
+
 $(window).ready ->
   $("body").on "submit", "._filter-form", ->
     el = $(this)
@@ -17,13 +26,7 @@ $(window).ready ->
 
   $("body").on "click", "._filter-closers a", (e) ->
     link = $(this)
-    filters = link.data()
-    # "empty" prevents use of default filters but may have other side effects?
-    filters.filter = "empty" if $.isEmptyObject filters.filter
-    url = decko.path link.closest("form").attr("action") + "?" + $.param(filters)
-    link.slotReload url
-    updateUrlBarWithFilter link, filters
-    resetOffCanvas link, filters
+    decko.filter.refilter link.closest("form"), link.data()
     e.preventDefault()
 
   $("body").on "show.bs.offcanvas", "._offcanvas-filter", ->
