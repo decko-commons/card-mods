@@ -1,5 +1,5 @@
 .filtered-results-header._filtered-results-header
-  %form{ filter_form_args }
+  %form.filtered-results-form{ filter_form_args }
     .header-top-row.my-4.d-flex.justify-content-between.align-items-center
       .filter-badges._filter-closers
         - removables = removable_filters
@@ -19,7 +19,9 @@
 
       ._filters-button.ms-3
         %a.text-reset.fw-bold{ "data-bs": { toggle: "offcanvas",
-                                            target: "##{offcanvas_filter_id}" } }
+                                            target: "##{offcanvas_filter_id}" },
+                               title: "All Filters",
+                               href: "" }
           = icon_tag :filter_list
           ALL FILTERS
 
