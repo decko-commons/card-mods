@@ -1,7 +1,7 @@
 # filter object that manages dynamic sorting and filtering
 
 # el can be any element inside widget
-decko.filter = (el) ->
+decko.compactFilter = (el) ->
   closest_widget = $(el).closest "._compact-filter"
   @widget =
     if closest_widget.length

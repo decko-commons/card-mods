@@ -50,7 +50,8 @@ format :html do
       method: "get",
       "accept-charset": "UTF-8",
       "data-remote": true,
-      "data-slot-selector": "._filter-result-slot"
+      "data-slot-selector": "._filter-result-slot",
+      "data-filter": filter_hash.to_json
     }
   end
 

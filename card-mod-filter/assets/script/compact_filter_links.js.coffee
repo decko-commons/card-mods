@@ -1,7 +1,7 @@
 decko.slot.ready (slot) ->
   slot.find("._compact-filter").each ->
     if slot[0] == $(this).slot()[0]
-      filter = new decko.filter this
+      filter = new decko.compactFilter this
       filter.showWithStatus "active"
       filter.updateQuickLinks()
 
@@ -9,8 +9,6 @@ decko.slot.ready (slot) ->
         filter.updateQuickLinks()
 
 $(window).ready ->
-
-
   # Add Filter
   $("body").on "click", "._filter-category-select", (e) ->
     e.preventDefault()
@@ -61,7 +59,7 @@ $(window).ready ->
     e.stopPropagation()
 
 filterFor = (el) ->
-  new decko.filter el
+  new decko.compactFilter el
 
 # sometimes this element shows up as changed and breaks the filter.
 weirdoSelect2FilterBreaker = (el) ->
