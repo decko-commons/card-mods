@@ -17,3 +17,44 @@ Include the Abstract::Filter set in any search set to add both:
 The mod also adds support for a `filtered_list` view of list/pointer cards that makes it
 easier to choose list items from options too numerous or complicated to fit into a 
 standard dropdown.
+
+Filters for a given set can be specified with the `#filter_map` method, which should
+return a list of filter configurations. Each configuration can be a Symbol or a Hash.
+For example, here is a simple configuration with three filters.
+
+```
+def filter_map 
+  [name topic bookmark]
+end
+```
+
+For each filter you can use methods to define:
+  1. labels, eg `#filter_topic_label` (same as the filter key if not defined)
+  2. options, eg `#filter_topic_options` (empty by default)
+  3. a default value, eg `#filter_topic_default` (blank unless specified), and
+  4. a type, eg `#filter_topic_type` (defaults to text).
+
+Type options include:
+
+  - text
+  - autocomplete
+  - radio
+  - check
+  - select
+  - multiselect
+  - range
+
+It is also possible to write custom filter types in the following manner:
+
+```
+def filter_myfield_type
+  :my_custom_type
+end  
+
+def my_custom_type_filter
+  # returns filter ui
+end
+```
+
+Note that fields that use radio and check filtering in the `filter_form` view will use 
+select and multiselect filtering respectively in the `compact_filter_form` view.
