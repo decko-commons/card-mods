@@ -47,6 +47,11 @@
   &.accordion .accordion-body {
     padding: 1rem 0.75rem;
   }
+
+  .accordion-item {
+    border: 0;
+    border-bottom: 1px solid $border-color;
+  }
 }
 
 .filtered_results-view {
