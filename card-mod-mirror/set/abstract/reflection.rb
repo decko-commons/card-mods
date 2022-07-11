@@ -54,18 +54,6 @@ def listed_by
                 return: :name }, "all cards listed by #{name}")
 end
 
-def item_type
-  name.right
-end
-
-def item_type_name
-  name.right_name
-end
-
-def item_type_card
-  name.right
-end
-
 def item_type_id
   right_id
 end
