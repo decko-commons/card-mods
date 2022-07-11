@@ -10,15 +10,27 @@ format do
   def export_timestamp
     DateTime.now.utc.strftime "%Y_%m_%d_%H%M%S"
   end
+
+  def show_as_attachment
+    controller.response.headers["Content-Disposition"] =
+      "attachment; filename=\"#{export_filename}\""
+  end
+end
+
+format :csv do
+  def show *_args
+    show_as_attachment
+    super
+  end
 end
 
 format :data do
   def show *_args
-    controller.response.headers["Content-Disposition"] =
-      "attachment; filename=\"#{export_filename}\""
+    show_as_attachment
     super
   end
 end
+
 
 format :html do
   def export_formats
@@ -57,7 +69,7 @@ format :html do
   end
 
   def export_modal_link text, opts={}
-    opts[:path] = { mark: card.name, view: :export_panel }
+    opts[:path] = filter_and_sort_hash.merge(mark: card.name, view: :export_panel)
     modal_link text, opts
   end
 
