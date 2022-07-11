@@ -66,7 +66,7 @@ format :html do
     [:csv]
   end
 
-  def export_link_path format
+  def export_link_path_args format
     path = super
     path[:status] = @current_status if @current_status
     path
