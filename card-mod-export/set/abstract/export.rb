@@ -36,8 +36,6 @@ format :html do
 
   view :export_button, cache: :never, template: :haml
 
-  view :export_panel, cache: :never, template: :haml
-
   view :filtered_results_footer do
     try(:no_results?) ? "" : render_export_button
   end
@@ -69,7 +67,7 @@ format :html do
 
   # localize
   def export_item_limit_label
-    type_name = item_type_name
+    type_name = card.item_type_name
     type_name.present? ? type_name&.vary(:plural) : "Items"
   end
 
