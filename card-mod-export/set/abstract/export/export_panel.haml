@@ -1,4 +1,4 @@
-%form
+%form.export-panel{ action: path, download: "ooga" }
   .row.mb-3
     .col-6
       %label.form-label Format
@@ -10,3 +10,6 @@
         = export_item_limit_label
     .col-6
       = select_tag :limit, options_for_select(export_limit_options), class: "form-select"
+
+  .d-flex
+    = submit_button text: "Export"

@@ -1,3 +1,25 @@
+format do
+  def export_filename
+    "#{export_timestamp}-#{export_title}"
+  end
+
+  def export_title
+    card.name.url_key
+  end
+
+  def export_timestamp
+    DateTime.now.utc.strftime "%Y_%m_%d_%H%M%S"
+  end
+end
+
+format :data do
+  def show *_args
+    controller.response.headers["Content-Disposition"] =
+      "attachment; filename=\"#{export_filename}\""
+    super
+  end
+end
+
 format :html do
   def export_formats
     [:csv, :json]
@@ -18,18 +40,6 @@ format :html do
 
   view :filtered_results_footer do
     try(:no_results?) ? "" : render_export_button
-  end
-
-  def export_filename
-    "#{export_timestamp}-#{export_title}"
-  end
-
-  def export_title
-    card.name.url_key
-  end
-
-  def export_timestamp
-    DateTime.now.utc.strftime "%Y_%m_%d_%H%M%S"
   end
 
   def export_format_links
@@ -64,6 +74,9 @@ format :html do
   end
 
   def export_limit_options
-    options_for_select [50, 100, 500, 1000, 5000]
+    options = [50, 100, 500, 1000, 5000].map { |num| ["up to #{num}", num] }
+    options_for_select options,
+                       disabled: (Auth.signed_in? ? [] : [1000, 5000]),
+                       selected: (Auth.signed_in? ? 5000 : 500)
   end
 end
