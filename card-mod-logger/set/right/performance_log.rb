@@ -13,7 +13,7 @@ def csv_path
 end
 
 def add_log_entry request, html_log
-  time = DateTime.now.utc.strftime "%Y%m%d%H%M%S"
+  time = Time.now.utc.strftime "%Y%m%d%H%M%S"
   item_name = "%s+%s %s" % [name, time, request.gsub('/','&#47;') ]
   if include_item? item_name
     item_name += 'a'
@@ -39,7 +39,7 @@ def add_csv_entry page, wbench_data, runs
       browser['responseEnd'][i] - browser['requestStart'][i],
       browser['domComplete'][i] - browser['domLoading'][i], # domLoadingTime
       browser['requestStart'][i],  # domLoadingStart
-      DateTime.now.utc.inspect
+      Time.now.utc.inspect
     ]
     csv_line = CSV.generate_line(csv_data)
     File.open(csv_path, 'a') { |f| f.puts csv_line }
