@@ -1,3 +1,4 @@
+
 format do
   def export_filename
     "#{export_timestamp}-#{export_title}"
@@ -31,7 +32,6 @@ format :data do
   end
 end
 
-
 format :html do
   def export_formats
     [:csv, :json]
@@ -45,8 +45,6 @@ format :html do
       "Export: #{export_format_links}"
     end
   end
-
-  view :export_button, cache: :never, template: :haml
 
   view :filtered_results_footer do
     try(:no_results?) ? "" : render_export_button
@@ -68,25 +66,7 @@ format :html do
     export_formats.first
   end
 
-  def export_modal_link text, opts={}
-    opts[:path] = filter_and_sort_hash.merge(mark: card.name, view: :export_panel)
-    modal_link text, opts
-  end
-
   def export_link_path_args format
     { format: format }
-  end
-
-  # localize
-  def export_item_limit_label
-    type_name = card.item_type_name
-    type_name.present? ? type_name&.vary(:plural) : "Items"
-  end
-
-  def export_limit_options
-    options = [50, 100, 500, 1000, 5000].map { |num| ["up to #{num}", num] }
-    options_for_select options,
-                       disabled: (Auth.signed_in? ? [] : [1000, 5000]),
-                       selected: (Auth.signed_in? ? 5000 : 500)
   end
 end
