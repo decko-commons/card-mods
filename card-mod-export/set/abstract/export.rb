@@ -9,7 +9,7 @@ format do
   end
 
   def export_timestamp
-    DateTime.now.utc.strftime "%Y_%m_%d_%H%M%S"
+    Time.now.utc.strftime "%Y_%m_%d_%H%M%S"
   end
 
   def show_as_attachment

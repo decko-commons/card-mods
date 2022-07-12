@@ -25,7 +25,7 @@ module Cardio
             log << env["REQUEST_METHOD"]
             log << status
             log << env["REQUEST_URI"]
-            log << DateTime.now.to_s
+            log << Time.now.to_s
             log << env['HTTP_ACCEPT_LANGUAGE'].to_s.scan(/^[a-z]{2}/).first
             log << env["HTTP_REFERER"]
 
