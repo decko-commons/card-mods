@@ -13,7 +13,7 @@ format do
   end
 
   def show_as_attachment
-    controller.response.headers["Content-Disposition"] =
+    controller.response.headers["Content-Disposition"] = # "inline"
       "attachment; filename=\"#{export_filename}\""
   end
 end
