@@ -44,7 +44,7 @@ end
 
 format :html do
   def export_formats
-    [:csv, :json]
+    %i[csv json]
   end
 
   # don't cache because many export links include filter/sort params
