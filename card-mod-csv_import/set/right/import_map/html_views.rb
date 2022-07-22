@@ -14,11 +14,7 @@ format :html do
   end
 
   def item_view type
-    item_view_hash[type] ||= card.left.try("import_map_#{type}_view") || :bar
-  end
-
-  def item_view_hash
-    @item_view_hash ||= {}
+    card.left.try("import_map_#{type}_view") || :bar
   end
 
   def tab_map
