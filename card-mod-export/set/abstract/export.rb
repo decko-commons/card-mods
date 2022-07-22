@@ -13,6 +13,8 @@ format do
   end
 
   def show_as_attachment
+    return unless controller&.response
+
     controller.response.headers["Content-Disposition"] =
       "attachment; filename=\"#{export_filename}.#{format_ext}\""
   end
