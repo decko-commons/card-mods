@@ -1,6 +1,6 @@
 .import-map-header.py-2
   .lead
-    Ensure items in file are mapped to WikiRate content.
+    Match items to import to existing data.
 
 .card-notice
 
@@ -8,13 +8,5 @@
   .import-map-form.d-flex.justify-content-end
     = render_map_form
 
-  .import-map-legend.float-end.d-flex.align-items-center.p-1.bg-light.my-3
-    .light-grey-color-2
-      (unmatched)
-    .light-grey-color-2.px-2
-      TYPE
-    .tab-badge.count-number.clearfix
-      %span.badge.bg-secondary
-        unique
   .import-map-tabs
     = render_tabs
