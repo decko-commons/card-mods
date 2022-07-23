@@ -1,37 +1,35 @@
-.d-flex.justify-content-between.mb-2.p-3.bg-light.align-items-center
-  .mapping-visibility
-    %a._toggle-mapping-vis.font-italic{ href: "#" }
-      %span._mapping-vis-name Hide
-      Mapped
-  .map-action-dropdown
-    = map_action_dropdown map_type
+-#.d-flex.justify-content-between.mb-2.p-3.bg-light.align-items-center
+-#  .mapping-visibility
+-#    %a._toggle-mapping-vis.font-italic{ href: "#" }
+-#      %span._mapping-vis-name Hide
+-#      Mapped
+-#  .map-action-dropdown
+-#    = map_action_dropdown map_type
 
-%table.wikirate-table.import-table._import-table
+- item_view = item_view map_type
+- type_name = map_type.cardname
+
+%table.table.import-table._import-table
   %thead
     %tr
-      %th{ style: "width: 50px" }
+      %th.col-1
         = check_box_tag "allImportMapItems"
-        All
-      %th
-        in File
-      %th
+      %th.col-4
+        = type_name
+        to Import
+      %th.col-4
+        = type_name
+        -# FIXME: Wikirate reference!
         on WikiRate
+      %th.col-2
+        Status
+      %th.col-1.text-right
+        %i.fa.fa-ellipsis-h
+
   %tbody
     - card.map[map_type].each do |name_in_file, cardid|
-      - auto_add = cardid&.to_s&.match?(/^AutoAdd/)
-      - cardname = auto_add ? cardid : cardid&.cardname
-      %tr{ class: "_map-item #{cardname ? 'mapped' : 'unmapped'}-import-attrib" }
-        %td
-          = check_box_tag "importMapItem" unless cardname
-        %td.in-file
-          = name_in_file
-        %td
-          - if auto_add
-            %em (#{cardname})
-          - elsif cardname.present?
-            = nest cardname, view: item_view(map_type)
-          - else
-            = map_ui map_type, name_in_file
+      = map_item name_in_file, cardid, map_type, item_view
+
 .d-flex.justify-content-end.py-3
   %span
     Export:

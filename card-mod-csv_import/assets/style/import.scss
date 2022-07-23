@@ -1,0 +1,15 @@
+._import-map-item .fa-circle {
+  margin-right: 0.25em;
+}
+
+._import-item-matched .fa-circle {
+  color: $green;
+}
+
+._import-item-with-suggestions .fa-circle {
+  color: $orange;
+}
+
+._import-item-without-suggestions .fa-circle {
+  color: $red;
+}
