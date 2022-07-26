@@ -1,6 +1,7 @@
 - item_view = item_view map_type
 - type_name = map_type.cardname
 - auto_add = auto_add_type? map_type
+- suggestions_on = suggestion_filter_mark map_type
 .nodblclick
   %table.table.import-table._import-table
     %thead
@@ -44,8 +45,7 @@
     %tbody
       - card.map[map_type].each do |name_in_file, cardid|
         - cardname = cardid&.cardname
-        - suggestions = cardname ? [] : map_item_suggestions(name_in_file)
-        - status = map_item_status cardname, suggestions
+        - status = cardname ? :matched : :unmatched
         %tr._import-map-item.import-map-item{ "data-status": status,
                                               "data-savedstatus": status,
                                               "data-savedmapping": cardname }
@@ -69,9 +69,10 @@
                     %em (Adding)
                   - else
                     = nest cardname, view: item_view
-                - elsif suggestions.present?
-                - else
-                  \--
+                - elsif suggestions_on
+                  ._import-mapping-suggestions{ "data-url": inline_suggestions_url(map_type, name_in_file)}
+                    %i.fa.fa-spin.fa-spinner
+
               ._mapping-label
           %td
             %i.fa.fa-circle
@@ -81,7 +82,7 @@
             - if auto_add && !cardname
               %button.btn.btn-sm.me-2.btn-outline-secondary._create-import-item{ "data-bs-toggle": "button", title: "Create #{map_type}" }
                 %i.fa.fa-plus
-            = suggest_link map_type, cardname
+            = suggest_link map_type, name_in_file if suggestions_on
 
   .d-flex.justify-content-end.py-3
     %span

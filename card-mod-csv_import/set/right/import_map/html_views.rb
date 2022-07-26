@@ -1,5 +1,5 @@
 format :html do
-  delegate :auto_add_type?, to: :card
+  delegate :import_item_class, :auto_add_type?, to: :card
 
   STATUSES = {
     matched: "Match",
@@ -66,31 +66,6 @@ format :html do
     super title, count: total, klass: "RIGHT-#{type.cardname.key}"
   end
 
-  # def map_item name_in_file, cardid, type, item_view
-  #   cardname = cardid&.cardname
-  #   suggestions = cardname ? [] : map_item_suggestions(name_in_file)
-  #   template = map_item_template cardname, suggestions
-  #   haml template, name_in_file: name_in_file,
-  #                  cardname: cardname,
-  #                  item_view: item_view,
-  #                  type: type,
-  #                  suggestions: suggestions
-  # end
-
-  def map_item_status cardname, suggestions
-    if cardname
-      :matched
-    elsif suggestions.present?
-      :suggested
-    else
-      :unmatched
-    end
-  end
-
-  def map_item_suggestions name_in_file
-    []
-  end
-
   def export_link type
     link_to_card card, "csv",
                  path: { format: :csv, view: :export, map_type: type }
@@ -100,22 +75,44 @@ format :html do
     check_box_tag "_import-map-item-checkbox"
   end
 
+  def inline_suggestions_url type, name
+    card_url path(suggest_path_args(type, :import_suggestions, name))
+  end
+
   # def map_ui type, name_in_file
   #   haml :map_ui, type: type, name_in_file: name_in_file
   # end
 
   def suggest_link type, name
-    klass = card.import_item_class
-    return unless (mark = klass.try "#{type}_suggestion_filter_mark")
-    filter_key = klass.try("#{type}_suggestion_filter_key") || :name
     modal_link '<i class="fa fa-search"></i>',
-               size: :large,
+               # size: :large,
                title: "Search for #{type}",
                class: "btn btn-sm btn-outline-secondary _suggest-link _selectable-filter-link",
-               path: { view: :selectable_filtered_content,
-                       mark: mark,
-                       filter: { filter_key => name } }
+               path: suggest_path_args(type, :selectable_filtered_content, name)
   end
+
+  def suggest_path_args type, view, name
+    { view: view,
+      mark: suggestion_filter_mark(type),
+      slot: { items: { view: item_view(type) } },
+      filter: { suggestion_filter_key(type) => name } }
+  end
+
+  def suggestion_filter_mark type
+    suggestions_config type, :mark
+  end
+
+  def suggestion_filter_key type
+    suggestions_config type, :key, :name
+  end
+
+  def suggestions_config type, field, fallback=nil
+    @suggestions_config ||= {}
+    @suggestions_config[type] ||= {}
+    @suggestions_config[type][field] ||=
+      import_item_class.try("#{type}_suggestion_filter_#{field}") || fallback
+  end
+
 
   # def map_action_dropdown map_type
   #   select_tag "import_map_action",
