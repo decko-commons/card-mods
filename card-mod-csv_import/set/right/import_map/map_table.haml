@@ -1,36 +1,89 @@
--#.d-flex.justify-content-between.mb-2.p-3.bg-light.align-items-center
--#  .mapping-visibility
--#    %a._toggle-mapping-vis.font-italic{ href: "#" }
--#      %span._mapping-vis-name Hide
--#      Mapped
--#  .map-action-dropdown
--#    = map_action_dropdown map_type
-
 - item_view = item_view map_type
 - type_name = map_type.cardname
+- auto_add = auto_add_type? map_type
+.nodblclick
+  %table.table.import-table._import-table
+    %thead
+      %tr
+        %th.col-1
+          .dropdown
+            %a.dropdown-toggle{ "data-bs-toggle": "dropdown", href: "#" }
+              %i.material-icons indeterminate_check_box
+            %ul.dropdown-menu
+              - selector_options.each do |status, label|
+                %li
+                  %a.dropdown-item._import-map-status-option{ href: "#",
+                                                              "data-status": status }
+                    = label
 
-%table.table.import-table._import-table
-  %thead
-    %tr
-      %th.col-1
-        = check_box_tag "allImportMapItems"
-      %th.col-4
-        = type_name
-        to Import
-      %th.col-4
-        = type_name
-        -# FIXME: Wikirate reference!
-        on WikiRate
-      %th.col-2
-        Status
-      %th.col-1.text-right
-        %i.fa.fa-ellipsis-h
+        %th.col-4
+          = type_name
+          to Import
+        %th.col-4
+          = type_name
+          -# FIXME: WikiRate reference!
+          on WikiRate
+        %th.col-2
+          Status
+        %th.col-1.text-end
+          .dropdown.item-map-action-dropdown
+            %button.btn.btn-sm.btn-secondary{ "data-bs-toggle": "dropdown" }
+              %i.fa.fa-ellipsis-h
+            %ul.dropdown-menu
+              - first_option_index = auto_add ? 0 : 1
+              - { "Selected Items": (first_option_index..4), "Other": [-1] }.each do |header, rows|
+                %li.dropdown-header
+                  = header
+                - rows.each do |i|
+                  - action = action_options.keys[i]
+                  %a.dropdown-item._import-map-action-option{ href: "#",
+                                                              "data-action": action }
+                    = action_options[action]
 
-  %tbody
-    - card.map[map_type].each do |name_in_file, cardid|
-      = map_item name_in_file, cardid, map_type, item_view
 
-.d-flex.justify-content-end.py-3
-  %span
-    Export:
-    = export_link map_type
+    %tbody
+      - card.map[map_type].each do |name_in_file, cardid|
+        - cardname = cardid&.cardname
+        - suggestions = cardname ? [] : map_item_suggestions(name_in_file)
+        - status = map_item_status cardname, suggestions
+        %tr._import-map-item.import-map-item{ "data-status": status,
+                                              "data-savedstatus": status,
+                                              "data-savedmapping": cardname }
+          %td
+            = item_checkbox
+          %td._item-name-in-import-file
+            = name_in_file
+          %td
+            //- input_id = "#{map_type}-#{SecureRandom.hex(10)}"
+            .import-map-input-item
+              %input{ name: "mapping[#{map_type}][#{CGI.escape name_in_file}]",
+                      type: "hidden",
+                      class: "_import-mapping",
+                      value: cardname,
+                      #id: input_id,
+                      form: "mappingForm" }
+
+              ._saved-mapping
+                - if cardname
+                  - if cardname == "AutoAdd"
+                    %em (Adding)
+                  - else
+                    = nest cardname, view: item_view
+                - elsif suggestions.present?
+                - else
+                  \--
+              ._mapping-label
+          %td
+            %i.fa.fa-circle
+            %span._import-map-status-label
+              = status_label status
+          %td.text-end
+            - if auto_add && !cardname
+              %button.btn.btn-sm.me-2.btn-outline-secondary._create-import-item{ "data-bs-toggle": "button", title: "Create #{map_type}" }
+                %i.fa.fa-plus
+            = suggest_link map_type, cardname
+
+  .d-flex.justify-content-end.py-3
+    %span
+      Export:
+      = export_link map_type

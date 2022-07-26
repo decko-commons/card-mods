@@ -1,4 +1,21 @@
 format :html do
+  delegate :auto_add_type?, to: :card
+
+  STATUSES = {
+    matched: "Match",
+    suggested: "Pending",
+    unmatched: "No Match"
+  }.freeze
+
+  ACTIONS = {
+    create: "Create",
+    accept: "Accept",
+    reset: "Reset",
+    hide: "Hide",
+    showonly: "Show Only",
+    show: "Show All"
+  }.freeze
+
   view :core do
     wrap { haml(:core) }
   end
@@ -11,6 +28,18 @@ format :html do
     card_form :update, id: "mappingForm" do
       submit_button text: "Save Changes", class: "_save-mapping"
     end
+  end
+
+  def selector_options
+    { all: "All", none: "None" }.merge STATUSES
+  end
+
+  def action_options
+    ACTIONS
+  end
+
+  def status_label status
+    STATUSES[status]
   end
 
   def item_view type
@@ -37,24 +66,24 @@ format :html do
     super title, count: total, klass: "RIGHT-#{type.cardname.key}"
   end
 
-  def map_item name_in_file, cardid, type, item_view
-    cardname = cardid&.cardname
-    suggestions = cardname ? [] : map_item_suggestions(name_in_file)
-    template = map_item_template cardname, suggestions
-    haml template, name_in_file: name_in_file,
-                   cardname: cardname,
-                   item_view: item_view,
-                   type: type,
-                   suggestions: suggestions
-  end
+  # def map_item name_in_file, cardid, type, item_view
+  #   cardname = cardid&.cardname
+  #   suggestions = cardname ? [] : map_item_suggestions(name_in_file)
+  #   template = map_item_template cardname, suggestions
+  #   haml template, name_in_file: name_in_file,
+  #                  cardname: cardname,
+  #                  item_view: item_view,
+  #                  type: type,
+  #                  suggestions: suggestions
+  # end
 
-  def map_item_template cardname, suggestions
+  def map_item_status cardname, suggestions
     if cardname
-      :matched_item
+      :matched
     elsif suggestions.present?
-      :item_with_suggestions
+      :suggested
     else
-      :item_without_suggestions
+      :unmatched
     end
   end
 
@@ -67,6 +96,10 @@ format :html do
                  path: { format: :csv, view: :export, map_type: type }
   end
 
+  def item_checkbox
+    check_box_tag "_import-map-item-checkbox"
+  end
+
   # def map_ui type, name_in_file
   #   haml :map_ui, type: type, name_in_file: name_in_file
   # end
@@ -76,8 +109,9 @@ format :html do
     return unless (mark = klass.try "#{type}_suggestion_filter_mark")
     filter_key = klass.try("#{type}_suggestion_filter_key") || :name
     modal_link '<i class="fa fa-search"></i>',
-               class: "btn btn-sm btn-outline-secondary _suggest-link",
-    # " _selectable-filter-link",
+               size: :large,
+               title: "Search for #{type}",
+               class: "btn btn-sm btn-outline-secondary _suggest-link _selectable-filter-link",
                path: { view: :selectable_filtered_content,
                        mark: mark,
                        filter: { filter_key => name } }
