@@ -34,7 +34,7 @@ class Card
 
     # FIXME: could break if type and column have different names
     def mapped_id
-      map_card.import_item_class.new(type => cardname).map_field type, cardname
+      map_card.import_item_class.new({ type => cardname }).map_field type, cardname
     end
 
     def invalid_mapping error=nil
