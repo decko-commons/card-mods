@@ -79,10 +79,6 @@ format :html do
     card_url path(suggest_path_args(type, :import_suggestions, name))
   end
 
-  # def map_ui type, name_in_file
-  #   haml :map_ui, type: type, name_in_file: name_in_file
-  # end
-
   def suggest_link type, name
     modal_link '<i class="fa fa-search"></i>',
                # size: :large,
@@ -112,17 +108,4 @@ format :html do
     @suggestions_config[type][field] ||=
       import_item_class.try("#{type}_suggestion_filter_#{field}") || fallback
   end
-
-
-  # def map_action_dropdown map_type
-  #   select_tag "import_map_action",
-  #              options_for_select(action_hash(map_type)),
-  #              class: "_import-map-action"
-  # end
-  #
-  # def action_hash map_type
-  #   h = {"Select Action" => "", "Clear" => "clear" }
-  #   h.merge!("Flag to AutoAdd" => "auto-add") if card.auto_add_type? map_type
-  #   h
-  # end
 end
