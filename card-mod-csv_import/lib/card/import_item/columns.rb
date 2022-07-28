@@ -53,6 +53,15 @@ class Card
         @map_types ||= mapped_column_keys.map { |column| map_type column }.uniq
       end
 
+      def suggest column
+        column_hash[column][:suggest]
+      end
+
+      def suggestion_mark column
+        s = suggest column
+        s.is_a?(Hash) && s[:mark]
+      end
+
       def headers
         @headers ||= column_keys.map { |column| header column }
       end
