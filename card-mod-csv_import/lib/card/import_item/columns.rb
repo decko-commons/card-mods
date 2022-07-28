@@ -11,7 +11,7 @@ class Card
 
     module Columns
       include ColumnHeaders
-      
+
       def column_hash
         @column_hash ||= normalize_column_hash
       end
