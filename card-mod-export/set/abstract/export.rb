@@ -13,12 +13,18 @@ format do
   end
 
   def show_as_attachment
+    return unless controller&.response
+
     controller.response.headers["Content-Disposition"] =
-      "attachment; filename=\"#{export_filename}\""
+      "attachment; filename=\"#{export_filename}.#{format_ext}\""
   end
 end
 
 format :csv do
+  def format_ext
+    "csv"
+  end
+
   def show *_args
     show_as_attachment
     super
@@ -32,9 +38,15 @@ format :data do
   end
 end
 
+format :json do
+  def format_ext
+    "json"
+  end
+end
+
 format :html do
   def export_formats
-    [:csv, :json]
+    %i[csv json]
   end
 
   # don't cache because many export links include filter/sort params
