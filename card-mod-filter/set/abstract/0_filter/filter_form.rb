@@ -18,6 +18,7 @@ format :html do
 
   view :compact_filtered_content do
     wrap true, class: "_filtered-content nodblclick" do
+      voo.hide! :filtered_results_header
       [render_compact_filter_form, render_filtered_results(home_view: :filtered_results)]
     end
   end

@@ -1,6 +1,5 @@
 class Card
   class ImportItem
-
     # Use column names as keys and method names as values to define normalization
     # and validation methods.
     # The normalization methods get the original field value as
@@ -11,6 +10,8 @@ class Card
     @validate = {}
 
     module Columns
+      include ColumnHeaders
+
       def column_hash
         @column_hash ||= normalize_column_hash
       end
@@ -53,16 +54,13 @@ class Card
         @map_types ||= mapped_column_keys.map { |column| map_type column }.uniq
       end
 
-      def headers
-        @headers ||= column_keys.map { |column| header column }
+      def suggest column
+        column_hash[column][:suggest]
       end
 
-      def header column
-        column_hash[column][:header]&.to_name || autoheader(column)
-      end
-
-      def header_alias column
-        column_hash[column][:alias]&.to_name
+      def suggestion_mark column
+        s = suggest column
+        s.is_a?(Hash) && s[:mark]
       end
 
       def separator column
@@ -72,25 +70,6 @@ class Card
       def separate_vals column, val
         return unless (sep = separator column)
         val.split(/\s*#{Regexp.escape sep}\s*/)
-      end
-
-      # @return [Hash] { column_key_0 => 0, column_key_1 => 1 }
-      def map_headers names
-        names = names.map(&:to_name)
-        column_keys.each_with_object({}) do |column, hash|
-          num = names.index header(column)
-          num ||= (ha = header_alias column) && names.index(ha)
-          unmapped column unless (hash[column] = num)
-        end
-      end
-
-      # @return [Hash] { column_key_0 => 0, column_key_1 => 1 }
-      def default_header_map
-        column_keys.zip((0..column_keys.size)).to_h
-      end
-
-      def export_csv_header
-        CSV.generate_line headers
       end
 
       def auto_add type, value
