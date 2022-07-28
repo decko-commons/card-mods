@@ -90,9 +90,12 @@ format :html do
 end
 
 format :csv do
+  view :titles do
+    card.import_item_class.export_csv_header
+  end
+
   view :core do
-    card.import_item_class.export_csv_header +
-      csv_lines_for(params[:status]&.to_sym).join
+    csv_lines_for(params[:status]&.to_sym).join
   end
 
   def csv_lines_for status
