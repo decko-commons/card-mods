@@ -1,5 +1,5 @@
 format :html do
-  view :import_suggestions do
+  view :import_suggestions, cache: :never do
     results = Env.with_params(limit: 3) { import_suggestions_search }
     output(results.map { |item| import_suggestion item })
   end
