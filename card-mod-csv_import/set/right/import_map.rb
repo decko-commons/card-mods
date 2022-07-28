@@ -1,7 +1,9 @@
 include_set Abstract::Tabs
 
-delegate :import_manager, :import_item_class, :import_status_card, to: :left
-delegate :column_hash, :mapped_column_keys, :map_type, :map_types, to: :import_item_class
+delegate :import_manager, :import_item_class, :import_status_card,
+         to: :left
+delegate :column_hash, :mapped_column_keys, :suggest, :map_type, :map_types,
+         to: :import_item_class
 attr_writer :import_item_class
 
 def followable?
