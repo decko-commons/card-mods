@@ -1,10 +1,10 @@
 format :html do
   view :import_suggestions do
-    Env.with_params(limit: 3) do
-      output(search_with_params.map do |item|
-        import_suggestion item
-      end)
-    end
+    output(import_suggestions_search.map { |item| import_suggestion item })
+  end
+
+  def import_suggestions_search
+    Env.with_params(limit: 3) { search_with_params }
   end
 
   def import_suggestion item

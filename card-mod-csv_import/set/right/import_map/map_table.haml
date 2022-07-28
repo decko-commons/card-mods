@@ -1,7 +1,8 @@
 - item_view = item_view map_type
 - type_name = map_type.cardname
 - auto_add = auto_add_type? map_type
-- suggestions_on = suggestion_filter_mark map_type
+- suggestions_on = card.suggest map_type
+
 .nodblclick
   %table.table.import-table._import-table
     %thead
@@ -19,7 +20,7 @@
 
         %th.col-4
           = type_name
-          to Import
+          in Import
         %th.col-4
           = type_name
           -# FIXME: WikiRate reference!

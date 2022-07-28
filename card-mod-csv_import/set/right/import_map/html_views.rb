@@ -1,5 +1,5 @@
 format :html do
-  delegate :import_item_class, :auto_add_type?, to: :card
+  delegate :import_item_class, :import_manager, :auto_add_type?, to: :card
 
   STATUSES = {
     matched: "Match",
@@ -83,7 +83,8 @@ format :html do
     modal_link '<i class="fa fa-search"></i>',
                # size: :large,
                title: "Search for #{type}",
-               class: "btn btn-sm btn-outline-secondary _suggest-link _selectable-filter-link",
+               class: "btn btn-sm btn-outline-secondary " \
+                      "_suggest-link _selectable-filter-link",
                path: suggest_path_args(type, :selectable_filtered_content, name)
   end
 
@@ -91,21 +92,17 @@ format :html do
     { view: view,
       mark: suggestion_filter_mark(type),
       slot: { items: { view: item_view(type) } },
-      filter: { suggestion_filter_key(type) => name } }
+      filter: suggestion_filter(type, name) }
   end
 
   def suggestion_filter_mark type
-    suggestions_config type, :mark
+    @suggestion_filter_mark = import_item_class.try(:suggestion_mark, type) || type
   end
 
-  def suggestion_filter_key type
-    suggestions_config type, :key, :name
-  end
+  def suggestion_filter type, name
+    method = "#{type}_suggestion_filter"
+    return { name: name } unless import_item_class.respond_to? method
 
-  def suggestions_config type, field, fallback=nil
-    @suggestions_config ||= {}
-    @suggestions_config[type] ||= {}
-    @suggestions_config[type][field] ||=
-      import_item_class.try("#{type}_suggestion_filter_#{field}") || fallback
+    import_item_class.send method, name, import_manager
   end
 end
