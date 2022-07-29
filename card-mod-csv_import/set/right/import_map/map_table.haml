@@ -66,8 +66,9 @@
 
               ._saved-mapping
                 - if cardname
-                  - if cardname == "AutoAdd"
-                    %em (Adding)
+                  - if cardname.match? /^AutoAdd/
+                    %em
+                      = cardname
                   - else
                     = nest cardname, view: item_view
                 - elsif suggestions_on
