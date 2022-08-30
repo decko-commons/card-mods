@@ -1,0 +1,25 @@
+---
+- :name: Flag Type
+  :codename: :flag_type
+  :type: :cardtype
+- :name: Flag
+  :codename: :flag
+  :type: :cardtype
+
+- :name: Wrong Year
+  :type: :flag_type
+  :fields:
+    :description: Answer is not associated with the year described by the source.
+- :name: Wrong Company
+  :type: :flag_type
+  :fields:
+    :description: Answer is not associated with the company described by the source.
+- :name: Wrong Value
+  :type: :flag_type
+  :fields:
+    :description: Answer's value is incorrect and/or not supported by source
+- :name: Other Problem
+  :codename: :other_flag
+  :type: :flag_type
+  :fields:
+    :description: Answer has a nonstandard issue.
