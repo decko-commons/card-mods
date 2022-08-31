@@ -1,8 +1,7 @@
-assign_type :pointer
-
 format :html do
+  # LOCALIZE
   before :title do
-    voo.title ||= "Flag Type"
+    voo.title = "Flag Type"
   end
 
   def input_type
