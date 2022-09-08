@@ -1,3 +1,9 @@
+<!--
+# @title README - mod: CSV imports
+-->
+
+# imports mod
+
 The `csv_import` mod provides a way to import data from csv files.
 You can use it to either build a web interface or to write scripts/use the console to
 import data.
