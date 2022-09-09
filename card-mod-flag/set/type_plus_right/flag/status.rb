@@ -1,4 +1,4 @@
-include_set Abstract::IdPointer
+include_set Abstract::FlagField
 
 # LOCALIZE
 def option_names

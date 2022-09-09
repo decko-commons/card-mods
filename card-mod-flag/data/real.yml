@@ -10,7 +10,18 @@
   :codename: :other_flag
   :type: :flag_type
 
+# TODO: make sure eating tests pristineness
+- :name:
+  - :flag
+  - :type
+  - :autoname
+  :content: Flag 0000001
+
 - :name:
   - :flag
   - :status
   - :type_plus_right
+  :fields:
+    :read: Anyone
+    :update: Anyone Signed In
+    :delete: Anyone Signed In

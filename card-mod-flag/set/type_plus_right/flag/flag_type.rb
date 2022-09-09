@@ -1,3 +1,5 @@
+include_set Abstract::IdPointer
+
 format :html do
   # LOCALIZE
   before :title do
