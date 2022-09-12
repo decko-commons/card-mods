@@ -4,13 +4,17 @@ def flag_card
   left
 end
 
-event :update_flaggable_lookup_field, :finalize, changed: :content do
+event :update_flaggable_lookup_field, :finalize, changed: :content, when: :lookup? do
   lookup_field_update do
     lookup.refresh(*Array.wrap(lookup_columns))
   end
 end
 
 private
+
+def lookup?
+  flag_card.respond_to? :lookup
+end
 
 def lookup_field_update
   yield unless lookup_card.action.in? %i[create delete]
