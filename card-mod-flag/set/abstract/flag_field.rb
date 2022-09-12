@@ -13,7 +13,7 @@ end
 private
 
 def lookup?
-  flag_card.respond_to? :lookup
+  lookup_card.respond_to? :lookup
 end
 
 def lookup_field_update
