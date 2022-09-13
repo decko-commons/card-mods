@@ -21,7 +21,7 @@ end
 
 # the following only matter if the flagged content uses lookups
 def lookup_card
-  fetch(:subject)&.first_card
+  subject_card&.first_card
 end
 
 def lookup
