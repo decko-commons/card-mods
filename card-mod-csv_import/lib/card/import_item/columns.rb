@@ -55,7 +55,7 @@ class Card
       end
 
       def suggest column
-        column_hash[column][:suggest]
+        column_hash.dig column, :suggest
       end
 
       def suggestion_mark column
