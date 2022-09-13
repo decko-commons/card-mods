@@ -1,5 +1,6 @@
 module Cardio
   class Mod
+    # method(s) for easy flag adding in specs
     module FlagSpecHelper
       def flag_subject subject, fields={}
         fields.reverse_merge! subject: subject,
