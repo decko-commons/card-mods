@@ -17,6 +17,18 @@ format :html do
   def edit_fields
     card.new? ? REQUIRED_FIELDS : FIELDS
   end
+
+  # redirect to subject card after creation. hacky :(
+  def card_form action, opts={}
+    opts[:success] = { mark: card.subject_card.first_name } if action == :create
+    super
+  end
+
+  view(:bar_left) { card.flag_type_card.first_name }
+  view(:bar_right) { card.status }
+  view :bar_bottom do
+    field_nest :discussion, view: :titled, show: :comment_box
+  end
 end
 
 # the following only matter if the flagged content uses lookups
