@@ -95,7 +95,7 @@ format :csv do
   end
 
   view :core do
-    csv_lines_for(params[:status]&.to_sym).join
+    csv_lines_for(params[:status]&.to_sym)
   end
 
   def csv_lines_for status
