@@ -18,10 +18,8 @@ format :html do
     card.new? ? REQUIRED_FIELDS : FIELDS
   end
 
-  # redirect to subject card after creation. hacky :(
-  def card_form action, opts={}
-    opts[:success] = { mark: card.subject_card.first_name } if action == :create
-    super
+  def new_form_opts
+    super.merge "data-slotter-mode": "update-origin", class: "_close-modal"
   end
 
   view(:bar_left) { card.flag_type_card.first_name }
