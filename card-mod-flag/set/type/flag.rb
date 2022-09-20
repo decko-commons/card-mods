@@ -17,11 +17,38 @@ format :html do
   def edit_fields
     card.new? ? REQUIRED_FIELDS : FIELDS
   end
+
+  def new_form_opts
+    super.merge "data-slotter-mode": "update-origin", class: "_close-modal"
+  end
+
+  mini_bar_cols 6, 6
+
+  view :bar_left, template: :haml
+  view(:bar_middle, wrap: :em) { card.status }
+  view(:bar_right) { render_credit }
+  view :bar_bottom do
+    field_nest :discussion, view: :titled, show: :comment_box
+  end
+
+  view :credit do
+    wrap_with :div, class: "credit text-muted text-end" do
+      ["Flagged", create_date, create_by_whom].join " "
+    end
+  end
+
+  def create_date
+  "#{render :updated_at} ago"
+  end
+
+  def create_by_whom
+    "by #{link_to_card card.creator}"
+  end
 end
 
 # the following only matter if the flagged content uses lookups
 def lookup_card
-  fetch(:subject)&.first_card
+  subject_card&.first_card
 end
 
 def lookup
