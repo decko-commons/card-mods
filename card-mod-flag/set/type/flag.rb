@@ -22,10 +22,27 @@ format :html do
     super.merge "data-slotter-mode": "update-origin", class: "_close-modal"
   end
 
-  view(:bar_left) { card.flag_type_card.first_name }
-  view(:bar_right) { card.status }
+  mini_bar_cols 6, 6
+
+  view :bar_left, template: :haml
+  view(:bar_middle, wrap: :em) { card.status }
+  view(:bar_right) { render_credit }
   view :bar_bottom do
     field_nest :discussion, view: :titled, show: :comment_box
+  end
+
+  view :credit do
+    wrap_with :div, class: "credit text-muted text-end" do
+      ["Flagged", create_date, create_by_whom].join " "
+    end
+  end
+
+  def create_date
+  "#{render :updated_at} ago"
+  end
+
+  def create_by_whom
+    "by #{link_to_card card.creator}"
   end
 end
 
