@@ -38,7 +38,7 @@ format :html do
   end
 
   def create_date
-  "#{render :updated_at} ago"
+    "#{render :updated_at} ago"
   end
 
   def create_by_whom
