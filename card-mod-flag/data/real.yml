@@ -25,3 +25,13 @@
     :read: Anyone
     :update: Anyone Signed In
     :delete: Anyone Signed In
+
+- :name:
+    - :flag
+    - :subject
+    - :type_plus_right
+  :fields:
+    :create: Anyone Signed In
+    :read: Anyone
+    :update: Anyone Signed In
+    :delete: Anyone Signed In
