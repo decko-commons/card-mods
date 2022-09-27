@@ -1,4 +1,3 @@
-include_set Abstract::IdPointer
 include_set Abstract::FlagField
 
 format :html do
