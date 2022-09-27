@@ -11,6 +11,7 @@ REQUIRED_FIELDS.each { |fld| require_field fld }
 format :html do
   # LOCALIZE
   before :new do
+    voo.button_view = :new_in_modal_buttons
     voo.title = "Flag a problem"
   end
 
