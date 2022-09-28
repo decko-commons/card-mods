@@ -10,10 +10,8 @@ REQUIRED_FIELDS.each { |fld| require_field fld }
 
 format :html do
   # LOCALIZE
-  before :new do
-    voo.button_view = :new_in_modal_buttons
-    voo.title = "Flag a problem"
-  end
+  before(:new) { voo.title = "Flag a problem" }
+  before(:new_fields) { voo.buttons_view = :new_in_modal_buttons }
 
   def edit_fields
     card.new? ? REQUIRED_FIELDS : FIELDS
