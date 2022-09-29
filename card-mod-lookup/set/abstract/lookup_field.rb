@@ -10,6 +10,10 @@ def lookup_columns
   Codename[right_id]
 end
 
+event :remove_lookup_content, :validate, on: :delete do
+  self.content = ""
+end
+
 event :update_lookup_field, :finalize, changed: :content do
   lookup_field_update do
     lookup.refresh(*Array.wrap(lookup_columns))
