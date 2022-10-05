@@ -16,6 +16,7 @@
   - :type
   - :autoname
   :content: Flag 0000001
+  :conflict: defer
 
 - :name:
   - :flag
