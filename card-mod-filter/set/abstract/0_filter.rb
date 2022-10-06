@@ -36,7 +36,7 @@ format do
   end
 
   def filter_hash
-    @filter_hash ||= filter_hash_from_params || default_filter_hash
+    @filter_hash ||= filter_hash_from_params || voo.filter || default_filter_hash
   end
 
   def filter_hash_from_params

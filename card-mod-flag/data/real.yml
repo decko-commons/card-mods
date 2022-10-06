@@ -16,12 +16,23 @@
   - :type
   - :autoname
   :content: Flag 0000001
+  :conflict: defer
 
 - :name:
   - :flag
   - :status
   - :type_plus_right
   :fields:
+    :read: Anyone
+    :update: Anyone Signed In
+    :delete: Anyone Signed In
+
+- :name:
+    - :flag
+    - :subject
+    - :type_plus_right
+  :fields:
+    :create: Anyone Signed In
     :read: Anyone
     :update: Anyone Signed In
     :delete: Anyone Signed In
