@@ -1,13 +1,13 @@
 ---
 - :name: Flag Type
-  :codename: :flag_type
+  :codename: flag_type
   :type: :cardtype
 - :name: Flag
-  :codename: :flag
+  :codename: flag
   :type: :cardtype
 
 - :name: Other Problem
-  :codename: :other_flag
+  :codename: other_flag
   :type: :flag_type
 
 # TODO: make sure eating tests pristineness
