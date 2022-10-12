@@ -12,7 +12,7 @@ global_job_config:
       value: "true"
   secrets:
     - name: s3-credentials
-    - name: code-climate
+    - name: code-climate-mods
   prologue:
     commands:
       - checkout # semaphore does git checkout and cds into card-mods
