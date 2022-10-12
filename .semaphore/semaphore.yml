@@ -1,5 +1,5 @@
 version: v1.0
-name: Decko Standard
+name: Decko Card Mods
 agent:
   machine:
     type: e1-standard-2
@@ -8,9 +8,11 @@ global_job_config:
   env_vars:
     - name: BUNDLE_PATH
       value: "~/bundle/"
+    - name: TMPSETS
+      value: "true"
   secrets:
     - name: s3-credentials
-    - name: code-climate
+    - name: code-climate-mods
   prologue:
     commands:
       - checkout # semaphore does git checkout and cds into card-mods
@@ -29,26 +31,44 @@ global_job_config:
       - be decko new monkey --monkey
       - cp .semaphore/Gemfile monkey
       - cp .semaphore/.rspec monkey
+      - cp .semaphore/.simplecov monkey
+
       - cd monkey
       - bundle lock # new Gemfile.lock in deck (gems are already installed above)
       - be decko setup
       - be decko update
       - be rake card:eat -- -t all
 
+      # INSTALL CODE CLIMATE REPORTER
+      - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      - chmod +x ./cc-test-reporter
+
+      # TWEAK ENVIRONMENTAL VARIABLES
+      # ...that are too complex for the env_vars config.
+
+      # without the following, code climate uses git to get git details.
+      # Semaphore uses the merge sha for PRS, so this leads to coverage report failures.
+      - if [ $SEMAPHORE_GIT_PR_SHA ]; then export GIT_COMMIT_SHA=$SEMAPHORE_GIT_PR_SHA; fi;
+      - export S3_PATH="s3://deckodev-test/$SEMAPHORE_PROJECT_NAME/$SEMAPHORE_GIT_BRANCH/coverage/$SEMAPHORE_WORKFLOW_ID/"
+
 blocks:
   - name: Unit Tests
     task:
       env_vars:
-        - name: COVERAGE
-          value: 'false'
         - name: RAILS_ENV
           value: test
-
+      prologue:
+        commands:
+          - ./cc-test-reporter before-build
       jobs:
         - name: RSpec
           commands:
             - be decko rspec -s
       epilogue:
+        on_pass:
+          commands:
+            - ./cc-test-reporter format-coverage --output "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" -t simplecov
+            - aws s3 cp "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" $S3_PATH
         always:
           commands:
             - test-results publish junit.xml
@@ -79,6 +99,19 @@ blocks:
         always:
           commands:
             - test-results publish /home/semaphore/reports/*.xml
+            - ./cc-test-reporter format-coverage --output "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" -t simplecov
+            - aws s3 cp "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" $S3_PATH
+
+  # NOTE: the code climate reporting cannot be handled in after_pipeline, because
+  # after_pipeline does not make secrets available - efm 2022-10-12
+  - name: Coverage Report
+    task:
+      jobs:
+        - name: CodeClimate Coverage
+          commands:
+            - aws s3 sync $S3_PATH coverage/
+            - ./cc-test-reporter sum-coverage --output - --parts $(ls -1 coverage/ | wc -l) coverage/codeclimate.*.json > coverage/codeclimate.json
+            - ./cc-test-reporter upload-coverage
 
 after_pipeline:
   task:
