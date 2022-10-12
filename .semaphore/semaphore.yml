@@ -31,6 +31,8 @@ global_job_config:
       - be decko new monkey --monkey
       - cp .semaphore/Gemfile monkey
       - cp .semaphore/.rspec monkey
+      - cp .semaphore/.simplecov monkey
+
       - cd monkey
       - bundle lock # new Gemfile.lock in deck (gems are already installed above)
       - be decko setup
@@ -63,7 +65,7 @@ blocks:
       jobs:
         - name: RSpec
           commands:
-            - be decko rspec -s -- --format RspecJunitFormatter --out junit.xml --format documentation
+            - be decko rspec -s
       epilogue:
         on_pass:
           commands:
