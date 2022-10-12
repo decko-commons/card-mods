@@ -3,7 +3,7 @@ if ENV["TMPSETS"] && ENV["COVERAGE"] != "false"
     add_filter "tmp/set/core"
     add_filter "tmp/set/gem-defaults"
     add_filter "tmp/set_pattern"
-    add_filter "vendor"
+    add_filter ".semaphore"
 
     def add_mod_groups dir_pattern
       Dir[dir_pattern].each do |path|
