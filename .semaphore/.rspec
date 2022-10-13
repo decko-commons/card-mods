@@ -2,7 +2,7 @@
 --profile
 --backtrace
 
---default-path /home/semaphore/card-mods
+--default-path <%= ENV["CARD_MODS_REPO_PATH"] %>
 
 --require "./spec/spec_helper"
 --pattern "card-mod-*/spec/**/*_spec.rb"
