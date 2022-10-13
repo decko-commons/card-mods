@@ -8,8 +8,8 @@ global_job_config:
   env_vars:
     - name: BUNDLE_PATH
       value: "~/bundle/"
-    - name: TMPSETS
-      value: "true"
+    - name: CARD_LOAD_STRATEGY
+      value: tmp_files
   secrets:
     - name: s3-credentials
     - name: code-climate-mods
