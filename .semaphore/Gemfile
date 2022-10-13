@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
-CARD_MODS_REPO_DIR = "#{Dir.home}/card-mods".freeze
-DECKO_REPO_DIR = "#{CARD_MODS_REPO_DIR}/.semaphore/decko".freeze
+CARD_MODS_DIR = ENV["CARD_MODS_REPO_PATH"].freeze
+DECKO_DIR = "#{CARD_MODS_DIR}/.semaphore/decko".freeze
 
 def card_mods_in dir, glob
   Dir.chdir dir do
@@ -12,7 +12,7 @@ def card_mods_in dir, glob
   end
 end
 
-path DECKO_REPO_DIR do
+path DECKO_DIR do
   gem "decko"
   gem "card", require: false
   gem "cardname"
@@ -21,15 +21,15 @@ end
 gem "mysql2", '~> 0.5'
 gem "thin"
 
-path "#{DECKO_REPO_DIR}/mod" do
-  card_mods_in "#{DECKO_REPO_DIR}/mod", "*"
+path "#{DECKO_DIR}/mod" do
+  card_mods_in "#{DECKO_DIR}/mod", "*"
 end
 
-path "#{DECKO_REPO_DIR}/support" do
+path "#{DECKO_DIR}/support" do
   gem "decko-rspec", group: :test
   gem "decko-cypress", group: :cypress
 end
 
-path CARD_MODS_REPO_DIR do
-  card_mods_in CARD_MODS_REPO_DIR, "card-mod-*"
+path CARD_MODS_DIR do
+  card_mods_in CARD_MODS_DIR, "card-mod-*"
 end
