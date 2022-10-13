@@ -6,6 +6,8 @@ agent:
     os_image: ubuntu1804
 global_job_config:
   env_vars:
+    - name: CARD_MODS_REPO_PATH
+      value: "/home/semaphore/card-mods"
     - name: BUNDLE_PATH
       value: "~/bundle/"
     - name: CARD_LOAD_STRATEGY
