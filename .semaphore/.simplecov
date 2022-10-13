@@ -5,14 +5,11 @@ if ENV["TMPSETS"] && ENV["COVERAGE"] != "false"
     add_filter "tmp/set_pattern"
     add_filter ".semaphore"
 
-    def add_mod_groups dir_pattern
-      Dir[dir_pattern].each do |path|
-        modname = File.basename path
-        add_group "Mod: #{modname}", %r{(mod/|mod\d{3}-)#{modname}}
-      end
+    Dir["#{ENV['CARD_MODS_REPO_PATH']}/card-mod-*"].each do |path|
+      modname = File.basename(path).sub /^card-mod-/, ""
+      add_group "Mod: #{modname}", %r{(mod/|mod\d{3}-)#{modname}}
     end
 
-    add_mod_groups "mod/*"
     add_filter "/spec/"
     add_filter "/features/"
     add_filter "/config/"
