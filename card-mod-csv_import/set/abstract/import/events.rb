@@ -1,6 +1,7 @@
 # CREATE EVENTS
 
-event :validate_import_format_on_create, :validate, on: :create, when: :save_preliminary_upload? do
+event :validate_import_format_on_create, :validate,
+      on: :create, when: :save_preliminary_upload? do
   validate_file_card upload_cache_card
 end
 
@@ -22,7 +23,7 @@ event :disallow_content_update, :validate, on: :update, changed: :content do
 end
 
 event :mark_items_as_importing, :validate, on: :update, when: :data_import? do
-  item_indeces_from_params.each do |index|
+  item_indices_from_params.each do |index|
     status.update_item index, status: :importing
   end
   import_status_card.save_status
@@ -34,16 +35,16 @@ end
 #   3. use trigger api!
 event :import_items, :integrate_with_delay, on: :update, when: :data_import? do
   Director.clear if Cardio.delaying?
-  # Rails.logger.info "#{item_indeces_from_params}\n\n#{Env.params}\n\n"
-  import! item_indeces_from_params
+  # Rails.logger.info "#{item_indices_from_params}\n\n#{Env.params}\n\n"
+  import! item_indices_from_params
 end
 
 def import_single_item?
-  item_indeces_from_params&.size == 1
+  item_indices_from_params&.size == 1
 end
 
-def import! item_indeces
-  import_manager.each_item item_indeces do |index, import_item|
+def import! item_indices
+  import_manager.each_item item_indices do |index, import_item|
     # Rails.logger.info "IMPORTING ITEM: #{import_item.input}".red
     import_status_card.update_item_and_save index, import_item.import
   end
@@ -57,8 +58,8 @@ def silent_change?
   data_import? || super
 end
 
-def item_indeces_from_params
-  @item_indeces_from_params ||=
+def item_indices_from_params
+  @item_indices_from_params ||=
     Env.hash(Env.params[:import_rows]).select do |_k, v|
       [true, "true"].include?(v)
     end.keys.map(&:to_i)
