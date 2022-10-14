@@ -45,8 +45,8 @@ def save_status status=nil
   update content: (status || self.status).to_json
 end
 
-def update_items indeces=nil
-  import_manager.each_item(indeces) do |index, import_item|
+def update_items indices=nil
+  import_manager.each_item(indices) do |index, import_item|
     status.update_item index, import_item.validate!
   end
   save_status
@@ -58,9 +58,9 @@ def update_item_and_save index, item
 end
 
 def update_items_with_status status_option
-  update_items status.status_indeces(status_option)
+  update_items status.status_indices(status_option)
 end
 
 def each_item_with_status status_option, &block
-  import_manager.each_item status.status_indeces(status_option), &block
+  import_manager.each_item status.status_indices(status_option), &block
 end

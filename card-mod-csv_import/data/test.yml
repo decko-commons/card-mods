@@ -1,0 +1,9 @@
+- name: TestImport
+  type: :cardtype
+  codename: test_import
+
+- name: FirstTestImport
+  codename: :first_test_import
+  type: :test_import
+  :storage_type: :coded
+  :test_import: test_import.csv

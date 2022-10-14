@@ -66,7 +66,7 @@ class Card
         self[:counts] = counts
       end
 
-      def status_indeces status
+      def status_indices status
         items.map.with_index do |item, index|
           index if item.first == status
         end.compact
