@@ -2,6 +2,9 @@ RSpec.describe Card::Set::Abstract::Import::Events do
   let(:new_file_card_name) { "live import" }
   let(:old_file_card) { "first test import".card }
 
+
+  # TODO: stop comparing to old_file_card; specify the answer here
+
   describe "event: generate_import_map" do
     it "uses automapping to generate an initial map" do
       create_import_file
@@ -12,13 +15,11 @@ RSpec.describe Card::Set::Abstract::Import::Events do
   end
 
   describe "event: generate_import_status" do
-    # TODO: reenable after answer eating works
-    # (test assumes original content was created when answers already existed)
     it "uses validation to generate an initial status" do
       create_import_file
       is = Card[new_file_card_name].import_status_card
       expect(is.id).to be_positive
-      #expect(is.content).to eq(old_file_card.import_status_card.content)
+      expect(is.content).to eq(old_file_card.import_status_card.content)
     end
   end
 

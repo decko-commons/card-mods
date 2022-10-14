@@ -1,4 +1,5 @@
-class ::Card
+class Card
+  # ImportItem instance used only for testing
   class TestImportItem < ImportItem
     @columns = { nickname: {},
                  house: { map: true },
@@ -17,8 +18,7 @@ class ::Card
         fields: {
           home: i[:house],
           credit: { type: :toggle, content: !i[:cash] }
-        }
-      }
+        } }
     end
   end
 end
