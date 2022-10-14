@@ -1,5 +1,13 @@
 RSpec.describe Card::Set::Abstract::Import do
-  let(:card) { Card["A"].with_set(described_class) }
+  let(:card) { "FirstTestImport".card }
+
+  def with_import_rows hash, &block
+    Card::Env.with_params import_rows: hash, &block
+  end
+
+  specify "set loading works" do
+    expect(card).to be_a(described_class)
+  end
 
   describe "#data_import?" do
     subject { card.data_import? }
@@ -9,13 +17,11 @@ RSpec.describe Card::Set::Abstract::Import do
     end
 
     example "an empty hash given" do
-      Card::Env.params[:import_rows] = {}
-      is_expected.to be_falsey
+      with_import_rows({}) { is_expected.to be_falsey }
     end
 
     example "an import value" do
-      Card::Env.params[:import_rows] = { 1 => true }
-      is_expected.to be_truthy
+      with_import_rows(1 => true) { is_expected.to be_truthy }
     end
   end
 end

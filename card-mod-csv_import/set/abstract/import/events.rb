@@ -28,18 +28,10 @@ event :mark_items_as_importing, :validate, on: :update, when: :data_import? do
   import_status_card.save_status
 end
 
-# event :initiate_import, :integrate, on: :update, when: :data_import? do
-#   return unless (indeces = item_indeces_from_params)&.size > 1
-#   indeces.each do |index|
-#     Env.with_params(import_rows: { index => true }) do
-#       import_item_with_delay
-#     end
-#   end
-# end
-
 # TODO:
 #   1. attach each import to the original act
 #   2. come up with a workable solution for when not delaying
+#   3. use trigger api!
 event :import_items, :integrate_with_delay, on: :update, when: :data_import? do
   Director.clear if Cardio.delaying?
   # Rails.logger.info "#{item_indeces_from_params}\n\n#{Env.params}\n\n"
