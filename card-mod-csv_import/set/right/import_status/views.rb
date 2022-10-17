@@ -1,4 +1,5 @@
 include_set Abstract::Export
+include_set Abstract::ProgressBar
 
 format :html do
   delegate :status, :csv_file, :import_item_class, :mapping, to: :card
