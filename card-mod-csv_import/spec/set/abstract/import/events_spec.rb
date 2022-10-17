@@ -2,7 +2,6 @@ RSpec.describe Card::Set::Abstract::Import::Events do
   let(:new_file_card_name) { "live import" }
   let(:old_file_card) { "first test import".card }
 
-
   # TODO: stop comparing to old_file_card; specify the answer here
 
   describe "event: generate_import_map" do

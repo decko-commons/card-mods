@@ -39,7 +39,7 @@ class Card
     end
 
     def invalid_mapping error=nil
-      message = "invalid #{type} mapping: #{cardname}"
+      message = "invalid #{type.cardname} mapping: #{cardname}"
       message += " (#{error})" if error
       map_card.errors.add :content, message
       nil

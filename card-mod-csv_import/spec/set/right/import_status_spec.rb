@@ -1,19 +1,17 @@
-# TODO: abstract and move to card-mod-csv_import
-
 RSpec.describe Card::Set::Right::ImportStatus do
   let :status_counts do
     {
-      not_ready: 12,
+      not_ready: 1,
       ready: 1,
-      failed: 2,
+      failed: 0,
       importing: 0,
       success: 0, # overridden + imported
-      total: 15
+      total: 2
     }
   end
 
   def card_subject
-    Card["answer_import_test"].import_status_card
+    "first test import".card.import_status_card
   end
 
   check_html_views_for_errors

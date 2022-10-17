@@ -2,11 +2,11 @@ class Card
   # ImportItem instance used only for testing
   class TestImportItem < ImportItem
     @columns = { nickname: {},
-                 house: { map: true },
+                 basic: { map: true, auto_add: true },
                  cash: {} }
 
-    def validate_house _value
-      true
+    def self.basic_suggestion_filter name, _import_manager
+      { basically: name }
     end
 
     # what to do with the value of a row in the csv file
@@ -16,7 +16,7 @@ class Card
       i = input.clone
       { name: i[:nickname],
         fields: {
-          home: i[:house],
+          home: i[:basic],
           credit: { type: :toggle, content: !i[:cash] }
         } }
     end

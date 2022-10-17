@@ -109,7 +109,7 @@ def mapping_param
 end
 
 def mapping?
-  mapping_param
+  mapping_param.present?
 end
 
 def each_map_item
