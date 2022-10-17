@@ -10,16 +10,24 @@ class Card
         end
       end
 
+      private
+
       def default_mapping field, value
         value.card_id unless validate_field field, value
       end
 
       def merge_mapping
-        return unless mapping
+        return unless (m = mapping)
+
         mapped_column_keys.each do |column|
-          next unless (map = mapping[map_type(column)])
-          error "unmapped #{column}" unless mapped_value? column, map
+          error "unmapped #{column}" if unmapped? column, m
         end
+      end
+
+      def unmapped? column, mapping
+        return false unless (map = mapping[map_type(column)])
+
+        !mapped_value? column, map
       end
 
       def mapped_value? column, map
@@ -42,13 +50,13 @@ class Card
         end
       end
 
+      def stringify value
+        value.is_a?(Integer) ? "~#{value}" : value
+      end
+
       def unmapped_value column
         return nil unless column.in? required
         throw :unmapped_value, false
-      end
-
-      def stringify value
-        value.is_a?(Integer) ? "~#{value}" : value
       end
     end
   end

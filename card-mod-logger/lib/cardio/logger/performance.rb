@@ -106,7 +106,6 @@ module Cardio
           print_log
         end
 
-
         def with_timer method, args, &block
           if args[:context]
             update_context args[:context]
@@ -178,14 +177,8 @@ module Cardio
           level = @@current_level
 
           last_entry = @@active_entries.last
-          parent =
-            if last_entry
-              last_entry.level == level ? last_entry.parent : last_entry
-            end
-
-          if args[:category]
-            @@category_log.start args[:category]
-          end
+          parent = parent_entry last_entry, level
+          @@category_log.start args[:category] if args[:category]
 
           @@log << Entry.new(parent, level, args)
           @@current_level += 1
@@ -234,34 +227,11 @@ module Cardio
           end
         end
 
-        def hashify_and_verify_keys args, default_key = nil
+        def hashify_and_verify_keys args, default_key = nil, &block
           if default_key
-            case args
-            when Symbol
-              { default_key => [args] }
-            when Array
-              { default_key => args }
-            when Hash
-              if block_given?
-                args.keys.select {|key| !(yield(key))}.each do |key|
-                  args[default_key] = { key => args[key] }
-                  args.delete key
-                end
-              end
-              args
-            end
+            hash_and_verify_with_default_key args, default_key, &block
           else
-            case args
-            when Symbol
-              { args => {} }
-            when Array
-              args.inject({}) do |h, key|
-                h[key] = {}
-                h
-              end
-            else
-              args
-            end
+            hash_and_verify_without_default_key args
           end
         end
 
@@ -270,14 +240,58 @@ module Cardio
           args[:max_depth] &&= args[:max_depth].to_i
           args[:min_time] &&= args[:min_time].to_i
           args[:output] &&= args[:output].to_sym
-          if args[:methods]
-            if args[:methods].kind_of?(String) && args[:methods].match(/^\[.+\]$/)
-              args[:methods] = JSON.parse(args[:methods]).map(&:to_sym)
-            elsif args[:methods].kind_of?(Array)
-              args[:methods].map!(&:to_sym)
-            end
-          end
+          standardize_methods_arg args
           args
+        end
+
+        private
+
+        def parent_entry last_entry, level
+          return unless last_entry
+
+          last_entry.level == level ? last_entry.parent : last_entry
+        end
+
+        def standardize_methods_arg args
+          case args[:methods]
+          when String
+            return unless args[:methods].match?(/^\[.+\]$/)
+            args[:methods] = JSON.parse(args[:methods]).map(&:to_sym)
+          when Array
+            args[:methods].map!(&:to_sym)
+          end
+        end
+
+        def hash_and_verify_with_default_key args, default_key, &block
+          case args
+          when Symbol
+            { default_key => [args] }
+          when Array
+            { default_key => args }
+          when Hash
+            block_given? ? hash_and_verify_with_block(args, default_key, &block) : args
+          end
+        end
+
+        def hash_and_verify_with_block args, default_key
+          args.keys.select {|key| !(yield(key))}.each do |key|
+            args[default_key] = { key => args[key] }
+            args.delete key
+          end
+        end
+
+        def hash_and_verify_without_default_key args
+          case args
+          when Symbol
+            { args => {} }
+          when Array
+            args.inject({}) do |h, key|
+              h[key] = {}
+              h
+            end
+          else
+            args
+          end
         end
       end
     end
