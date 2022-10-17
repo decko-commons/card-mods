@@ -96,13 +96,17 @@ blocks:
           commands:
             # --key should not be necessary. secrets not working
             - yarn run cypress run --record --key 8854bd4e-ad0c-4f67-82dd-d90cbc43b96f
+            - pkill -2 -f puma
 
       epilogue:
+        on_pass:
+          commands:
+            - ./cc-test-reporter format-coverage --output "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" -t simplecov
+            - aws s3 cp "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" $S3_PATH
+
         always:
           commands:
             - test-results publish /home/semaphore/reports/*.xml
-            - ./cc-test-reporter format-coverage --output "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" -t simplecov
-            - aws s3 cp "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" $S3_PATH
             - aws s3 sync $S3_PATH coverage/
             - ./cc-test-reporter sum-coverage --output - --parts $(ls -1 coverage/ | wc -l) coverage/codeclimate.*.json > coverage/codeclimate.json
             - ./cc-test-reporter upload-coverage

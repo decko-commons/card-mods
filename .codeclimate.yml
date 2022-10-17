@@ -29,3 +29,4 @@ exclude_paths:
 - "card-mod-*/{lib,assets}/{style,stylesheets}/*.css"
 - "card-mod-*/{lib,assets}/{script,javascript}/*.js"
 - "card-mod-*/{data,public,vendor}/**/*"
+- "card-mod-legacy"
