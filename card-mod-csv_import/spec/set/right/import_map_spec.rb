@@ -83,24 +83,22 @@ RSpec.describe Card::Set::Right::ImportMap do
     end
 
     it "auto adds", as_bot: true do
-      card = update_with_mapping_param basic: { "castle" => "AutoAdd" }
-      expect(card.import_status_card.status.item_hash(0)[:status]).to eq(:ready)
-      expect("castle".card).to be_real
+      update_with_mapping_param basic: { "castle" => "AutoAdd" } do |card|
+        expect(status_for_item(card, 0)).to eq(:ready)
+      end
     end
   end
 
   describe "event: update_import_status" do
     it "moves newly valid items to 'ready'" do
       update_with_mapping_param basic: { "castle" => "B" } do |card|
-        status_card = card.left.import_status_card
-        expect(status_card.status.item_hash(1)[:status]).to eq(:ready)
+        expect(status_for_item(card, 1)).to eq(:ready)
       end
     end
 
     it "keeps badly mapped items in 'not ready'" do
       update_with_mapping_param(basic: { "castle" => "not a card" }) do |card|
-        status_card = card.left.import_status_card
-        expect(status_card.status.item_hash(4)[:status]).to eq(:not_ready)
+        expect(status_for_item(card, 4)).to eq(:ready)
       end
     end
   end
@@ -125,7 +123,7 @@ RSpec.describe Card::Set::Right::ImportMap do
       csv = <<-CSV.strip_heredoc
         Name in File,Name in My Deck,My Deck ID
         castle,,
-        A,A,#{"A".card_id}
+        A,A,#{'A'.card_id}
       CSV
       expect(card_subject.format(:csv).render_export).to eq(csv)
     end
@@ -138,6 +136,10 @@ RSpec.describe Card::Set::Right::ImportMap do
       end
     end
   end
+end
+
+def status_for_item map_card, index
+  map_card.left.import_status_card.status.item_hash(index)[:status]
 end
 
 def with_mapping_param value
