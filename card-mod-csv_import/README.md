@@ -27,8 +27,6 @@ Platypus, 4, no
 The ImportItem class for that could look like this:
 
 ```ruby
-
-
 class Card
    class AnimalImportItem < ImportItem
      @columns = %i[animal legs dangerous]
@@ -51,7 +49,7 @@ class Card
         { name: i[:animal],
           fields: {
             legs: i[:legs],
-            petting: { type: :toggle, content: !i[:dangerous] }
+            dangerous: { type: :toggle, content: !i[:dangerous] }
           }
         }
      end
