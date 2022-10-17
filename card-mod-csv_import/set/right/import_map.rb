@@ -40,7 +40,7 @@ event :update_import_status, :integrate_with_delay,
   @already_mapping = true
   auto_add_items
   status_card = import_status_card
-  not_ready_items = status_card.status.status_indeces :not_ready
+  not_ready_items = status_card.status.status_indices :not_ready
   import_manager.each_item not_ready_items do |index, item|
     status_card.update_item_and_save index, item.validate!
   end
@@ -109,7 +109,7 @@ def mapping_param
 end
 
 def mapping?
-  mapping_param
+  mapping_param.present?
 end
 
 def each_map_item

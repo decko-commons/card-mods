@@ -19,9 +19,9 @@ class Card
     end
 
     # yields the rows of the csv file as simple hashes
-    def each_input indeces=nil, &block
-      if indeces
-        selected_rows indeces, &block
+    def each_input indices=nil, &block
+      if indices
+        selected_rows indices, &block
       else
         all_rows &block
       end
