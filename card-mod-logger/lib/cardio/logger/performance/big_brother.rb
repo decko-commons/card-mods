@@ -4,13 +4,18 @@ module Cardio
       module BigBrother
         def watch_method method_name, method_type=:all, options={}
           Performance.enable_method method_name
-          if !SPECIAL_METHODS.include? method_name
-            if method_type == :all || method_type == :singleton
-              add_singleton_logging method_name, options
-            end
-            if method_type == :all || method_type == :instance
-              add_instance_logging method_name, options
-            end
+          return if SPECIAL_METHODS.include? method_name
+
+          logging_types(method_type).each do |logging_type|
+            send "add_#{logging_type}_logging", method_name, options
+          end
+        end
+
+        def logging_types method_type
+          if method_type == :all
+            %i[singleton instance]
+          else
+            [method_type]
           end
         end
 
