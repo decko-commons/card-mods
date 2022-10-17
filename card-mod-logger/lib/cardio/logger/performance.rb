@@ -1,6 +1,8 @@
 module Cardio
   class Logger
     class Performance
+      extend MethodPreparation
+
       DEFAULT_CLASS = Card
       DEFAULT_METHOD_TYPE = :all
       DEFAULT_LOG_LEVEL = :info
@@ -106,7 +108,6 @@ module Cardio
           print_log
         end
 
-
         def with_timer method, args, &block
           if args[:context]
             update_context args[:context]
@@ -172,20 +173,13 @@ module Cardio
           end
         end
 
-
         def new_entry args
           args.delete(:details) unless @details
           level = @@current_level
 
           last_entry = @@active_entries.last
-          parent =
-            if last_entry
-              last_entry.level == level ? last_entry.parent : last_entry
-            end
-
-          if args[:category]
-            @@category_log.start args[:category]
-          end
+          parent = parent_entry last_entry, level
+          @@category_log.start args[:category] if args[:category]
 
           @@log << Entry.new(parent, level, args)
           @@current_level += 1
@@ -212,72 +206,29 @@ module Cardio
           end
         end
 
-        def prepare_methods_for_logging args
-          classes = hashify_and_verify_keys(args, DEFAULT_CLASS) do |key|
-            key.kind_of?(Class) || key.kind_of?(Module)
-          end
-
-          classes.each do |klass, method_types|
-            klass.extend BigBrother # add watch methods
-
-            method_types = hashify_and_verify_keys(method_types, DEFAULT_METHOD_TYPE) do |key|
-              [:all, :instance, :singleton].include? key
-            end
-
-            method_types.each do |method_type, methods|
-              methods = hashify_and_verify_keys methods
-              methods.each do |method_name, options|
-                klass.watch_method method_name, method_type, DEFAULT_METHOD_OPTIONS.merge(options)
-              end
-            end
-
-          end
-        end
-
-        def hashify_and_verify_keys args, default_key = nil
-          if default_key
-            case args
-            when Symbol
-              { default_key => [args] }
-            when Array
-              { default_key => args }
-            when Hash
-              if block_given?
-                args.keys.select {|key| !(yield(key))}.each do |key|
-                  args[default_key] = { key => args[key] }
-                  args.delete key
-                end
-              end
-              args
-            end
-          else
-            case args
-            when Symbol
-              { args => {} }
-            when Array
-              args.inject({}) do |h, key|
-                h[key] = {}
-                h
-              end
-            else
-              args
-            end
-          end
-        end
-
         def params_to_config args
           args[:details] = args[:details] == 'true' ? true : false
           args[:max_depth] &&= args[:max_depth].to_i
           args[:min_time] &&= args[:min_time].to_i
           args[:output] &&= args[:output].to_sym
-          if args[:methods]
-            if args[:methods].kind_of?(String) && args[:methods].match(/^\[.+\]$/)
-              args[:methods] = JSON.parse(args[:methods]).map(&:to_sym)
-            elsif args[:methods].kind_of?(Array)
-              args[:methods].map!(&:to_sym)
-            end
-          end
+          standardize_methods_arg args
           args
+        end
+
+        def parent_entry last_entry, level
+          return unless last_entry
+
+          last_entry.level == level ? last_entry.parent : last_entry
+        end
+
+        def standardize_methods_arg args
+          case args[:methods]
+          when String
+            return unless args[:methods].match?(/^\[.+\]$/)
+            args[:methods] = JSON.parse(args[:methods]).map(&:to_sym)
+          when Array
+            args[:methods].map!(&:to_sym)
+          end
         end
       end
     end
