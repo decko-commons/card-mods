@@ -54,12 +54,6 @@ RSpec.describe Card::Set::Right::ImportMap do
       initial_content = card_subject.content
       expect(card_subject.auto_map!).to eq(initial_content)
     end
-
-    it "handles values with separators" do
-      card_subject.auto_map!
-      expect(card_subject.map[:source].keys)
-        .to include("https://thereaderwiki.com/en/Space_opera")
-    end
   end
 
   describe "event: update_import_mapping" do

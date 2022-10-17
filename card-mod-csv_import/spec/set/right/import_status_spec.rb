@@ -30,7 +30,7 @@ RSpec.describe Card::Set::Right::ImportStatus do
 
     it "contains an items for each import item" do
       expect(card_subject.status[:items])
-        .to include([:not_ready, nil, { errors: ["unmapped source"] }])
+        .to include([:not_ready, nil, { errors: ["unmapped basic"] }])
     end
 
     it "handles manually set statuses" do
@@ -64,7 +64,6 @@ RSpec.describe Card::Set::Right::ImportStatus do
         .to have_tag("div.progress") do
           progress_section self, "secondary", :not_ready, "Not Ready"
           progress_section self, "info", :ready, "Ready"
-          progress_section self, "danger", :failed, "Failure"
         end
     end
   end
