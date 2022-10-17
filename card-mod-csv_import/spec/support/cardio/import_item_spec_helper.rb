@@ -1,4 +1,4 @@
-class Card
+module Cardio
   # helper module for specs for classes that inherit from ImportItem
   module ImportItemSpecHelper
     def item_name args={}
