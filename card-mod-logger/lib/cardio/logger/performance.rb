@@ -1,6 +1,8 @@
 module Cardio
   class Logger
     class Performance
+      extend MethodPreparation
+
       DEFAULT_CLASS = Card
       DEFAULT_METHOD_TYPE = :all
       DEFAULT_LOG_LEVEL = :info
@@ -171,7 +173,6 @@ module Cardio
           end
         end
 
-
         def new_entry args
           args.delete(:details) unless @details
           level = @@current_level
@@ -205,36 +206,6 @@ module Cardio
           end
         end
 
-        def prepare_methods_for_logging args
-          classes = hashify_and_verify_keys(args, DEFAULT_CLASS) do |key|
-            key.kind_of?(Class) || key.kind_of?(Module)
-          end
-
-          classes.each do |klass, method_types|
-            klass.extend BigBrother # add watch methods
-
-            method_types = hashify_and_verify_keys(method_types, DEFAULT_METHOD_TYPE) do |key|
-              [:all, :instance, :singleton].include? key
-            end
-
-            method_types.each do |method_type, methods|
-              methods = hashify_and_verify_keys methods
-              methods.each do |method_name, options|
-                klass.watch_method method_name, method_type, DEFAULT_METHOD_OPTIONS.merge(options)
-              end
-            end
-
-          end
-        end
-
-        def hashify_and_verify_keys args, default_key = nil, &block
-          if default_key
-            hash_and_verify_with_default_key args, default_key, &block
-          else
-            hash_and_verify_without_default_key args
-          end
-        end
-
         def params_to_config args
           args[:details] = args[:details] == 'true' ? true : false
           args[:max_depth] &&= args[:max_depth].to_i
@@ -243,8 +214,6 @@ module Cardio
           standardize_methods_arg args
           args
         end
-
-        private
 
         def parent_entry last_entry, level
           return unless last_entry
@@ -259,38 +228,6 @@ module Cardio
             args[:methods] = JSON.parse(args[:methods]).map(&:to_sym)
           when Array
             args[:methods].map!(&:to_sym)
-          end
-        end
-
-        def hash_and_verify_with_default_key args, default_key, &block
-          case args
-          when Symbol
-            { default_key => [args] }
-          when Array
-            { default_key => args }
-          when Hash
-            block_given? ? hash_and_verify_with_block(args, default_key, &block) : args
-          end
-        end
-
-        def hash_and_verify_with_block args, default_key
-          args.keys.select {|key| !(yield(key))}.each do |key|
-            args[default_key] = { key => args[key] }
-            args.delete key
-          end
-        end
-
-        def hash_and_verify_without_default_key args
-          case args
-          when Symbol
-            { args => {} }
-          when Array
-            args.inject({}) do |h, key|
-              h[key] = {}
-              h
-            end
-          else
-            args
           end
         end
       end
