@@ -42,7 +42,6 @@ format :html do
   end
 
   def import_button
-    button_tag "Import", class: "submit-button",
-               data: { disable_with: "Importing" }
+    button_tag "Import", class: "submit-button", data: { disable_with: "Importing" }
   end
 end
