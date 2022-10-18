@@ -103,13 +103,13 @@ blocks:
           commands:
             - ./cc-test-reporter format-coverage --output "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" -t simplecov
             - aws s3 cp "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" $S3_PATH
+            - aws s3 sync $S3_PATH coverage/
+            - ./cc-test-reporter sum-coverage --output - --parts $(ls -1 coverage/codeclimate.*.json | wc -l) coverage/codeclimate.*.json > coverage/codeclimate.json
+            - ./cc-test-reporter upload-coverage
 
         always:
           commands:
             - test-results publish /home/semaphore/reports/*.xml
-            - aws s3 sync $S3_PATH coverage/
-            - ./cc-test-reporter sum-coverage --output - --parts $(ls -1 coverage/ | wc -l) coverage/codeclimate.*.json > coverage/codeclimate.json
-            - ./cc-test-reporter upload-coverage
 
 after_pipeline:
   task:
