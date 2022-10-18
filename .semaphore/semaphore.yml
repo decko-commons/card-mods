@@ -63,7 +63,7 @@ blocks:
           value: test
       prologue:
         commands:
-          - ./cc-test-reporter before-build
+          - $CARD_MODS_REPO_PATH/cc-test-reporter before-build
       jobs:
         - name: RSpec
           commands:
