@@ -7,7 +7,7 @@ if (ENV["CARD_LOAD_STRATEGY"] == "tmp_files") && ENV["CARD_NO_COVERAGE"] != "tru
 
     Dir["#{ENV['CARD_MODS_REPO_PATH']}/card-mod-*"].each do |path|
       modname = File.basename(path).sub /^card-mod-/, ""
-      add_group "Mod: #{modname}", %r{(mod/|mod\d{3}-)#{modname}}
+      add_group "Mod: #{modname}", %r{(card-mod|mod\d{3})-#{modname}}
     end
 
     add_filter "/spec/"
