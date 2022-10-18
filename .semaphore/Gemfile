@@ -28,6 +28,7 @@ end
 path "#{DECKO_DIR}/support" do
   gem "decko-rspec", group: :test
   gem "decko-cypress", group: :cypress
+  gem "decko-cucumber", group: :cucumber
 end
 
 path CARD_MODS_DIR do
