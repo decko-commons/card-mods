@@ -1,5 +1,7 @@
 RSpec.shared_context "lookup filter query" do |filter_class|
   let(:filter_class) { filter_class }
+
+  # for override
   let(:default_filters) { {} }
   let(:default_sort) { {} }
 
@@ -8,7 +10,7 @@ RSpec.shared_context "lookup filter query" do |filter_class|
     yield
   end
 
-  def search filter
+  def search filter={}
     altered_results { run_query filter, default_sort }
   end
 
