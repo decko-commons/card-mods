@@ -1,4 +1,4 @@
-if (ENV["CARD_LOAD_STRATEGY"] == "tmp_files") && ENV["CARD_NO_COVERAGE"] != "true"
+if (ENV["CARD_LOAD_STRATEGY"] == "tmp_files") && ENV["CARD_SIMPLECOV"] != "false"
   SimpleCov.start do
     repo_path = ENV["CARD_MODS_REPO_PATH"]
     root repo_path
