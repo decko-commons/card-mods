@@ -14,7 +14,7 @@ RSpec.describe Card::Set::Right::ImportStatus do
     "first test import".card.import_status_card
   end
 
-  check_html_views_for_errors
+  check_views_for_errors
 
   describe "#content_hash" do
     it "parses json content" do

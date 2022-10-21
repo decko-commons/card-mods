@@ -3,6 +3,6 @@ RSpec.describe Card::Set::Abstract::Import::Views do
     "first test import".card
   end
 
-  check_html_views_for_errors
-  check_html_views_for_errors %i[new edit]
+  check_views_for_errors
+  check_views_for_errors views: %i[new edit]
 end

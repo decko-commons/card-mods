@@ -1,5 +1,5 @@
 RSpec.describe Card::Set::Abstract::Bookmarkable do
-  check_html_views_for_errors
+  check_views_for_errors
 
   describe "#toggle_bookmark" do
     let :toggled_bookmark do
