@@ -20,7 +20,7 @@ class Card
         return unless (m = mapping)
 
         mapped_column_keys.each do |column|
-          error "unmapped #{column}" if unmapped? column, m
+          add_error "unmapped #{column}" if unmapped? column, m
         end
       end
 

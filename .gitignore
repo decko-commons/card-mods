@@ -2,3 +2,6 @@
 coverage
 .DS_Store
 card-mod-*/*.gem
+
+/Gemfile*
+/monkey
