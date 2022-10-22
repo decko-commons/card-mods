@@ -59,16 +59,21 @@ module ClassMethods
 
   def define_event_to_update_expired_cached_cards set_of_changed_card, args,
                                                   method_name
-    args[:on] ||= %i[create update delete]
-    name = event_name set_of_changed_card, args
-    stage = args[:in_stage] || :integrate
-    Card::Set.register_set set_of_changed_card
-    set_of_changed_card.event name, stage, args do
+
+    update_solid_cache_event set_of_changed_card, args do
       Array.wrap(yield(self)).compact.each do |expired_cache_card|
         next unless expired_cache_card.solid_cache?
         expired_cache_card.send method_name
       end
     end
+  end
+
+  def update_solid_cache_event set_of_changed_card, args, &block
+    args[:on] ||= %i[create update delete]
+    name = event_name set_of_changed_card, args
+    stage = args[:in_stage] || :integrate
+    Card::Set.register_set set_of_changed_card
+    set_of_changed_card.event name, stage, args, &block
   end
 
   def event_name set, args
