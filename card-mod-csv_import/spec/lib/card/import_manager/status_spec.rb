@@ -1,5 +1,3 @@
-# TODO: move to card-mods
-
 RSpec.describe Card::ImportManager::Status do
   let(:status) { described_class.new }
 

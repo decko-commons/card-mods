@@ -15,15 +15,6 @@ class Card
         end
       end
 
-      # @param list_card [Card] +bookmarks card for (eg) user
-      # @return [Hash]. keys are type_ids, values are list of bookmarked card ids
-      def bookmark_hash_for_list_card list_card
-        list_card.item_cards.each_with_object({}) do |item, hash|
-          hash[item.type_id] ||= []
-          hash[item.type_id] << item.id
-        end
-      end
-
       def current_list_card
         Auth.current.bookmarks_card if ok?
       end
@@ -38,16 +29,12 @@ class Card
         ok? ? yield : {}
       end
 
-      def id_restriction bookmarked=true
+      def id_restriction bookmarked=true, &block
         if current_ids.empty?
           yield [] if bookmarked
         else
-          yield([(bookmarked ? "in" : "not in")] + current_ids)
+          restrict_to_current_ids bookmarked, &block
         end
-      end
-
-      def cache
-        Card.cache.soft
       end
 
       def clear
@@ -60,6 +47,25 @@ class Card
           "LEFT JOIN counts cts " \
           "ON #{join_field} = cts.left_id AND cts.right_id = #{Card::BookmarkersID}"
         )
+      end
+
+      private
+
+      def cache
+        Card.cache.soft
+      end
+
+      def restrict_to_current_ids bookmarked
+        yield([(bookmarked ? "in" : "not in")] + current_ids)
+      end
+
+      # @param list_card [Card] +bookmarks card for (eg) user
+      # @return [Hash]. keys are type_ids, values are list of bookmarked card ids
+      def bookmark_hash_for_list_card list_card
+        list_card.item_cards.each_with_object({}) do |item, hash|
+          hash[item.type_id] ||= []
+          hash[item.type_id] << item.id
+        end
       end
     end
   end
