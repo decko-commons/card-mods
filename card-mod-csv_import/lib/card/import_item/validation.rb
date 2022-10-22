@@ -64,7 +64,7 @@ class Card
 
       def check_required_fields
         required.each do |key|
-          error "value for #{key} missing" unless input[key].present?
+          add_error "value for #{key} missing" unless input[key].present?
         end
       end
 
@@ -77,7 +77,7 @@ class Card
       private
 
       def validation_error field, value
-        error "invalid #{field}: #{value}"
+        add_error "invalid #{field}: #{value}"
       end
 
       def field_action action, field, value

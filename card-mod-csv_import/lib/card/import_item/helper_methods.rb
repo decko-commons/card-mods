@@ -2,14 +2,6 @@ class Card
   class ImportItem
     # common methods to be used in ImportItem classees
     module HelperMethods
-      def comma_list_to_pointer str, comma=","
-        str.split(comma).map(&:strip).to_pointer_content
-      end
-
-      def to_html value
-        value.gsub "\n", "<br>\n"
-      end
-
       def prep_fields hash
         hash = select_present hash
         hash.each_key do |field|
@@ -18,9 +10,7 @@ class Card
         hash
       end
 
-      # def prep_value value
-      #   value.is_a?(Integer) ? "~#{value}" : value
-      # end
+      private
 
       def select_present hash
         hash.select { |_k, v| v.present? }
