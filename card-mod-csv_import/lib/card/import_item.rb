@@ -31,9 +31,7 @@ class Card
       returning_status :success do
         validate
         ImportLog.debug "start import"
-        handling_conflicts do
-          import_card import_hash
-        end
+        handling_conflicts { import_card import_hash }
       end
     end
 
@@ -41,7 +39,7 @@ class Card
       throw :skip_row, status
     end
 
-    def error msg
+    def add_error msg
       @errors << msg
     end
 
@@ -101,14 +99,27 @@ class Card
       pick_up_card_errors do
         self.name = card_args[:name]
         card = Card.fetch self.name, new: card_args
-        if card.real?
-          card.update card_args
-        else
-          card.save
-        end
+        card.real? ? card.update(card_args) : card.save
         @cardid = card.id if card.id
         card
       end
+    end
+
+    def pick_up_card_errors
+      card = yield
+      return card unless card.errors.any?
+
+      card.errors.each { |e| add_error "#{card.name} (#{e.attribute}): #{e.message}" }
+      card.errors.clear
+      skip :failed
+    end
+
+    def major_error error
+      add_error error.message
+      Rails.logger.info "import failed: #{error.message} (see import log)"
+      ImportLog.debug "import failed: #{error.message}"
+      ImportLog.debug error.backtrace.join "\n"
+      skip :failed
     end
 
     def method_missing method_name, *args
@@ -117,25 +128,6 @@ class Card
 
     def respond_to_missing? method_name, _include_private=false
       input.keys.include? method_name
-    end
-
-    def pick_up_card_errors
-      card = yield
-      return card unless card.errors.any?
-
-      card.errors.each do |error|
-        error "#{card.name} (#{error.attribute}): #{error.message}"
-      end
-      card.errors.clear
-      skip :failed
-    end
-
-    def major_error error
-      error error.message
-      Rails.logger.info "import failed: #{error.message} (see import log)"
-      ImportLog.debug "import failed: #{error.message}"
-      ImportLog.debug error.backtrace.join "\n"
-      skip :failed
     end
   end
 end
