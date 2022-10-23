@@ -4,22 +4,16 @@ format :html do
   end
 
   def default_pdfjs_iframe_args args
-    args[:pdf_url] ||= card.file.url if card.respond_to?(:file)
+    args[:pdf_url] ||=
     args[:viewer_path] ||= card_path "/mod/pdfjs/web/viewer.html"
-    args[:viewer_path] << "?file=#{args[:pdf_url]}" if args[:pdf_url]
+
   end
 
-  def pdfjs_iframe args
-    default_pdfjs_iframe_args args
+  def pdfjs_iframe pdf_url: nil, viewer_path: nil
+    pdf_url ||= pdf_url_from_card
+    haml :pdfjs_iframe, viewer_path: pdf_viewer_path(viewer_path, pdf_url)
     <<-HTML
-      <iframe style="width: 100%"
-              id="source-preview-iframe" class="pdfjs-iframe"
-              src="#{args[:viewer_path]}"
-              security="restricted"
-              sandbox="allow-same-origin allow-scripts allow-forms allow-modals
-                       allow-top-navigation"
-              allowfullscreen>
-      </iframe>
+
     HTML
   end
 
@@ -32,5 +26,17 @@ format :html do
   view :pdfjs_viewer do
     # TODO: show pdfjs viewer directly without iframe
     # Pdfjs.viewer
+  end
+
+  private
+
+  def pdf_url_from_card
+    card.file.url if card.respond_to? :file
+  end
+
+  def pdf_viewer_path viewer_path, pdf_url
+    viewer_path ||= card_path "/mod/pdfjs/web/viewer.html"
+    viewer_path << "?file=#{pdf_url}" if pdf_url
+    viewer_path
   end
 end
