@@ -16,19 +16,21 @@ module Cardio
 
           controller.instance_eval do
             File.open(Request.path, "a") do |f|
-              f.write CSV.generate_line(log_items(env))
+              items = Request.log_items env, card, action_name, status
+              f.write CSV.generate_line(items)
             end
           end
         end
 
-        def log_items env
+        def log_items env, card, action_name, status
+          params = Card::Env.params
           [
             (Card::Env.ajax? ? "YES" : "NO"),
             env["REMOTE_ADDR"],
             Card::Auth.current_id,
             card.name,
             action_name,
-            (params["view"] || params.dig("success", "view")),
+            (params[:view] || params.dig(:success, :view)),
             env["REQUEST_METHOD"],
             status,
             env["REQUEST_URI"],
