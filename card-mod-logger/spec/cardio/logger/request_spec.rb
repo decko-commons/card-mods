@@ -14,9 +14,10 @@ describe Cardio::Logger::Request do
     allow(card).to receive(:name) { 'cardname' }
     allow(controller).to receive(:card) { card }
     allow(controller).to receive(:action_name) { 'action_name' }
-    allow(controller).to receive(:params) { {'view' => 'view'} }
     allow(controller).to receive(:status) { 'status' }
-    described_class.write_log_entry controller
+    Card::Env.with_params view: "view" do
+      described_class.write_log_entry controller
+    end
   end
 
   it 'creates csv file' do
