@@ -15,24 +15,29 @@ module Cardio
           return if env["REQUEST_URI"] =~ %r{^/files?/}
 
           controller.instance_eval do
-            log = []
-            log << (Card::Env.ajax? ? "YES" : "NO")
-            log << env["REMOTE_ADDR"]
-            log << Card::Auth.current_id
-            log << card.name
-            log << action_name
-            log << params['view'] || (s = params['success'] and  s['view'])
-            log << env["REQUEST_METHOD"]
-            log << status
-            log << env["REQUEST_URI"]
-            log << Time.now.to_s
-            log << env['HTTP_ACCEPT_LANGUAGE'].to_s.scan(/^[a-z]{2}/).first
-            log << env["HTTP_REFERER"]
-
             File.open(Request.path, "a") do |f|
-              f.write CSV.generate_line(log)
+              items = Request.log_items env, card, action_name, status
+              f.write CSV.generate_line(items)
             end
           end
+        end
+
+        def log_items env, card, action_name, status
+          params = Card::Env.params
+          [
+            (Card::Env.ajax? ? "YES" : "NO"),
+            env["REMOTE_ADDR"],
+            Card::Auth.current_id,
+            card.name,
+            action_name,
+            (params[:view] || params.dig(:success, :view)),
+            env["REQUEST_METHOD"],
+            status,
+            env["REQUEST_URI"],
+            Time.now.to_s,
+            env['HTTP_ACCEPT_LANGUAGE'].to_s.scan(/^[a-z]{2}/).first,
+            env["HTTP_REFERER"]
+          ]
         end
       end
     end
