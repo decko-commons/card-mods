@@ -3,18 +3,9 @@ format :html do
     card.respond_to?(:file) && card.file.content_type == "application/pdf"
   end
 
-  def default_pdfjs_iframe_args args
-    args[:pdf_url] ||=
-    args[:viewer_path] ||= card_path "/mod/pdfjs/web/viewer.html"
-
-  end
-
   def pdfjs_iframe pdf_url: nil, viewer_path: nil
     pdf_url ||= pdf_url_from_card
     haml :pdfjs_iframe, viewer_path: pdf_viewer_path(viewer_path, pdf_url)
-    <<-HTML
-
-    HTML
   end
 
   view :pdf_preview do
