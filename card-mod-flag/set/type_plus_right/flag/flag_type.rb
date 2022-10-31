@@ -1,5 +1,9 @@
 include_set Abstract::IdPointer
 
+def ok_item_types
+  :flag_type
+end
+
 format :html do
   # LOCALIZE
   before :title do
