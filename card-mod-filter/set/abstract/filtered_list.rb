@@ -1,3 +1,11 @@
+def unique_items?
+  true
+end
+
+def not_ids_value
+  unique_items? ? item_ids.map(&:to_s).join(",") : ""
+end
+
 format :html do
   view :filtered_list, unknown: true do
     filtered_list_input
@@ -41,7 +49,7 @@ format :html do
   end
 
   def filter_items_default_filter
-    { not_ids: not_ids_value }
+    { not_ids: card.not_ids_value }
   end
 
   def filter_items_data
@@ -60,14 +68,6 @@ format :html do
 
   def filter_items_modal_slot
     { hide: [:modal_footer] }
-  end
-
-  def filtered_item_duplicable
-    false
-  end
-
-  def not_ids_value
-    filtered_item_duplicable ? "" : card.item_ids.map(&:to_s).join(",")
   end
 
   view :add_selected_link, unknown: true do
