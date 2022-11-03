@@ -9,11 +9,6 @@ format :html do
 
   view :filter_items, unknown: true, wrap: :slot, template: :haml
 
-  # for override
-  def allow_duplicates?
-    false
-  end
-
   def filtered_item_view
     implicit_item_view
   end
