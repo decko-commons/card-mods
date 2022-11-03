@@ -66,6 +66,10 @@ format :html do
     end
   end
 
+  def filtered_item_duplicable
+    !card.unique_items?
+  end
+
   def filter_items_modal_slot
     { hide: [:modal_footer] }
   end
