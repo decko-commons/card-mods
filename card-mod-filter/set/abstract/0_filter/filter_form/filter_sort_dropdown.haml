@@ -6,6 +6,6 @@
     %span.input-group-text.text-muted Sort
     = select_tag "sort_by",
                  options_for_select(options, current),
-                 class: "pointer-select _filter-sort form-control _submit-on-change",
+                 class: "pointer-select _filter-sort form-control",
                  include_blank: ("--" unless options.values.include? current),
                  "data-minimum-results-for-search": "Infinity"

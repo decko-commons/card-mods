@@ -9,6 +9,8 @@ decko.filter =
 
 $(window).ready ->
   $("body").on "submit", "._filter-form", ->
+    debugger
+
     el = $(this)
     query = el.serializeArray().filter (i) -> i.value
     updateUrlBarWithFilter el, query
@@ -27,6 +29,14 @@ $(window).ready ->
   $("body").on "click", "._filter-closers a", (e) ->
     link = $(this)
     decko.filter.refilter link.closest("form"), link.data()
+    e.preventDefault()
+
+  $("body").on "change", "._filtered-results-header ._filter-sort", (e) ->
+    sel = $(this)
+    form = sel.closest "form"
+    data = form.data()
+    data.sort_by = sel.val()
+    decko.filter.refilter form, data
     e.preventDefault()
 
   $("body").on "show.bs.offcanvas", "._offcanvas-filter", ->
