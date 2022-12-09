@@ -24,7 +24,7 @@ format :html do
   mini_bar_cols 6, 6
 
   view :bar_left, template: :haml
-  view(:bar_middle, wrap: :em) { card.status }
+  view(:bar_middle, wrap: :em) { field_nest :status, view: :core }
   view(:bar_right) { render_credit }
   view :bar_bottom do
     field_nest :discussion, view: :titled, show: :comment_box
