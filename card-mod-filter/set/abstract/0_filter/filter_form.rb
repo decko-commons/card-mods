@@ -87,7 +87,7 @@ format :html do
   end
 
   def offcanvas_filter_id
-    "#{card.name.safe_key}-offCanvasFilters"
+    "d0-#{card.name.safe_key}-offCanvasFilters"
   end
 
   def reset_filter_data
