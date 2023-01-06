@@ -92,4 +92,9 @@ format do
   def default_limit
     Auth.signed_in? ? 5000 : 500
   end
+
+  # not a CQL search
+  def filter_cql
+    {}
+  end
 end
