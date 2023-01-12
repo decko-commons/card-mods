@@ -54,8 +54,10 @@ class Card
         @map_types ||= mapped_column_keys.map { |column| map_type column }.uniq
       end
 
-      def suggest column
-        column_hash.dig column, :suggest
+      def suggest type
+        return unless (col_key = columns_for_type(type)&.first)
+
+        column_hash.dig col_key, :suggest
       end
 
       def suggestion_mark column
@@ -92,6 +94,12 @@ class Card
         raise StandardError, "#{header(column)} column is missing"
       end
 
+      def columns_for_type type
+        return [type] if column_hash[type]
+
+        column_keys.select { |col_key| column_hash[col_key][:type] == type }
+      end
+
       def columns_with_config config
         column_keys.select { |col_key| column_hash[col_key][config] }
       end
@@ -106,11 +114,6 @@ class Card
         else
           raise Card::Error, "@column configuration must be Hash or Array"
         end
-      end
-
-      def autoheader column
-        string = Card::Codename[column] ? column.cardname : column.to_s
-        string.tr("_", " ").tr("*", "").split.map(&:capitalize).join(" ").to_name
       end
     end
 
