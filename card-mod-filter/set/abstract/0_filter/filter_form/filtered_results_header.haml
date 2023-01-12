@@ -5,7 +5,7 @@
         - removables = removable_filters
         - removables.each do |key, value|
           - filter = filter_hash_without key, value
-          %a.btn.btn-sm.btn-outline-primary.m-3.ms-0{ "data-filter": JSON(filter),
+          %a.btn.btn-sm.btn-outline-primary.m-1.ms-0{ "data-filter": JSON(filter),
                                                       class: "filter-closer close-filter-#{key}" }
             = "#{filter_label key}: "
             %span.fw-bold
@@ -13,7 +13,7 @@
 
             = fa_icon :times, class: "ms-2"
         - if removables.size > 1
-          %a.clear-filters.m-3.ms-0{ "data-filter": "{}", href: "#" }
+          %a.clear-filters.m-1.ms-0{ "data-filter": "{}", href: "#" }
             Clear All
         &nbsp;
 
