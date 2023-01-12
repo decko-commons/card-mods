@@ -34,6 +34,13 @@ class Card
       def default_header_map
         column_keys.zip((0..column_keys.size)).to_h
       end
+
+      private
+
+      def autoheader column
+        string = Card::Codename[column] ? column.cardname : column.to_s
+        string.tr("_", " ").tr("*", "").split.map(&:capitalize).join(" ").to_name
+      end
     end
   end
 end

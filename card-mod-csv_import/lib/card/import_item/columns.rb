@@ -55,7 +55,7 @@ class Card
       end
 
       def suggest type
-        return unless col_key = columns_for_type(type)&.first
+        return unless (col_key = columns_for_type(type)&.first)
 
         column_hash.dig col_key, :suggest
       end
@@ -114,11 +114,6 @@ class Card
         else
           raise Card::Error, "@column configuration must be Hash or Array"
         end
-      end
-
-      def autoheader column
-        string = Card::Codename[column] ? column.cardname : column.to_s
-        string.tr("_", " ").tr("*", "").split.map(&:capitalize).join(" ").to_name
       end
     end
 
