@@ -1,7 +1,1 @@
-class Card
-  module Query
-    class CardQuery
-      include CachedCountSorting
-    end
-  end
-end
+Card::Query::CardQuery.include CachedCountSorting

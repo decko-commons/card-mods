@@ -92,7 +92,7 @@ class Card
 
     def sort_fields
       @sort_hash.keys.map do |key|
-        return if key == :random
+        return nil if key == :random
 
         if key.match?(/_bookmarkers$/)
           "cts.value as bookmarkers"
