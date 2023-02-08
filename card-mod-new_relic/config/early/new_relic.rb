@@ -1,4 +1,4 @@
-  
+
 ActiveSupport.on_load :card do
   require "new_relic/agent/method_tracer"
 
