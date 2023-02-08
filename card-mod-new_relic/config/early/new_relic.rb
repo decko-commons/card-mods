@@ -1,6 +1,6 @@
   
 ActiveSupport.on_load :card do
-  require 'new_relic/agent/method_tracer'
+  require "new_relic/agent/method_tracer"
 
   class Card
     module Set
@@ -89,4 +89,3 @@ ActiveSupport.on_load :card do
     end
   end
 end
-
