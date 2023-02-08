@@ -77,8 +77,8 @@ module ClassMethods
   end
 
   def event_name set, args
-    changed_card_set = set.underscore
-    solid_cache_set = underscore + "__solid_cache"
+    changed_card_set = set.underscored_name
+    solid_cache_set = underscored_name + "__solid_cache"
     actions = Array.wrap(args[:on]).join("_")
     ["update", solid_cache_set,
      "changed_by", changed_card_set,

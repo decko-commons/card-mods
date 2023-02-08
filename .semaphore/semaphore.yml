@@ -91,7 +91,7 @@ blocks:
           - cp ../.semaphore/decko/decko/spec/package.json .
           - cp -R ../.semaphore/decko/decko/spec/cypress .
           - be decko server -p 5002 &
-          - nvm use 16.0.0
+          # - nvm use 16.0.0
           - yarn install
 
       jobs:
