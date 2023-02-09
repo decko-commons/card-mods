@@ -1,1 +1,1 @@
-Card::Query::CardQuery.include CachedCountSorting
+Card::Query::CardQuery.include Card::Query::CachedCountSorting
