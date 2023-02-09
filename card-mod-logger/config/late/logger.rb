@@ -1,32 +1,26 @@
 class Card
-  module Query
-    class CardQuery
-      alias_method :original_run, :run
-      def run
-        Cardio::Logger.with_logging :search, message: @statement, details: sql do
-          original_run
-        end
+  class Query::CardQuery
+    alias_method :original_run, :run
+    def run
+      Cardio::Logger.with_logging :search, message: @statement, details: sql do
+        original_run
       end
     end
   end
 
-  alias_method :original_run_callbaks, :run_callbacks
+  alias_method :original_run_callbacks, :run_callbacks
   def run_callbacks event, &block
     Cardio::Logger.with_logging :event, message: event, context: name do
       original_run_callbacks event, &block
     end
   end
 
-  module Card
-    module Rule
-      module All
-        alias_method :original_rule_card, :rule_card
-        def rule_card setting_code, options={}
-          Cardio::Logger.with_logging :rule, message: setting_code, category: "rule",
-                                             context: name, details: options  do
-            original_rule_card setting_code, options
-          end
-        end
+  module Rule::All
+    alias_method :original_rule_card, :rule_card
+    def rule_card setting_code, options={}
+      Cardio::Logger.with_logging :rule, message: setting_code, category: "rule",
+                                         context: name, details: options  do
+        original_rule_card setting_code, options
       end
     end
   end
