@@ -20,7 +20,7 @@
 
           // FILTERING
           .filter-in-filter-form
-            %i.fa.fa-filter.filter-section-icon
+            = icon_tag :filter, "filter-section-icon"
             ._filter-container.d-flex.flew-row.flex-wrap.align-items-start
               // FILTERS inserted here dynamically from prototypes
 
@@ -43,4 +43,4 @@
               // RESET BUTTON
               ._reset-filter{ "data-reset": reset_filter_data }
                 %button.btn.btn-sm.btn-secondary{ type: "button" }
-                  %i.fa.fa-sync-alt
+                  = icon_tag :reset

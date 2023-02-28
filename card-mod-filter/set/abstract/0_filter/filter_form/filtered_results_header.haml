@@ -11,7 +11,7 @@
             %span.fw-bold
               = filter_closer_value key, value
 
-            = fa_icon :times, class: "ms-2"
+            = icon_tag :remove, class: "ms-2"
         - if removables.size > 1
           %a.clear-filters.m-1.ms-0{ "data-filter": "{}", href: "#" }
             Clear All
