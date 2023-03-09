@@ -9,8 +9,6 @@ decko.filter =
 
 $(window).ready ->
   $("body").on "submit", "._filter-form", ->
-    debugger
-
     el = $(this)
     query = el.serializeArray().filter (i) -> i.value
     updateUrlBarWithFilter el, query

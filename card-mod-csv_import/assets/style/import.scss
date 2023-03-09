@@ -52,9 +52,9 @@ table.import-table {
 .tab-li-failed    .tab-title .badge { background-color: $danger; }
 .tab-li-success   .tab-title .badge { background-color: $success; }
 
-._import-map-item .fa-circle {
-  margin-right: 0.25em;
-}
+//._import-map-item .fa-circle {
+//  margin-right: 0.25em;
+//}
 
 
 // status specific colors
@@ -64,9 +64,9 @@ $statusColors: (
   unmatched: $red
 );
 
-@each $status, $color in $statusColors {
-
-  .import-map-item[data-status='#{$status}'] .fa-circle {
-    color: $color;
-  }
-}
+//@each $status, $color in $statusColors {
+//
+//  .import-map-item[data-status='#{$status}'] .fa-circle {
+//    color: $color;
+//  }
+//}
