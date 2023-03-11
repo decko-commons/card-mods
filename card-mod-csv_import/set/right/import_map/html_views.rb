@@ -80,7 +80,7 @@ format :html do
   end
 
   def suggest_link type, name
-    modal_link '<i class="fa fa-search"></i>',
+    modal_link icon_tag(:search),
                # size: :large,
                title: "Search for #{type}",
                class: "btn btn-sm btn-outline-secondary " \
