@@ -83,6 +83,6 @@ format :html do
   end
 
   def meta_tag property, content
-    %{<meta name="#{property}" content="#{content}">}
+    %{<meta property="#{property}" content="#{content}">}
   end
 end
