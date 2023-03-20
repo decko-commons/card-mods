@@ -9,8 +9,8 @@ format :html do
 
   view :social_meta_tags, unknown: :blank do
     shared = %w[title description image]
-    meta_tags_for(:og, shared + %w[url site_name type]) +
-      meta_tags_for(:twitter, shared + %w[card site creator])
+    meta_tags_for(:og, :property, shared + %w[url site_name type]) +
+      meta_tags_for(:twitter, :name, shared + %w[card site creator])
   end
 
   # OPEN GRAPH
@@ -75,14 +75,14 @@ format :html do
 
   private
 
-  def meta_tags_for prefix, properties
+  def meta_tags_for prefix, field, properties
     properties.map do |property|
       next unless (content = try "#{prefix}_#{property}")
-      meta_tag "#{prefix}:#{property}", content
+      meta_tag field, "#{prefix}:#{property}", content
     end.compact
   end
 
-  def meta_tag property, content
-    %{<meta name="#{property}" content="#{content}">}
+  def meta_tag attribute, property, content
+    %{<meta #{attribute}="#{property}" content="#{content}">}
   end
 end
