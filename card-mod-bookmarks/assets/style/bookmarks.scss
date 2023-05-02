@@ -12,9 +12,8 @@ $active-bookmark-color: $info !default;
   align-items: center;
   white-space: nowrap;
   color: $secondary;
-  .fa {
+  i {
     cursor: pointer;
-    font-size: large;
   }
   .bookmark-count {
     display: inline-block;
@@ -36,7 +35,7 @@ $active-bookmark-color: $info !default;
 .media-body-xlarge {
   .bookmark-view {
     min-width: 2.8em;
-    .bookmark-toggle > .fa {
+    .bookmark-toggle > i {
       font-size: 1.1em;
     }
   }
