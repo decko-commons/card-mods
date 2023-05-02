@@ -1,8 +1,10 @@
 # config/initializers/cors.rb
 
+require "rack/cors"
+
 Decko.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     origins "*"
-    resource "*", headers: :any, methods: [:get, :post, :patch, :put]
+    resource "*", headers: :any, methods: %i[get post patch put]
   end
 end

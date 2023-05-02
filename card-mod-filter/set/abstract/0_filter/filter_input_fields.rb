@@ -87,8 +87,8 @@ format :html do
   end
 
   def range_sign side
-    dir = side == :from ? "right" : "left"
-    fa_icon("chevron-#{dir}", class: "input-group-text range-sign")
+    dir = side == :from ? "greater" : "less"
+    icon_tag("#{dir}_than", class: "input-group-text range-sign")
   end
 
   def sub_text_filter field, subfield, default={}, opts={}

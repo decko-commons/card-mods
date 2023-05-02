@@ -1,5 +1,5 @@
-include_set Abstract::Pointer
-include_set Abstract::IdPointer
+include_set Abstract::List
+include_set Abstract::IdList
 
 event :validate_alias_source, :validate, on: :save do
   errors.add :name, t(:alias_must_be_simple) if name.compound?
