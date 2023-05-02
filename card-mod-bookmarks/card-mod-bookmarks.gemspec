@@ -3,7 +3,7 @@
 require "../card_mod_gem"
 
 CardModGem.mod "bookmarks" do |s, d|
-  s.version = "0.1"
+  s.version = "0.2"
   s.summary       = "bookmarking on decko cards"
   s.description   = "WikiRate.org is driving development on this to-be-generalized " \
                     "decko bookmarking tool."

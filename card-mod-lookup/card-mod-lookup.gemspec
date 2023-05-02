@@ -3,7 +3,7 @@
 require "../card_mod_gem"
 
 CardModGem.mod "lookup" do |s, d|
-  s.version = "0.1"
+  s.version = "0.3"
   s.summary = "lookup"
   s.description = ""
   d.depends_on_mod :filter
