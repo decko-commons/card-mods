@@ -3,7 +3,7 @@
 require "../card_mod_gem"
 
 CardModGem.mod "social" do |s, _d|
-  s.version = "0.1"
+  s.version = "0.2"
   s.summary = "Social media markup for decko"
   s.description = ""
 end
