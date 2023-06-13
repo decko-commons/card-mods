@@ -1,4 +1,4 @@
-class AddFulltextIndexing < ActiveRecord::Migration[6.0]
+class AddFulltextIndexing < Cardio::Migration::Schema
   def up
     add_column :cards, :search_content, :text, limit: 1.megabyte
     add_index :cards, %i[name search_content],
