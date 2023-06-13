@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class CountsTable < ActiveRecord::Migration[4.2]
+class CountsTable < Cardio::Migration::Schema
   def up
     drop_table :counts if table_exists? :counts
     create_table :counts do |t|
