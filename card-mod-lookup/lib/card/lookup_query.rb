@@ -1,6 +1,6 @@
 class Card
-  # base class for FilterQuery classes built on lookup tables
-  class LookupFilterQuery
+  # base class for query classes built on lookup tables
+  class LookupQuery
     include Filtering
 
     attr_accessor :filter_args, :sort_args, :paging_args

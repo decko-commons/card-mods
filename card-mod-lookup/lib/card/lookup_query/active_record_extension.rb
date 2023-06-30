@@ -1,5 +1,5 @@
 class Card
-  class LookupFilterQuery
+  class LookupQuery
     # support methods for sort and page
     module ActiveRecordExtension
       # @params hash [Hash] key1: dir1, key2: dir2

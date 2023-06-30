@@ -1,18 +1,24 @@
 include_set Abstract::BsBadge
 
 format do
-  def filter_class
-    Card::FilterQuery
+  def filter_cql_class
+    Card::FilterCql
   end
 
+  # definitive list of available filters
+  # (see README)
+  # For override (default value is name filtering only)
+  # @return [Array<Hash>]
   def filter_map
     [{ key: :name, open: true }]
   end
 
+  # current filters and values
   def filter_keys_from_params
     filter_hash.keys.map(&:to_sym) - [:not_ids]
   end
 
+  # For override (default values)
   def sort_options
     { "Alphabetical": :name, "Recently Added": :create }
   end
@@ -35,6 +41,7 @@ format do
     filter_hash[field.to_sym]
   end
 
+  # current filters in key value pairs
   def filter_hash
     @filter_hash ||= filter_hash_from_params || voo.filter || default_filter_hash
   end
@@ -59,21 +66,9 @@ format do
     param.blank? ? nil : Card::Query.safe_sql(param)
   end
 
+  # list of keys of available filters
   def filter_keys
     filter_keys_from_map_list(filter_map).flatten.compact
-  end
-
-  def filter_keys_from_map_list list
-    list.map do |item|
-      case item
-      when Symbol then item
-      when Hash then filter_keys_from_map_hash item
-      end
-    end
-  end
-
-  def filter_keys_from_map_hash item
-    item[:filters] ? filter_keys_from_map_list(item[:filters]) : item[:key]
   end
 
   def filter_keys_with_values
@@ -127,5 +122,20 @@ format do
     { filter: filter_hash }.tap do |hash|
       hash[:sort_by] = sort_param if sort_param
     end
+  end
+
+  private
+
+  def filter_keys_from_map_list list
+    list.map do |item|
+      case item
+      when Symbol then item
+      when Hash then filter_keys_from_map_hash item
+      end
+    end
+  end
+
+  def filter_keys_from_map_hash item
+    item[:filters] ? filter_keys_from_map_list(item[:filters]) : item[:key]
   end
 end

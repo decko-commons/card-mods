@@ -1,6 +1,6 @@
 class Card
   # Class for generating CQL based on filter params
-  class FilterQuery
+  class FilterCql
     def initialize filter_keys_with_values, extra_cql={}
       @filter_cql = Hash.new { |h, k| h[k] = [] }
       @rules = yield if block_given?
