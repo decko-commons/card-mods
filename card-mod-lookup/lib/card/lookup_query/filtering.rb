@@ -17,7 +17,7 @@ class Card
         if (method = filter_method key)
           send method, key, value
         else
-          try "#{key}_query", value
+          try "filter_by_#{key}", value
         end
       end
 
