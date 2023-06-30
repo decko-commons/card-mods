@@ -12,12 +12,12 @@ def run_query_returning query, return_type
   end
 end
 
-def filter_class
-  raise Error::ServerError, "filter_class required!"
+def query_class
+  raise Error::ServerError, "query_class required!"
 end
 
 def query paging={}
-  filter_class.new query_hash, {}, paging
+  query_class.new query_hash, {}, paging
 end
 
 def query_hash
@@ -29,7 +29,7 @@ def count
 end
 
 format do
-  delegate :filter_class, to: :card
+  delegate :query_class, to: :card
 
   def search_with_params
     @search_with_params ||= card.search query: query
@@ -40,11 +40,11 @@ format do
   end
 
   def query
-    filter_class.new query_hash, sort_hash, paging_params
+    query_class.new query_hash, sort_hash, paging_params
   end
 
   def count_query
-    filter_class.new query_hash
+    query_class.new query_hash
   end
 
   def query_hash
