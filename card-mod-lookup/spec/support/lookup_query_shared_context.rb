@@ -1,5 +1,5 @@
-RSpec.shared_context "lookup filter query" do |filter_class|
-  let(:filter_class) { filter_class }
+RSpec.shared_context "lookup query" do |query_class|
+  let(:query_class) { query_class }
 
   # for override
   let(:default_filters) { {} }
@@ -15,6 +15,6 @@ RSpec.shared_context "lookup filter query" do |filter_class|
   end
 
   def run_query filter, sort
-    filter_class.new(default_filters.merge(filter), sort).run
+    query_class.new(default_filters.merge(filter), sort).run
   end
 end

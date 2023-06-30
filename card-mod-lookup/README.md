@@ -18,10 +18,10 @@ and when a database grows large, it can become quite expensive to execute all
 the implied self joins.
 
 For example, consider the use case that first inspired this code: _answers_ on
-Wikirate.org. WikiRate is a site that collects answers to questions about 
+wikirate.org. Wikirate is a site that collects answers to questions about 
 companies. A given answer is a response to a given metric for a given year
 for a given company. When you consider all the kinds of companies and metrics
-and metric designers that WikiRate supports, you can imagine the queries 
+and metric designers that Wikirate supports, you can imagine the queries 
 becoming quite complex if we have to re-join the cards table to itself every
 time we want to consider a different variable.
 

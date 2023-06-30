@@ -19,7 +19,7 @@ format do
 
   # separate method is needed for tests
   def filter_cql_from_params
-    filter_class.new(filter_keys_with_values, blocked_id_cql).to_cql
+    filter_cql_class.new(filter_keys_with_values, blocked_id_cql).to_cql
   end
 
   def sort_cql
