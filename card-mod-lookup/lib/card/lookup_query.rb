@@ -1,6 +1,6 @@
 class Card
-  # base class for FilterQuery classes built on lookup tables
-  class LookupFilterQuery
+  # base class for query classes built on lookup tables
+  class LookupQuery
     include Filtering
 
     attr_accessor :filter_args, :sort_args, :paging_args
@@ -92,13 +92,21 @@ class Card
 
     def sort_fields
       @sort_hash.keys.map do |key|
-        key.match?(/_bookmarkers$/) ? "cts.value as bookmarkers" : key
+        return nil if key == :random
+
+        if key.match?(/_bookmarkers$/)
+          "cts.value as bookmarkers"
+        else
+          Card::Query.safe_sql key
+        end
       end
     end
 
     def sort_by sort_by
       if (id_field = sort_by_cardname[sort_by])
         sort_by_join sort_by, lookup_table, id_field
+      elsif sort_by == :random
+        "rand()"
       else
         simple_sort_by sort_by
       end

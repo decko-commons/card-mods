@@ -31,7 +31,7 @@
         %th.col-1.text-end
           .dropdown.item-map-action-dropdown
             %button.btn.btn-sm.btn-secondary{ "data-bs-toggle": "dropdown" }
-              %i.fa.fa-ellipsis-h
+              = icon_tag :more
             %ul.dropdown-menu
               - first_option_index = auto_add ? 0 : 1
               - { "Selected Items": (first_option_index..4), "Other": [-1] }.each do |header, rows|
@@ -77,14 +77,14 @@
                     %i.fa.fa-spin.fa-spinner
 
               ._mapping-label
-          %td
-            %i.fa.fa-circle
+          %td.import-item-status
+            = icon_tag :circle
             %span._import-map-status-label
               = status_label status
           %td.text-end
             - if auto_add && !cardname
               %button.btn.btn-sm.me-2.btn-outline-secondary._create-import-item{ "data-bs-toggle": "button", title: "Create #{map_type}" }
-                %i.fa.fa-plus
+                = icon_tag :plus
             = suggest_link map_type, name_in_file if suggestions_on
 
   .d-flex.justify-content-end.py-3

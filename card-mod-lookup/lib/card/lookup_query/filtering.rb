@@ -1,6 +1,6 @@
 class Card
-  class LookupFilterQuery
-    # shared filtering methods for FilterQuery classes built on lookup tables
+  class LookupQuery
+    # shared filtering methods for query classes built on lookup tables
     module Filtering
       def process_filters
         normalize_filter_args
@@ -17,7 +17,7 @@ class Card
         if (method = filter_method key)
           send method, key, value
         else
-          try "#{key}_query", value
+          try "filter_by_#{key}", value
         end
       end
 
