@@ -29,6 +29,14 @@ $(window).ready ->
     decko.filter.refilter link.closest("form"), link.data()
     e.preventDefault()
 
+  $("body").on "change", "._filtered-results-header ._filter-sort", (e) ->
+    sel = $(this)
+    form = sel.closest "form"
+    data = form.data()
+    data.sort_by = sel.val()
+    decko.filter.refilter form, data
+    e.preventDefault()
+
   $("body").on "show.bs.offcanvas", "._offcanvas-filter", ->
     ocbody = $(this).find ".offcanvas-body"
     if ocbody.html() == ""

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddTwitterCards < Cardio::Migration
+class AddTwitterCards < Cardio::Migration::Transform
   def up
     ensure_card name: "Twitter template", codename: "twitter_template",
                 type_id: Card::CardtypeID

@@ -1,7 +1,7 @@
 ._filter-input.filter-input-group.input-group.input-group-sm{"data-category": field[:key],
                                                              "class": "_filter-input-#{field[:key]}" }
   %button.btn.btn-secondary.input-group-text.p-1._delete-filter-input{:type => "button"}
-    = fa_icon :times
+    = icon_tag :remove
   %span.input-group-text._selected-category.text-muted
     = field[:label]
   = field[:input_field]
