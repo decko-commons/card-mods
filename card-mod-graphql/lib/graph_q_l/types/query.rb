@@ -39,7 +39,7 @@ module GraphQL
       end
 
       def card_search codename, limit, offset, filter
-        cql = codename.card.format.filter_class.new(filter).to_cql
+        cql = codename.card.format.filter_cql_class.new(filter).to_cql
         cql[:limit] = limit
         cql[:offset] = offset
         cql[:type_id] = codename.card.id
