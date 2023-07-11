@@ -1,4 +1,8 @@
-include_set Abstract::IdPointer
+include_set Abstract::IdList
+
+def ok_item_types
+  :flag_type
+end
 
 format :html do
   # LOCALIZE

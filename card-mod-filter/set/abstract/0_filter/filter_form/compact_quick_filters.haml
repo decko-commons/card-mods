@@ -1,6 +1,7 @@
 - if (quick_filters = quick_filter_list).present?
   .quick-filter._quick-filter
-    %i.fa.fa-bolt.filter-section-icon
+
+    = icon_tag :quick_filter, "filter-section-icon"
     .quick-filter-links.d-flex.flex-wrap
       - quick_filters.each do |hash|
         - f = quick_filter_item hash.clone, hash.keys.first

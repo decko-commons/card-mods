@@ -1,4 +1,4 @@
-include_set Abstract::Pointer
+include_set Abstract::List
 
 event :validate_mirrorable, :validate, on: :save, changed: :name do
   return if right&.type_code == :cardtype
