@@ -38,13 +38,6 @@ module GraphQL
         card if card&.ok?(:read) && (!type_code || card.type_code == type_code)
       end
 
-      def card_search codename, limit, offset, filter
-        cql = codename.card.format.filter_cql_class.new(filter).to_cql
-        cql[:limit] = limit
-        cql[:offset] = offset
-        cql[:type_id] = codename.card.id
-        ::Card.search cql
-      end
     end
   end
 end
