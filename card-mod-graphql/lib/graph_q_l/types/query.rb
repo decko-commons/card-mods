@@ -37,7 +37,6 @@ module GraphQL
         card = ::Card.fetch name || id
         card if card&.ok?(:read) && (!type_code || card.type_code == type_code)
       end
-
     end
   end
 end

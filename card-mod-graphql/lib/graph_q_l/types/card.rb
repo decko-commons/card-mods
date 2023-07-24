@@ -1,7 +1,6 @@
 module GraphQL
   module Types
     class Card < BaseObject
-
       field :id, Integer, "unique numerical identifier", null: true
       field :type, Card, "card type", null: false
       field :name, String, "name that is unique across all cards", null: false
@@ -46,7 +45,6 @@ module GraphQL
       def referers type, field
         ::Card.search type: type, limit: 10, right_plus: [field, refer_to: object.card_id]
       end
-
     end
   end
 end
