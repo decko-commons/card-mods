@@ -1,6 +1,6 @@
 RSpec.describe "blog.rb" do
   before do
-    require 'vendor/card-mods/card_mod_blog/spec/set/type/blog_spec.rb'
+    require "vendor/card-mods/card_mod_blog/spec/set/type/blog_spec.rb"
   end
 
   context "when formatting as HTML" do
@@ -10,7 +10,7 @@ RSpec.describe "blog.rb" do
       def instance.edit_fields
         %i[date image description]
       end
-      
+
       expected_edit_fields = %i[date image description]
       expect(instance.edit_fields).to eq(expected_edit_fields)
     end

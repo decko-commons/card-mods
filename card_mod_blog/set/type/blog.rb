@@ -6,6 +6,6 @@ format :html do
   def edit_fields
     %i[date image description]
   end
-  
+
   view :core, template: :haml
 end
