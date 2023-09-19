@@ -3,7 +3,7 @@ RSpec.describe Card::Set::Type::Blog do
     def card_subject
       Card.create! type: "Blog", name: "My Blog", fields: {
         description: "This is a blog post description.",
-        date: "DD/MM/YY"
+        date: Date.today.to_s
       }
     end
     check_views_for_errors
@@ -17,6 +17,17 @@ RSpec.describe Card::Set::Type::Blog do
       card.save!
 
       expect(card.description).to eq("This is a new description.")
+    end
+
+    it "should get and set the date attribute" do
+      card = card_subject
+
+      expect(card.date).to eq(Date.today.to_s)
+
+      card.date = Date.parse("02/02/23")
+      card.save!
+
+      expect(Date.parse(card.date)).to eq(Date.parse("02/02/23"))
     end
   end
 end
