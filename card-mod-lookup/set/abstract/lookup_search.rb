@@ -89,10 +89,6 @@ format do
     safe_sql_param(:sort_by)&.to_sym || safe_sql_param(:sort)&.to_sym
   end
 
-  def default_limit
-    Auth.signed_in? ? 5000 : 500
-  end
-
   # not a CQL search
   def filter_cql
     {}
