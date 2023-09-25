@@ -22,6 +22,10 @@ module GraphQL
         ok_card nil, **mark
       end
 
+      def cards codename: nil, filter: nil, limit: 10, offset: 0
+        card_search codename, filter, limit, offset
+      end
+
       private
 
       def ok_card_of_type type_code, **mark
