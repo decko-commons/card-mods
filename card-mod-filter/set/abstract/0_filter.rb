@@ -124,6 +124,14 @@ format do
     end
   end
 
+  # helper method
+  def filter_map_without_keys map, *keys
+    map.reject do |item|
+      item_key = item.is_a?(Hash) ? item[:key] : item
+      item_key.in? keys
+    end
+  end
+
   private
 
   def filter_keys_from_map_list list
