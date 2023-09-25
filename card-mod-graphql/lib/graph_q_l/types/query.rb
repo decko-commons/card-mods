@@ -22,10 +22,6 @@ module GraphQL
         ok_card nil, **mark
       end
 
-      def cards name: nil, type: nil, limit: 10, offset: 0
-        card_search name, type, limit, offset
-      end
-
       private
 
       def ok_card_of_type type_code, **mark
@@ -36,13 +32,6 @@ module GraphQL
       def ok_card type_code, name: nil, id: nil
         card = ::Card.fetch name || id
         card if card&.ok?(:read) && (!type_code || card.type_code == type_code)
-      end
-
-      def card_search name, type, limit, offset
-        cql = { limit: limit, offset: offset }
-        cql[:type] = type if type
-        cql[:name] = [:match, name] if name
-        ::Card.search cql
       end
     end
   end
