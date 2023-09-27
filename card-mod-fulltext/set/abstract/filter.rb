@@ -22,6 +22,6 @@ format do
   end
 
   def fulltext_name_filtering?
-    params.dig(:filter, :name)&.match?(/^\:/)
+    filter_hash[:name]&.match?(/^\:/)
   end
 end
