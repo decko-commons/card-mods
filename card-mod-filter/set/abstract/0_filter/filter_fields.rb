@@ -1,3 +1,5 @@
+delegate :filter_option_values, to: :format
+
 format :html do
   def filter_config category
     @filter_config ||= {}

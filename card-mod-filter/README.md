@@ -18,6 +18,8 @@ The mod also adds support for a `filtered_list` view of list/pointer cards that 
 easier to choose list items from options too numerous or complicated to fit into a 
 standard dropdown.
 
+### Filter maps
+
 Filters for a given set can be specified with the `#filter_map` method, which should
 return a list of filter configurations. Each configuration can be a Symbol or a Hash.
 For example, here is a simple configuration with three filters.
@@ -58,3 +60,21 @@ end
 
 Note that fields that use radio and check filtering in the `filter_form` view will use 
 select and multiselect filtering respectively in the `compact_filter_form` view.
+
+### Filter introspection
+
+The full filter mapping for a given search card can be accessed via the `#filter_map`
+method. A simpler list of the available keys are available at `#filter_keys`. And
+the option values for any give filter are available using 
+`#filter_option_values(filter_key)`.
+
+### Contributing
+
+Bug reports, feature suggestions requests are welcome on GitHub at 
+https://github.com/wikirate/wikirate/issues.
+
+### 🎉 Acknowledgements
+
+The development of this module was supported by [NLnet foundation](https://nlnet.nl/).
+
+![Image](https://nlnet.nl/logo/banner-160x60.png)
