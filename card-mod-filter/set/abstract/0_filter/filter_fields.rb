@@ -1,3 +1,5 @@
+delegate :filter_option_values, to: :format
+
 format :html do
   def filter_config category
     @filter_config ||= {}
@@ -6,6 +8,11 @@ format :html do
         method = "filter_#{category}_#{trait}"
         hash[trait] = send method if respond_to? method
       end
+  end
+
+  def filter_option_values category
+    options = send "filter_#{category}_options"
+    options.is_a?(Hash) ? options.values : options
   end
 
   def filter_name_type
