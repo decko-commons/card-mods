@@ -2,7 +2,6 @@ class Card
   class LookupQuery
     # shared filtering methods for query classes built on lookup tables
     module Filtering
-
       def process_filters
         normalize_filter_args
         return if @empty_result
