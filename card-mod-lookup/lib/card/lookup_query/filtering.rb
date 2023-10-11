@@ -2,6 +2,7 @@ class Card
   class LookupQuery
     # shared filtering methods for query classes built on lookup tables
     module Filtering
+
       def process_filters
         normalize_filter_args
         return if @empty_result
@@ -40,9 +41,12 @@ class Card
         filter card_id_map[key], card_id
       end
 
-      def not_ids_query value
-        add_condition "#{lookup_class.card_column} not in (?)", value.split(",")
+      def filter_by_not_ids value
+        add_condition "#{lookup_class.card_column} not in (?)",
+                      not_ids_value(value)
       end
+
+      private
 
       def to_card_id value
         if value.is_a? Array
@@ -105,6 +109,11 @@ class Card
 
       def db_value value
         value.is_a?(Array) ? "(?)" : "?"
+      end
+
+      def not_ids_value value
+        return value if value.is_a? Array
+        value.to_s.split ","
       end
     end
   end
