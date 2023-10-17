@@ -3,7 +3,7 @@
 require "../card_mod_gem"
 
 CardModGem.mod "csv_import" do |s, d|
-  s.version = "0.10"
+  s.version = "0.2"
   s.summary = "tool to import csv files "
   s.description = "a card mod for importing data from csv files as cards into a deck"
   d.depends_on_mod :tabs, :export
