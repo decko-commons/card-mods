@@ -97,10 +97,21 @@ format do
   def removable_filters
     each_removable_filter do |key, value, array|
       if value.is_a? Array
-        value.each { |v| array << [key, v] }
+        value.each { |v| array << [key, user_friendly_value(v)] }
       elsif !empty_filter_value_hash? value
-        array << [key, value]
+        array << [key, user_friendly_value(value)]
       end
+    end
+  end
+
+  def user_friendly_value value
+    case value
+    when Symbol
+      value.cardname
+    when String
+      value.starts_with?(/~|:/) ? value.cardname : value
+    else
+      value
     end
   end
 
