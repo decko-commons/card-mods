@@ -3,7 +3,7 @@
 require "../card_mod_gem"
 
 CardModGem.mod "solid_cache" do |s, _d|
-  s.version = "0.3"
+  s.version = "0.4"
   s.summary = "solid cache"
   s.description = ""
 end

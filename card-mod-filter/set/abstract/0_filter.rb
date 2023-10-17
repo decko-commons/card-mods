@@ -97,12 +97,13 @@ format do
   def removable_filters
     each_removable_filter do |key, value, array|
       if value.is_a? Array
-        value.each { |v| array << [key, v] }
+        value.each { |v| array << [key, user_friendly_value(v)] }
       elsif !empty_filter_value_hash? value
-        array << [key, value]
+        array << [key, user_friendly_value(value)]
       end
     end
   end
+
 
   def empty_filter_value_hash? value
     value.is_a?(Hash) && value.values.present? && !value.values.select(&:present?).any?
@@ -134,6 +135,21 @@ format do
 
   private
 
+  def user_friendly_value value
+    case value
+    when Symbol
+      value.cardname
+    when String
+      user_friendly_string_value value
+    else
+      value
+    end
+  end
+
+  def user_friendly_string_value value
+    value.starts_with?(/~|:/) ? value.cardname : value
+  end
+  
   def filter_keys_from_map_list list
     list.map do |item|
       case item
