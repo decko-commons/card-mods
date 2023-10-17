@@ -104,16 +104,6 @@ format do
     end
   end
 
-  def user_friendly_value value
-    case value
-    when Symbol
-      value.cardname
-    when String
-      value.starts_with?(/~|:/) ? value.cardname : value
-    else
-      value
-    end
-  end
 
   def empty_filter_value_hash? value
     value.is_a?(Hash) && value.values.present? && !value.values.select(&:present?).any?
@@ -144,6 +134,22 @@ format do
   end
 
   private
+
+  def user_friendly_value value
+    case value
+    when Symbol
+      value.cardname
+    when String
+      user_friendly_string_value value
+    else
+      value
+    end
+  end
+
+  def user_friendly_string_value value
+    value.starts_with?(/~|:/) ? value.cardname : value
+  end
+
 
   def filter_keys_from_map_list list
     list.map do |item|
