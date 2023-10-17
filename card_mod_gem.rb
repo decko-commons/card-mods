@@ -34,7 +34,8 @@ class CardModGem
   def mod name
     spec.name = "card-mod-#{name}"
     spec.metadata = { "card-mod" => name }
-    spec.files = Dir["{db,file,lib,public,set,config,vendor}/**/*", "README.md"]
+    spec.files =
+      Dir["{db,file,lib,public,set,config,vendor}/**/*", "README.md", "LICENSE"]
     spec.add_runtime_dependency "card"
   end
 

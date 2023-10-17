@@ -3,7 +3,7 @@
 require "../card_mod_gem"
 
 CardModGem.mod "filter" do |s, d|
-  s.version = "0.2"
+  s.version = "0.3"
   s.summary = "filter"
   s.description = ""
   d.depends_on_mod :search, :bootstrap
