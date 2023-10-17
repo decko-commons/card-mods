@@ -104,7 +104,6 @@ format do
     end
   end
 
-
   def empty_filter_value_hash? value
     value.is_a?(Hash) && value.values.present? && !value.values.select(&:present?).any?
   end
@@ -149,7 +148,7 @@ format do
   def user_friendly_string_value value
     value.starts_with?(/~|:/) ? value.cardname : value
   end
-  
+
   def filter_keys_from_map_list list
     list.map do |item|
       case item
