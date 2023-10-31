@@ -1,8 +1,8 @@
 - tag_method = field_type == :check ? :check_box_tag : :radio_button_tag
 .filter-list._filter-list{ class: "filter-#{field_type}-list _filter-#{field}-field"}
   - options.each_with_index do |(label, value), index|
-    - id = "filter-#{input_name.to_name.key}-#{value.to_name.key}"
     - value ||= label
+    - id = "filter-#{input_name.to_name.key}-#{value.to_name.key}"
     .form-check{ class: ("_more-filter-option" if index > 10) }
       %label.form-check-label{ for: id }<
         = label
