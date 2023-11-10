@@ -6,7 +6,7 @@ RSpec.describe Card::Set::Right::Account do
         type_id: Card::SignupID,
         "+*account" => {
           "+*email" => "tmpuser@decko.org",
-          "+*password" => "tmp_pass"
+          "+*password" => "1tmpPass!"
         }
       }
     end
