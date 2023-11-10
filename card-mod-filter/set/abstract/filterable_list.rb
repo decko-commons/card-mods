@@ -14,3 +14,9 @@ end
 def count
   item_strings.size
 end
+
+format :html do
+  def show_paging?
+    false
+  end
+end
