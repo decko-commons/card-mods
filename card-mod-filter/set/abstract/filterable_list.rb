@@ -15,7 +15,7 @@ def count
   item_strings.size
 end
 
-format do
+format :json do
   def show_paging?
     false
   end
