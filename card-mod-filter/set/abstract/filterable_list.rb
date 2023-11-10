@@ -15,7 +15,7 @@ def count
   item_strings.size
 end
 
-format :html do
+format do
   def show_paging?
     false
   end
