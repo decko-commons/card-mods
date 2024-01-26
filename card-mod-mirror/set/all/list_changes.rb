@@ -7,7 +7,7 @@ end
 
 def items_in_mirrors
   @items_in_mirrors ||=
-    Card.search left: name, type: [:mirror_list, :mirored_list], return: :name
+    Card.search left: name, type_id: [MirrorListID, MirroredListID], return: :name
 end
 
 def item_in_mirror?
