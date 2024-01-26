@@ -3,7 +3,7 @@ name: Decko Card Mods
 agent:
   machine:
     type: e1-standard-2
-    os_image: ubuntu1804
+    os_image: ubuntu2004
 global_job_config:
   env_vars:
     - name: CARD_MODS_REPO_PATH
@@ -18,8 +18,8 @@ global_job_config:
   prologue:
     commands:
       - checkout # semaphore does git checkout and cds into card-mods
-      - sem-version ruby 3.0.1
-      - gem install bundler:2.3.11
+      - sem-version ruby 3.0.2
+      - gem update --system
       - alias be='bundle exec'
       - cp .semaphore/Gemfile .
       - git submodule update --init --recursive
