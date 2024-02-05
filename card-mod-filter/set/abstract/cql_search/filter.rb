@@ -26,6 +26,11 @@ format do
     { sort_by: current_sort }
   end
 
+  def default_sort_option
+    cql = card.cql_content || {}
+    cql[:sort_by] || cql[:sort]
+  end
+
   def blocked_id_cql
     not_ids = filter_param :not_ids
     not_ids.present? ? { id: ["not in", not_ids.split(",")] } : {}
