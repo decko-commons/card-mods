@@ -29,12 +29,7 @@ format do
   end
 
   def current_sort
-    sort_param || default_sort_option
-  end
-
-  def default_sort_option
-    cql = card.cql_content || {}
-    cql[:sort_by] || cql[:sort]
+    sort_param || try(:default_sort_option)
   end
 
   def filter_param field
