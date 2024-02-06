@@ -87,7 +87,7 @@ blocks:
           value: cypress
       prologue:
         commands:
-          - cp ../.semaphore/cypress.json .
+          - cp ../.semaphore/cypress.config.js .
           - cp ../.semaphore/decko/decko/spec/package.json .
           - cp -R ../.semaphore/decko/decko/spec/cypress .
           - be decko server -p 5002 &
