@@ -44,13 +44,9 @@ module ClassMethods
 
   # use in cases where both the base card and the field card can trigger counting
   # (prevents double work)
-  def field_recount field_card
-    yield unless field_card.left&.action&.in? %i[create delete]
-  end
-
-  def field_recount_trigger *set_parts, &block
-    recount_trigger *set_parts do |changed_field_card|
-      field_recount(changed_field_card) &block
+  def field_recount_trigger *set_parts
+    recount_trigger *set_parts do |field_card|
+      yield field_card unless field_card.left&.action&.in? %i[create delete]
     end
   end
 
