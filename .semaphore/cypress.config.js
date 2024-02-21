@@ -7,7 +7,7 @@ module.exports = defineConfig({
   defaultCommandTimeout: 10000,
   watchForFileChanges: false,
   reporterOptions: {
-    mochaFile: "/home/semaphore/reports/cypress-output-[hash].xml"
+    mochaFile: '/home/semaphore/reports/cypress-output-[hash].xml'
   },
   reporter: 'junit',
   e2e: {
