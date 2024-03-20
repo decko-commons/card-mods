@@ -56,7 +56,8 @@ format do
   end
 
   def sort_hash
-    { sort_by.to_sym => sort_dir }
+    primary = { sort_by.to_sym => sort_dir }
+    secondary_sort ? primary.merge(secondary_sort) : primary
   end
 
   def sort_dir
@@ -91,6 +92,17 @@ format do
 
   # not a CQL search
   def filter_cql
+    {}
+  end
+
+  private
+
+  def secondary_sort
+    @secondary_sort ||= secondary_sort_hash[sort_by]
+  end
+
+  # for override
+  def secondary_sort_hash
     {}
   end
 end

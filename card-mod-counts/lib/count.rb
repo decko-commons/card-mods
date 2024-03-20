@@ -8,6 +8,10 @@ class Count < ActiveRecord::Base
     new_value
   end
 
+  def card
+    Card.fetch([left_id, right_id])
+  end
+
   class << self
     def create card
       validate_count_card card
