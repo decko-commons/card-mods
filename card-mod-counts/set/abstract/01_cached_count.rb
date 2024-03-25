@@ -34,7 +34,12 @@ def update_cached_count_when_ready
 end
 
 module ClassMethods
-  # @param parts [Array] set parts of changed card
+  # trigger a recount
+  # The set in which the #recount_trigger method is called is usually the set counted.
+  # This makes it easy to see all the events that update that card.
+  # The block should use the changed card to find the relevant cards in the current
+  # set that should be recounted.
+  # @param parts [Array] set parts of card that, when changed, should trigger a recount
   def recount_trigger *set_parts, &block
     event_args = set_parts.last.is_a?(Hash) ? set_parts.pop : {}
     set = ensure_set { set_parts }
