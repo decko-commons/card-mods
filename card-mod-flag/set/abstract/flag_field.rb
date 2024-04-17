@@ -17,5 +17,11 @@ def lookup?
 end
 
 def lookup_field_update
-  yield unless left.action.in? %i[create delete]
+  yield # unless left.action.in? %i[create delete]
+  # FIXME: the code commented above should work.
+  # it used to say "lookup_card" rather than "left", which is too literal a translation
+  # from LookupField - the lookup card is not involved in the action at all.
+  # Instead the problem is that the flag card itself is not trigerring any actions.
+  # Until we fix that, this should work, but it probably will involve multiple refreshes
+  # when multiple fields are edited at once. (eg on create and delete)
 end
