@@ -17,5 +17,5 @@ def lookup?
 end
 
 def lookup_field_update
-  yield unless lookup_card.action.in? %i[create delete]
+  yield unless left.action.in? %i[create delete]
 end
