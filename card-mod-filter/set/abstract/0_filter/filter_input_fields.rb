@@ -21,20 +21,32 @@ format :html do
   end
 
   def select_filter field, default, options, multiple: false
-    options = filter_options options
-    options = [["--", ""]] + options unless default
-    select_filter_tag field, default, options, multiple: multiple
+    options = filter_options options, field
+    data = {}
+
+    if options.is_a? String
+      data = { "options-card": options }
+      options = []
+    else
+      options = [["--", ""]] + options unless default
+    end
+    select_filter_tag field, default, options, multiple: multiple, data: data
   end
 
   def multiselect_filter field, default, options
     select_filter field, default, options, multiple: true
   end
 
-  def autocomplete_filter type_code, _default, options_card=nil
-    options_card ||= Card::Name[type_code, :type, :by_name]
-    text_filter type_code, "", class: "#{type_code}_autocomplete",
-                               "data-options-card": options_card
-  end
+  # def autocomplete_filter field, default, options_cardname
+  #   options_cardname ||= [field, :type, :by_name].cardname
+  #   select_filter field, default, [],
+  #                 multiple: true,
+  #                 data: { "options-card": options_cardname.cardname.url_key }
+  #
+  #   # options_card ||= Card::Name[type_code, :type, :by_name]
+  #   # text_filter type_code, "", class: "#{type_code}_autocomplete",
+  #   #                            "data-options-card": options_card
+  # end
 
   def text_filter field, default, opts
     opts ||= {}
@@ -61,7 +73,7 @@ format :html do
          field_type: check_or_radio,
          field: field,
          input_name: filter_input_name(field, multi: (check_or_radio == :check)),
-         options: filter_options(options),
+         options: filter_options(options, field),
          default: Array.wrap(filter_param(field) || default)
   end
 
@@ -71,7 +83,7 @@ format :html do
     text_field_tag name, value, opts
   end
 
-  def select_filter_tag field, default, options, multiple: false, disabled: false
+  def select_filter_tag field, default, options, multiple: false, disabled: false, data: {}
     klasses = "_filter_input_field filter-input filter-input-#{field} " \
               "_submit-on-change form-control " \
               "pointer-#{'multi' if multiple}select"
@@ -83,7 +95,8 @@ format :html do
                id: "filter-input-#{unique_id}",
                multiple: multiple,
                class: klasses,
-               disabled: disabled
+               disabled: disabled,
+               data: data
   end
 
   def range_sign side
