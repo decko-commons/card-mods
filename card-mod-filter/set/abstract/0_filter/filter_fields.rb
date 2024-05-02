@@ -23,6 +23,13 @@ format :html do
     filter_config(field)[:label] || filter_label_from_name(field)
   end
 
+  def type_options type_codename, order="asc", max_length=nil
+    Card.cache.fetch "#{type_codename}-TYPE-OPTIONS" do
+      res = Card.search type: type_codename, return: :name, sort_by: "name", dir: order
+      max_length ? (res.map { |i| [trim_option(i, max_length), i] }) : res
+    end
+  end
+
   private
 
   def filter_label_from_name field
@@ -54,13 +61,6 @@ format :html do
     option_hash.each_with_object([]) do |(key, value), array|
       array << [key, value.to_s]
       array
-    end
-  end
-
-  def type_options type_codename, order="asc", max_length=nil
-    Card.cache.fetch "#{type_codename}-TYPE-OPTIONS" do
-      res = Card.search type: type_codename, return: :name, sort_by: "name", dir: order
-      max_length ? (res.map { |i| [trim_option(i, max_length), i] }) : res
     end
   end
 
