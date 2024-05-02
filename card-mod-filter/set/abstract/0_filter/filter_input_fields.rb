@@ -83,7 +83,8 @@ format :html do
     text_field_tag name, value, opts
   end
 
-  def select_filter_tag field, default, options, multiple: false, disabled: false, data: {}
+  def select_filter_tag field, default, options,
+                        multiple: false, disabled: false, data: {}
     klasses = "_filter_input_field filter-input filter-input-#{field} " \
               "_submit-on-change form-control " \
               "pointer-#{'multi' if multiple}select"
