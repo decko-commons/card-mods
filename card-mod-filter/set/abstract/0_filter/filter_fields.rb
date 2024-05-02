@@ -23,6 +23,15 @@ format :html do
     filter_config(field)[:label] || filter_label_from_name(field)
   end
 
+  def type_options type_codename, order="asc", max_length=nil
+    Card.cache.fetch "#{type_codename}-TYPE-OPTIONS" do
+      res = Card.search type: type_codename, return: :name, sort_by: "name", dir: order
+      max_length ? (res.map { |i| [trim_option(i, max_length), i] }) : res
+    end
+  end
+
+  private
+
   def filter_label_from_name field
     Card.fetch_name(field) { field.to_s.sub(/^\*/, "").titleize }
   end
@@ -31,19 +40,27 @@ format :html do
     try("filter_#{field}_closer_value", value) || value
   end
 
-  def filter_options raw
-    return raw if raw.is_a? Array
-
-    raw.each_with_object([]) do |(key, value), array|
-      array << [key, value.to_s]
-      array
+  def filter_options raw, field
+    case raw
+    when Array, String, Name
+      # Array is option pairs
+      # name is options card for remote options
+      raw
+    when :remote_type
+      # special setting for when field is a type, options
+      # are cards of that type, and remote queries are desired
+      [field, :type, :by_name].cardname
+    when Hash
+      filter_options_from_hash raw
+    else
+      []
     end
   end
 
-  def type_options type_codename, order="asc", max_length=nil
-    Card.cache.fetch "#{type_codename}-TYPE-OPTIONS" do
-      res = Card.search type: type_codename, return: :name, sort_by: "name", dir: order
-      max_length ? (res.map { |i| [trim_option(i, max_length), i] }) : res
+  def filter_options_from_hash option_hash
+    option_hash.each_with_object([]) do |(key, value), array|
+      array << [key, value.to_s]
+      array
     end
   end
 
