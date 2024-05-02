@@ -23,6 +23,8 @@ format :html do
     filter_config(field)[:label] || filter_label_from_name(field)
   end
 
+  private
+
   def filter_label_from_name field
     Card.fetch_name(field) { field.to_s.sub(/^\*/, "").titleize }
   end
@@ -31,10 +33,25 @@ format :html do
     try("filter_#{field}_closer_value", value) || value
   end
 
-  def filter_options raw
-    return raw if raw.is_a? Array
+  def filter_options raw, field
+    case raw
+    when Array, String, Name
+      # Array is option pairs
+      # name is options card for remote options
+      raw
+    when :remote_type
+      # special setting for when field is a type, options
+      # are cards of that type, and remote queries are desired
+      [field, :type, :by_name].cardname
+    when Hash
+      filter_options_from_hash raw
+    else
+      []
+    end
+  end
 
-    raw.each_with_object([]) do |(key, value), array|
+  def filter_options_from_hash option_hash
+    option_hash.each_with_object([]) do |(key, value), array|
       array << [key, value.to_s]
       array
     end
