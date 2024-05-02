@@ -53,5 +53,12 @@ resetOffCanvas = (el, query) ->
 
 updateUrlBarWithFilter = (el, query) ->
   unless el.closest('._noFilterUrlUpdates')[0]
-    window.history.pushState "filter", "filter", '?' + $.param(query)
+    query_string = '?' + $.param(query)
+    if (tab = el.closest(".tabbable").find(".nav-link.active").data("tabName"))
+      query_string += "&tab=" + tab
+    window.history.pushState "filter", "filter", query_string
 
+
+#  $("body").on "click", "a.card-paging-link", ->
+#    id = $(this).slot().attr("id")
+# consider using pushState with paging, too.
