@@ -1,4 +1,6 @@
-.pe-3
-  = card.flag_type_card.first_name
-%em.fw-normal
-  = "(#{card.status})"
+.flag-bar-left
+  .pe-3
+    = field_nest :flag_type, view: :core, items: { view: :name }
+  %em.fw-normal
+    = "–"
+    = field_nest :status, view: :core, items: { view: :name }
