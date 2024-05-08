@@ -5,7 +5,7 @@ def virtual?
 end
 
 format :csv do
-  view :core do
+  view :body do
     res = []
     type_id = card.left.id
     all_votes do |user, vote, dir|
