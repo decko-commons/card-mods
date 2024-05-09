@@ -1,5 +1,5 @@
 format :csv do
-  view :core do
+  view :body do
     res = []
     all_votes do |user, vote, dir|
       res << CSV.generate_line([user.id, vote.id, dir, vote.created_at])
