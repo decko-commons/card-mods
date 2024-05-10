@@ -95,7 +95,7 @@ format :csv do
     card.import_item_class.export_csv_header
   end
 
-  view :core do
+  view :body do
     csv_lines_for(params[:status]&.to_sym)
   end
 
