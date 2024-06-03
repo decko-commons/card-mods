@@ -1,3 +1,4 @@
+basket[:filter_buttons] << :export_button
 
 format do
   def export_filename
@@ -58,9 +59,9 @@ format :html do
     end
   end
 
-  view :filtered_results_footer do
-    try(:no_results?) ? "" : render_export_button
-  end
+  # view :filtered_results_footer do
+  #   try(:no_results?) ? "" : render_export_button
+  # end
 
   def export_format_links
     export_formats.map { |format| export_format_link format }.join " / "

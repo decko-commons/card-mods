@@ -1,3 +1,5 @@
+basket[:filter_buttons] = %i[open_filters_button]
+
 format :html do
   view :filter_bars, cache: :never, template: :haml
 
@@ -31,8 +33,15 @@ format :html do
 
   view :offcanvas_filters, template: :haml, cache: :never
   view :filtered_results_header, template: :haml, cache: :never
+  view :open_filters_button, template: :haml
   view :filtered_results_stats, cache: :never do
     labeled_badge count_with_params, "Results"
+  end
+
+
+
+  view :filtered_view_toggle do
+    "(view toggle)"
   end
 
   # for override
