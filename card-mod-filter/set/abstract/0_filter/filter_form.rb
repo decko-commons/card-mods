@@ -48,7 +48,6 @@ format :html do
   end
 
   # for override
-  view(:filtered_results_visualization) { "" }
   view(:filtered_results_footer) { "" }
 
   view :selectable_filtered_content, template: :haml, cache: :never
