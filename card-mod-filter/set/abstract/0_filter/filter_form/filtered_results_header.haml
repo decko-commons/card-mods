@@ -16,18 +16,14 @@
           %a.clear-filters.m-1.ms-0{ "data-filter": "{}", href: "#" }
             Clear All
         &nbsp;
+      .filter-buttons.d-flex
+        - filter_buttons.each do |button|
+          .ms-3
+            = render button
 
-      ._filters-button.ms-3
-        %a.text-reset.fw-bold{ "data-bs": { toggle: "offcanvas",
-                                            target: "##{offcanvas_filter_id}" },
-                               title: "All Filters",
-                               href: "" }
-          = icon_tag :filter_list
-          ALL FILTERS
 
-    .header-middle-row.my-4
-      = render_filtered_results_visualization
     .header-bottom-row.mb-2.mt-4.d-flex.justify-content-between.align-items-center
       = render_filtered_results_stats
-      = render_filter_sort_dropdown
-
+      .sort-and-toggle.d-flex
+        = render_filter_sort_dropdown
+        = render_filtered_view_toggle

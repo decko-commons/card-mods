@@ -31,8 +31,13 @@ format :html do
 
   view :offcanvas_filters, template: :haml, cache: :never
   view :filtered_results_header, template: :haml, cache: :never
+  view :open_filters_button, template: :haml
   view :filtered_results_stats, cache: :never do
     labeled_badge count_with_params, "Results"
+  end
+
+  view :filtered_view_toggle do
+    "(view toggle)"
   end
 
   # for override
@@ -43,6 +48,10 @@ format :html do
 
   before(:select_item) { class_up "card-slot", "_filter-result-slot" }
   view :select_item, cache: :never, wrap: :slot, template: :haml
+
+  def filter_buttons
+    [:open_filters_button]
+  end
 
   def filter_form_args
     {
