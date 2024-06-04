@@ -52,7 +52,7 @@ end
 def add_new_relic_card_attributes
   ::NewRelic::Agent.add_custom_attributes(
     card: { type: type_code, name: name },
-    user: { roles: all_roles.join(", ") }
+    user: { roles: Card::Auth.current.all_roles.join(", ") }
   )
 end
 
