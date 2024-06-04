@@ -60,7 +60,7 @@ format :html do
   def filter_buttons
     super << :export_button
   end
-  
+
   # view :filtered_results_footer do
   #   try(:no_results?) ? "" : render_export_button
   # end
