@@ -1,5 +1,3 @@
-basket[:filter_buttons] = %i[open_filters_button]
-
 format :html do
   view :filter_bars, cache: :never, template: :haml
 
@@ -38,8 +36,6 @@ format :html do
     labeled_badge count_with_params, "Results"
   end
 
-
-
   view :filtered_view_toggle do
     "(view toggle)"
   end
@@ -52,6 +48,10 @@ format :html do
 
   before(:select_item) { class_up "card-slot", "_filter-result-slot" }
   view :select_item, cache: :never, wrap: :slot, template: :haml
+
+  def filter_buttons
+    [:open_filters_button]
+  end
 
   def filter_form_args
     {

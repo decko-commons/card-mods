@@ -1,5 +1,3 @@
-basket[:filter_buttons] << :export_button
-
 format do
   def export_filename
     "#{export_timestamp}-#{export_title}"
@@ -46,10 +44,6 @@ format :json do
 end
 
 format :html do
-  def export_formats
-    %i[csv json]
-  end
-
   # don't cache because many export links include filter/sort params
   view :export_links, cache: :never do
     return "" if export_formats.blank?
@@ -59,6 +53,14 @@ format :html do
     end
   end
 
+  def export_formats
+    %i[csv json]
+  end
+
+  def filter_buttons
+    super << :export_button
+  end
+  
   # view :filtered_results_footer do
   #   try(:no_results?) ? "" : render_export_button
   # end
