@@ -1,7 +1,7 @@
 include_set Abstract::Lock
 
-def ok_to_read
-  left.ok_to_read
+def ok_to_read?
+  left.ok_to_read?
 end
 
 def followable?
