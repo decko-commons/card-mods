@@ -12,9 +12,10 @@ format :html do
   end
 
   def current_filtered_body
-    params[:filtered_body] || default_filtered_body
+    params[:filtered_body]&.to_sym || default_filtered_body
   end
 
+  # for override
   def default_filtered_body
 
   end
@@ -24,10 +25,9 @@ format :html do
   end
 
   def link_to_filtered_body view, icon
-    link_to icon_tag(icon),
-            class: "_filtered-body-toggle btn ms-1",
-            data: { view: view },
-            href: "#"
+    klasses = "_filtered-body-toggle btn ms-1"
+    klasses << " btn-light" if view == current_filtered_body
+    link_to icon_tag(icon), class: klasses, href: "#", data: { view: view }
   end
 
   def extra_paging_path_args

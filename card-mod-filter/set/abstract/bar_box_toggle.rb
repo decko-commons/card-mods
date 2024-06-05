@@ -5,6 +5,11 @@ format :html do
     { bar_results: :bars, box_results: :boxes }
   end
 
+  def default_filtered_body
+    imp = implicit_item_view
+    :"#{imp}_results" if %i[bar box].include? imp&.to_sym
+  end
+
   view :bar_results do
     voo.items[:view] = "bar"
     render_core
