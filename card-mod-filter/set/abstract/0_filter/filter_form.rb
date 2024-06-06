@@ -25,24 +25,43 @@ format :html do
 
   view :filtered_results, cache: :never do
     wrap true, class: "_filter-result-slot" do
-      [render_filtered_results_header, render_core, render_filtered_results_footer]
+      [
+        render_filtered_results_header,
+        render_filtered_body,
+        render_filtered_results_footer
+      ]
     end
   end
 
   view :offcanvas_filters, template: :haml, cache: :never
   view :filtered_results_header, template: :haml, cache: :never
+  view :open_filters_button, template: :haml
+  view :filter_closers, template: :haml
   view :filtered_results_stats, cache: :never do
     labeled_badge count_with_params, "Results"
   end
 
+  view :filtered_results_nav do
+    render_filter_sort_dropdown
+  end
+
+  view :filtered_body, cache: :never do
+    view = params[:filtered_body]
+    view = :core unless view.present?
+    render view
+  end
+
   # for override
-  view(:filtered_results_visualization) { "" }
   view(:filtered_results_footer) { "" }
 
   view :selectable_filtered_content, template: :haml, cache: :never
 
   before(:select_item) { class_up "card-slot", "_filter-result-slot" }
   view :select_item, cache: :never, wrap: :slot, template: :haml
+
+  def filter_buttons
+    [:open_filters_button]
+  end
 
   def filter_form_args
     {
