@@ -1,33 +1,15 @@
-.filtered-results-header._filtered-results-header
+.filtered-results-header._filtered-results-header.my-3.card-menu-hoverspace
   %form.filtered-results-form{ filter_form_args }
+    = render_menu_block optional: :hide
     .header-top-row.mb-4.d-flex.justify-content-between.align-items-center
-      .filter-badges._filter-closers
-        - removables = removable_filters
-        - removables.each do |key, value|
-          - filter = filter_hash_without key, value
-          %a.btn.btn-sm.btn-outline-primary.m-1.ms-0{ "data-filter": JSON(filter),
-                                                      class: "filter-closer close-filter-#{key}" }
-            = "#{filter_label key}: "
-            %span.fw-bold
-              = filter_closer_value key, value
+      .filter-closers-section
+        = render_filter_closers
+      .filter-buttons.d-flex
+        - filter_buttons.each do |button|
+          .ms-3
+            = render button
 
-            = icon_tag :remove, class: "ms-2"
-        - if removables.size > 1
-          %a.clear-filters.m-1.ms-0{ "data-filter": "{}", href: "#" }
-            Clear All
-        &nbsp;
-
-      ._filters-button.ms-3
-        %a.text-reset.fw-bold{ "data-bs": { toggle: "offcanvas",
-                                            target: "##{offcanvas_filter_id}" },
-                               title: "All Filters",
-                               href: "" }
-          = icon_tag :filter_list
-          ALL FILTERS
-
-    .header-middle-row.my-4
-      = render_filtered_results_visualization
     .header-bottom-row.mb-2.mt-4.d-flex.justify-content-between.align-items-center
       = render_filtered_results_stats
-      = render_filter_sort_dropdown
-
+      .sort-and-toggle.d-flex
+        = render_filtered_results_nav

@@ -1,0 +1,14 @@
+.filter-badges._filter-closers
+  - removables = removable_filters
+  - removables.each do |key, value|
+    - filter = filter_hash_without key, value
+    %a.btn.btn-sm.btn-outline-primary.m-1.ms-0{ "data-filter": JSON(filter),
+                                                    class: "filter-closer close-filter-#{key}" }
+      = "#{filter_label key}: "
+      %span.fw-bold
+        = filter_closer_value key, value
+
+      = icon_tag :remove, class: "ms-2"
+  - if removables.size > 1
+    %a.clear-filters.m-1.ms-0{ "data-filter": "{}", href: "#" }
+      Clear All

@@ -30,12 +30,7 @@ $(window).ready ->
     e.preventDefault()
 
   $("body").on "change", "._filtered-results-header ._filter-sort", (e) ->
-    sel = $(this)
-    form = sel.closest "form"
-    data = form.data()
-    data.sort_by = sel.val()
-    decko.filter.refilter form, data
-    e.preventDefault()
+    navigateResults $(this).closest("form"), e
 
   $("body").on "show.bs.offcanvas", "._offcanvas-filter", ->
     ocbody = $(this).find ".offcanvas-body"
@@ -45,6 +40,21 @@ $(window).ready ->
       $.get path, (data) ->
         ocbody.html data
         ocbody.slot().trigger "decko.slot.ready"
+
+  $("body").on "click", "._filtered-body-toggle", (e) ->
+    link = $(this)
+    parent = link.parent()
+    parent.data "current", link.data("view")
+    parent.children().removeClass "btn-light"
+    link.addClass "btn-light"
+    navigateResults link.closest("form"), e
+
+navigateResults = (form, event) ->
+  data = form.data()
+  data.sort_by = form.find("._filter-sort").val()
+  data.filtered_body = form.find("._filtered-body").data "current"
+  decko.filter.refilter form, data
+  event.preventDefault()
 
 resetOffCanvas = (el, query) ->
   ocbody = el.closest("._filtered-content").find ".offcanvas-body"
