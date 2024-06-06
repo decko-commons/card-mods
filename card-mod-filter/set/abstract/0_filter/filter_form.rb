@@ -41,7 +41,7 @@ format :html do
     render_filter_sort_dropdown
   end
 
-  view :filtered_body do
+  view :filtered_body, cache: :never do
     view = params[:filtered_body]
     view = :core unless view.present?
     render view
