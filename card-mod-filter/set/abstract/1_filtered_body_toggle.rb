@@ -3,7 +3,7 @@ format :html do
     [render_filter_sort_dropdown, render_filtered_body_toggle]
   end
 
-  view :filtered_body_toggle do
+  view :filtered_body_toggle, cache: :never do
     wrap_with :div, class: "_filtered-body filtered-body ms-2" do
       filtered_body_views.map do |view, icon|
         link_to_filtered_body view, icon
