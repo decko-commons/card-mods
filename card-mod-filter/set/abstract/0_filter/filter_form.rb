@@ -25,7 +25,11 @@ format :html do
 
   view :filtered_results, cache: :never do
     wrap true, class: "_filter-result-slot" do
-      [render_filtered_results_header, render_filtered_body, render_filtered_results_footer]
+      [
+        render_filtered_results_header,
+        render_filtered_body,
+        render_filtered_results_footer
+      ]
     end
   end
 

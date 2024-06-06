@@ -15,13 +15,12 @@ format :html do
     params[:filtered_body]&.to_sym || default_filtered_body
   end
 
-  # for override
   def default_filtered_body
-
+    raise "override #default_filtered_body in #{self.class}"
   end
 
   def filtered_body_views
-    []
+    raise "override #filtered_body_views in #{self.class}"
   end
 
   def link_to_filtered_body view, icon
