@@ -14,8 +14,9 @@ format do
   def show_as_attachment
     return unless controller&.response && Cardio.config.export_disposition == :attachment
 
+    disposition = params[:disposition] || "attachment"
     controller.response.headers["Content-Disposition"] =
-      "attachment; filename=\"#{export_filename}.#{format_ext}\""
+      "#{disposition}; filename=\"#{export_filename}.#{format_ext}\""
   end
 end
 
