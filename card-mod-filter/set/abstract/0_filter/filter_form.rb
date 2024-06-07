@@ -36,7 +36,7 @@ format :html do
   view :offcanvas_filters, template: :haml, cache: :never
   view :filtered_results_header, template: :haml, cache: :never
   view :open_filters_button, template: :haml
-  view :filter_closers, template: :haml
+  view :filter_closers, cache: :never, template: :haml
   view :filtered_results_stats, cache: :never do
     labeled_badge count_with_params, "Results"
   end
