@@ -26,7 +26,7 @@ format :html do
 
     if options.is_a? String
       data = { "options-card": options }
-      options = []
+      options = Array.wrap(filter_param(field)).map { |p| [p.cardname, p] }
     else
       options = [["--", ""]] + options unless default
     end
