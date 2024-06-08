@@ -86,9 +86,10 @@ format :html do
   end
 
   def filter_bar item
+    puts "item: #{item}"
     item = { key: item } unless item.is_a? Hash
     body = filter_bar_content item
-    title = filter_label item[:key]
+    title = item[:label] || filter_label(item[:key])
     context = item[:key].to_name.safe_key
     accordion_item title, body: body, open: item[:open], context: context
   end
