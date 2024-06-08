@@ -86,7 +86,6 @@ format :html do
   end
 
   def filter_bar item
-    puts "item: #{item}"
     item = { key: item } unless item.is_a? Hash
     body = filter_bar_content item
     title = item[:label] || filter_label(item[:key])
