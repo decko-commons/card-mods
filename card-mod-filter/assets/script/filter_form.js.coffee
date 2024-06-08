@@ -6,7 +6,6 @@ decko.filter =
     updateUrlBarWithFilter form, data
     resetOffCanvas form, data
 
-
 $(window).ready ->
   $("body").on "submit", "._filter-form", ->
     el = $(this)
@@ -58,6 +57,7 @@ navigateResults = (form, event) ->
 
 resetOffCanvas = (el, query) ->
   ocbody = el.closest("._filtered-content").find ".offcanvas-body"
+  ocbody.parent().offcanvas "hide"
   ocbody.empty()
   ocbody.data "query", query
 

@@ -92,9 +92,9 @@ format do
   def removable_filters
     each_removable_filter do |key, value, array|
       if value.is_a? Array
-        value.each { |v| array << [key, user_friendly_value(v)] }
+        value.each { |v| array << [key, v, user_friendly_value(v)] }
       elsif !empty_filter_value_hash? value
-        array << [key, user_friendly_value(value)]
+        array << [key, value, user_friendly_value(value)]
       end
     end
   end
