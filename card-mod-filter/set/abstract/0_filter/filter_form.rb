@@ -47,7 +47,7 @@ format :html do
 
   view :filtered_body, cache: :never do
     view = params[:filtered_body]
-    view = :core unless view.present?
+    view = default_filtered_body unless view.present?
     render view
   end
 
