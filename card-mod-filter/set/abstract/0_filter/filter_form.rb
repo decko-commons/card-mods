@@ -59,6 +59,10 @@ format :html do
   before(:select_item) { class_up "card-slot", "_filter-result-slot" }
   view :select_item, cache: :never, wrap: :slot, template: :haml
 
+  def default_filtered_body
+    :core
+  end
+
   def filter_buttons
     [:open_filters_button]
   end
