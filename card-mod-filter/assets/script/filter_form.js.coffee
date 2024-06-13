@@ -1,10 +1,15 @@
 decko.filter =
   refilter: (form, data) ->
+
     data.filter = "empty" if $.isEmptyObject data.filter
     url = decko.path form.attr("action") + "?" + $.param(data)
     form.slot().slotReload url
     updateUrlBarWithFilter form, data
     resetOffCanvas form, data
+
+  formatters:
+    sort_by: (form, data) -> data.sort_by = form.find("._filter-sort").val()
+    filtered_body: (form, data) -> data.filtered_body = form.find("._filtered-body").data "current"
 
 $(window).ready ->
   $("body").on "submit", "._filter-form", ->
@@ -50,8 +55,7 @@ $(window).ready ->
 
 navigateResults = (form, event) ->
   data = form.data()
-  data.sort_by = form.find("._filter-sort").val()
-  data.filtered_body = form.find("._filtered-body").data "current"
+  $.each decko.filter.formatters, (_key, func)-> func(form, data)
   decko.filter.refilter form, data
   event.preventDefault()
 
