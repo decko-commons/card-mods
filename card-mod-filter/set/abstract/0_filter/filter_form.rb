@@ -47,7 +47,7 @@ format :html do
 
   view :filtered_body, cache: :never do
     view = params[:filtered_body]
-    view = :core unless view.present?
+    view = default_filtered_body unless view.present?
     render view
   end
 
@@ -58,6 +58,10 @@ format :html do
 
   before(:select_item) { class_up "card-slot", "_filter-result-slot" }
   view :select_item, cache: :never, wrap: :slot, template: :haml
+
+  def default_filtered_body
+    :core
+  end
 
   def filter_buttons
     [:open_filters_button]
@@ -88,7 +92,7 @@ format :html do
   def filter_bar item
     item = { key: item } unless item.is_a? Hash
     body = filter_bar_content item
-    title = filter_label item[:key]
+    title = item[:label] || filter_label(item[:key])
     context = item[:key].to_name.safe_key
     accordion_item title, body: body, open: item[:open], context: context
   end
