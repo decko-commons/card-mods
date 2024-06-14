@@ -264,17 +264,26 @@
 
 // filter_form.js.coffee
 (function() {
-  var findInFilteredContent, query, removeFromQuery, resetOffCanvas, updateUrlBarWithFilter;
+  var removeFromQuery, resetOffCanvas, updateUrlBarWithFilter;
 
   decko.filter = {
     refilter: function(el) {
       var form, query, url;
-      form = $(el).closest("form");
+      form = decko.filter.resultsForm(el);
       query = form.data("query");
       url = decko.path(form.attr("action") + "?" + $.param(query));
       form.slot().slotReload(url);
       updateUrlBarWithFilter(form, query);
       return resetOffCanvas(form);
+    },
+    query: function(el) {
+      return decko.filter.resultsForm(el).data("query");
+    },
+    resultsForm: function(el) {
+      return decko.filter.findInFilteredContent(el, "form.filtered-results-form");
+    },
+    findInFilteredContent: function(el, selector) {
+      return $(el).closest("._filtered-content").find(selector);
     }
   };
 
@@ -310,7 +319,7 @@
     $("body").on("change", "._filtered-results-header ._filter-sort", function(e) {
       var sel;
       sel = $(this);
-      query(sel).sort_by = sel.val();
+      decko.filter.query(sel).sort_by = sel.val();
       decko.filter.refilter(this);
       return e.preventDefault;
     });
@@ -331,21 +340,15 @@
       link = $(this);
       link.parent().children().removeClass("btn-light");
       link.addClass("btn-light");
-      query(link).filtered_body = link.data("view");
+      decko.filter.query(link).filtered_body = link.data("view");
       decko.filter.refilter(this);
       return e.preventDefault();
     });
   });
 
-  query = function(el) {
-    var form;
-    form = findInFilteredContent(el, "form.filtered-results-form");
-    return form.data("query");
-  };
-
   resetOffCanvas = function(el) {
     var ocbody;
-    ocbody = findInFilteredContent(el, ".offcanvas-body");
+    ocbody = decko.filter.findInFilteredContent(el, ".offcanvas-body");
     ocbody.parent().offcanvas("hide");
     return ocbody.empty();
   };
@@ -361,13 +364,9 @@
     }
   };
 
-  findInFilteredContent = function(el, selector) {
-    return $(el).closest("._filtered-content").find(selector);
-  };
-
   removeFromQuery = function(link) {
     var filter, i, key, remove, value;
-    filter = query(link).filter;
+    filter = decko.filter.query(link).filter;
     remove = link.data("removeFilter");
     key = remove[0];
     value = remove[1];
