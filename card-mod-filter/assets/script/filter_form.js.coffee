@@ -1,8 +1,9 @@
 # TODO: make filter form an object
 
 decko.filter =
-  refilter: (form, query) ->
-    query ||= form.data("query")
+  refilter: (el) ->
+    form = $(el).closest "form"
+    query = form.data "query"
     url = decko.path form.attr("action") + "?" + $.param(query)
     form.slot().slotReload url
     updateUrlBarWithFilter form, query
@@ -27,13 +28,14 @@ $(window).ready ->
 
   $("body").on "click", "._filter-closers a", (e) ->
     link = $(this)
-    decko.filter.refilter link.closest("form"), link.data()
+    removeFromQuery link
+    decko.filter.refilter this
     e.preventDefault()
 
   $("body").on "change", "._filtered-results-header ._filter-sort", (e) ->
     sel = $(this)
     query(sel).sort_by = sel.val()
-    decko.filter.refilter sel.closest("form")
+    decko.filter.refilter this
     e.preventDefault
 
   $("body").on "show.bs.offcanvas", "._offcanvas-filter", ->
@@ -50,15 +52,15 @@ $(window).ready ->
     link.parent().children().removeClass "btn-light"
     link.addClass "btn-light"
     query(link).filtered_body = link.data("view")
-    decko.filter.refilter link.closest("form")
+    decko.filter.refilter this
     e.preventDefault()
 
 query = (el) ->
-  form = $(el).closest(".filtered_content-view").find "form.filtered-results-form"
+  form = findInFilteredContent el, "form.filtered-results-form"
   form.data "query"
 
 resetOffCanvas = (el) ->
-  ocbody = el.closest("._filtered-content").find ".offcanvas-body"
+  ocbody = findInFilteredContent el, ".offcanvas-body"
   ocbody.parent().offcanvas "hide"
   ocbody.empty()
 
@@ -68,6 +70,20 @@ updateUrlBarWithFilter = (el, query) ->
     if (tab = el.closest(".tabbable").find(".nav-link.active").data("tabName"))
       query_string += "&tab=" + tab
     window.history.pushState "filter", "filter", query_string
+
+findInFilteredContent = (el, selector) ->
+  $(el).closest("._filtered-content").find selector
+
+removeFromQuery = (link) ->
+  filter = query(link).filter
+  remove = link.data "removeFilter"
+  key = remove[0]
+  value = remove[1]
+  if Array.isArray filter[key]
+    i = filter[key].indexOf value
+    filter[key].splice i, 1
+  else
+    delete filter[key]
 
 
 #  $("body").on "click", "a.card-paging-link", ->
