@@ -78,17 +78,6 @@ format do
     {}
   end
 
-  def filter_hash_without key, value
-    filter_hash.clone.tap do |hash|
-      case hash[key]
-      when Array
-        hash[key] = hash[key] - Array.wrap(value)
-      else
-        hash.delete key
-      end
-    end
-  end
-
   def removable_filters
     each_removable_filter do |key, value, array|
       if value.is_a? Array
