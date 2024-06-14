@@ -3,7 +3,7 @@
   - removables.each do |key, value, pretty_value|
     - filter = filter_hash_without key, value
     %a.btn.btn-sm.btn-outline-primary.m-1.ms-0{ "data-filter": JSON(filter),
-                                                    class: "filter-closer close-filter-#{key}" }
+                                                class: "filter-closer close-filter-#{key}" }
       = "#{filter_label key}: "
       %span.fw-bold
         = filter_closer_value key, pretty_value
