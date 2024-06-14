@@ -16,7 +16,7 @@ format :html do
   end
 
   def default_filtered_body
-    raise "override #default_filtered_body in #{self.class}"
+    filtered_body_views.keys.first
   end
 
   def filtered_body_views
