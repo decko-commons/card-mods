@@ -1,15 +1,12 @@
+# TODO: make filter form an object
+
 decko.filter =
-  refilter: (form, data) ->
-
-    data.filter = "empty" if $.isEmptyObject data.filter
-    url = decko.path form.attr("action") + "?" + $.param(data)
+  refilter: (form, query) ->
+    query ||= form.data("query")
+    url = decko.path form.attr("action") + "?" + $.param(query)
     form.slot().slotReload url
-    updateUrlBarWithFilter form, data
-    resetOffCanvas form, data
-
-  formatters:
-    sort_by: (form, data) -> data.sort_by = form.find("._filter-sort").val()
-    filtered_body: (form, data) -> data.filtered_body = form.find("._filtered-body").data "current"
+    updateUrlBarWithFilter form, query
+    resetOffCanvas form
 
 $(window).ready ->
   $("body").on "submit", "._filter-form", ->
@@ -34,36 +31,36 @@ $(window).ready ->
     e.preventDefault()
 
   $("body").on "change", "._filtered-results-header ._filter-sort", (e) ->
-    navigateResults $(this).closest("form"), e
+    sel = $(this)
+    query(sel).sort_by = sel.val()
+    decko.filter.refilter sel.closest("form")
+    e.preventDefault
 
   $("body").on "show.bs.offcanvas", "._offcanvas-filter", ->
     ocbody = $(this).find ".offcanvas-body"
-    if ocbody.html() == ""
-      path = decko.path ocbody.data("path") + "/filter_bars?" +
-        $.param(ocbody.data("query"))
-      $.get path, (data) ->
-        ocbody.html data
-        ocbody.slot().trigger "decko.slot.ready"
+    return unless ocbody.html() == ""
+
+    path = decko.path ocbody.data("path") + "/filter_bars?" + $.param(query(ocbody))
+    $.get path, (data) ->
+      ocbody.html data
+      ocbody.slot().trigger "decko.slot.ready"
 
   $("body").on "click", "._filtered-body-toggle", (e) ->
     link = $(this)
-    parent = link.parent()
-    parent.data "current", link.data("view")
-    parent.children().removeClass "btn-light"
+    link.parent().children().removeClass "btn-light"
     link.addClass "btn-light"
-    navigateResults link.closest("form"), e
+    query(link).filtered_body = link.data("view")
+    decko.filter.refilter link.closest("form")
+    e.preventDefault()
 
-navigateResults = (form, event) ->
-  data = form.data()
-  $.each decko.filter.formatters, (_key, func)-> func(form, data)
-  decko.filter.refilter form, data
-  event.preventDefault()
+query = (el) ->
+  form = $(el).closest(".filtered_content-view").find "form.filtered-results-form"
+  form.data "query"
 
-resetOffCanvas = (el, query) ->
+resetOffCanvas = (el) ->
   ocbody = el.closest("._filtered-content").find ".offcanvas-body"
   ocbody.parent().offcanvas "hide"
   ocbody.empty()
-  ocbody.data "query", query
 
 updateUrlBarWithFilter = (el, query) ->
   unless el.closest('._noFilterUrlUpdates')[0]

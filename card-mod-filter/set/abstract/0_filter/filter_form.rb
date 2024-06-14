@@ -75,7 +75,7 @@ format :html do
       "accept-charset": "UTF-8",
       "data-remote": true,
       "data-slot-selector": "._filter-result-slot",
-      "data-filter": filter_hash.to_json
+      "data-query": { filter: filter_hash }.to_json
     }
   end
 
