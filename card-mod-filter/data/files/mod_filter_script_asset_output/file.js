@@ -324,12 +324,13 @@
       return e.preventDefault;
     });
     $("body").on("show.bs.offcanvas", "._offcanvas-filter", function() {
-      var ocbody, path;
+      var ocbody, path, query;
       ocbody = $(this).find(".offcanvas-body");
       if (ocbody.html() !== "") {
         return;
       }
-      path = decko.path(ocbody.data("path") + "/filter_bars?" + $.param(query(ocbody)));
+      query = decko.filter.query(ocbody);
+      path = decko.path(ocbody.data("path") + "/filter_bars?" + query);
       return $.get(path, function(data) {
         ocbody.html(data);
         return ocbody.slot().trigger("decko.slot.ready");
