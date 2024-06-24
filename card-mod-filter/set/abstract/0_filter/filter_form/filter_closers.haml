@@ -1,8 +1,7 @@
 .filter-badges._filter-closers
   - removables = removable_filters
   - removables.each do |key, value, pretty_value|
-    - filter = filter_hash_without key, value
-    %a.btn.btn-sm.btn-outline-primary.m-1.ms-0{ "data-filter": JSON(filter),
+    %a.btn.btn-sm.btn-outline-primary.m-1.ms-0{ "data-remove-filter": [key, value].to_json,
                                                 class: "filter-closer close-filter-#{key}" }
       = "#{filter_label key}: "
       %span.fw-bold
