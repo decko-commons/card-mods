@@ -51,7 +51,8 @@ $(window).ready ->
     ocbody = $(this).find ".offcanvas-body"
     return unless ocbody.html() == ""
 
-    path = decko.path ocbody.data("path") + "/filter_bars?" + $.param(query(ocbody))
+    query = decko.filter.query ocbody
+    path = decko.path ocbody.data("path") + "/filter_bars?" + query
     $.get path, (data) ->
       ocbody.html data
       ocbody.slot().trigger "decko.slot.ready"
@@ -77,16 +78,19 @@ updateUrlBarWithFilter = (el, query) ->
     window.history.pushState "filter", "filter", query_string
 
 removeFromQuery = (link) ->
-  filter = decko.filter.query(link).filter
+  query = decko.filter.query link
   remove = link.data "removeFilter"
-  key = remove[0]
-  value = remove[1]
+  if remove == "all"
+    query["filter"] = "empty"
+  else
+    removeSingleFilter query.filter, remove[0], remove[1]
+
+removeSingleFilter = (filter, key, value) ->
   if Array.isArray filter[key]
     i = filter[key].indexOf value
     filter[key].splice i, 1
   else
     delete filter[key]
-
 
 #  $("body").on "click", "a.card-paging-link", ->
 #    id = $(this).slot().attr("id")
