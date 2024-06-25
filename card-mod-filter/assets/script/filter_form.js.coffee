@@ -51,7 +51,8 @@ $(window).ready ->
     ocbody = $(this).find ".offcanvas-body"
     return unless ocbody.html() == ""
 
-    path = decko.path ocbody.data("path") + "/filter_bars?" + $.param(query(ocbody))
+    query = decko.filter.query ocbody
+    path = decko.path ocbody.data("path") + "/filter_bars?" + query
     $.get path, (data) ->
       ocbody.html data
       ocbody.slot().trigger "decko.slot.ready"
