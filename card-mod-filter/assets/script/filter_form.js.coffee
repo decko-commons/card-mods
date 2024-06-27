@@ -52,7 +52,7 @@ $(window).ready ->
     return unless ocbody.html() == ""
 
     query = decko.filter.query ocbody
-    path = decko.path ocbody.data("path") + "/filter_bars?" + query
+    path = decko.path ocbody.data("path") + "/filter_bars?" + $.param(query)
     $.get path, (data) ->
       ocbody.html data
       ocbody.slot().trigger "decko.slot.ready"
