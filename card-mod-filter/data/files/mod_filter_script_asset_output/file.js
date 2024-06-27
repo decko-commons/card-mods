@@ -264,7 +264,7 @@
 
 // filter_form.js.coffee
 (function() {
-  var removeFromQuery, resetOffCanvas, updateUrlBarWithFilter;
+  var removeFromQuery, removeSingleFilter, resetOffCanvas, updateUrlBarWithFilter;
 
   decko.filter = {
     refilter: function(el) {
@@ -324,12 +324,13 @@
       return e.preventDefault;
     });
     $("body").on("show.bs.offcanvas", "._offcanvas-filter", function() {
-      var ocbody, path;
+      var ocbody, path, query;
       ocbody = $(this).find(".offcanvas-body");
       if (ocbody.html() !== "") {
         return;
       }
-      path = decko.path(ocbody.data("path") + "/filter_bars?" + $.param(query(ocbody)));
+      query = decko.filter.query(ocbody);
+      path = decko.path(ocbody.data("path") + "/filter_bars?" + $.param(query));
       return $.get(path, function(data) {
         ocbody.html(data);
         return ocbody.slot().trigger("decko.slot.ready");
@@ -365,11 +366,18 @@
   };
 
   removeFromQuery = function(link) {
-    var filter, i, key, remove, value;
-    filter = decko.filter.query(link).filter;
+    var query, remove;
+    query = decko.filter.query(link);
     remove = link.data("removeFilter");
-    key = remove[0];
-    value = remove[1];
+    if (remove === "all") {
+      return query["filter"] = "empty";
+    } else {
+      return removeSingleFilter(query.filter, remove[0], remove[1]);
+    }
+  };
+
+  removeSingleFilter = function(filter, key, value) {
+    var i;
     if (Array.isArray(filter[key])) {
       i = filter[key].indexOf(value);
       return filter[key].splice(i, 1);
