@@ -20,13 +20,15 @@ format :html do
     check_or_radio_filter :radio, *args
   end
 
-  def select_filter field, default, options, multiple: false
+  def select_filter field, default, options, multiple: false, view: :name
     options = filter_options options, field
     data = {}
 
     if options.is_a? String
       data = { "options-card": options }
-      options = Array.wrap(filter_param(field)).map { |p| [p.cardname, p] }
+      options = Array.wrap(filter_param(field)).map do |val|
+        select_filter_option val, view
+      end
     else
       options = [["--", ""]] + options unless default
     end
@@ -35,6 +37,11 @@ format :html do
 
   def multiselect_filter field, default, options
     select_filter field, default, options, multiple: true
+  end
+
+  def select_filter_option value, view
+    display = view == :name ? value.cardname : nest(value, view)
+    [display, value]
   end
 
   # def autocomplete_filter field, default, options_cardname
