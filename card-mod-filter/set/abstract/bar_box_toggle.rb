@@ -7,7 +7,7 @@ format :html do
 
   def default_filtered_body
     imp = implicit_item_view
-    :"#{imp}_results" if %i[bar box].include? imp&.to_sym
+    %i[bar box].include?(imp&.to_sym) ? :"#{imp}_results" : super
   end
 
   view :bar_results do
