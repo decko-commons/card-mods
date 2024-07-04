@@ -3,9 +3,9 @@ format :html do
 
   def filter_input_field field, default: nil, compact: false
     fc = filter_config field
-    default ||= fc[:default]
+    fc[:default] = default unless default.nil?
     filter_type = (compact && COMPACT_FILTER_TYPES[fc[:type]]) || fc[:type] || :text
-    send "#{filter_type}_filter", field, default, fc[:options]
+    send "#{filter_type}_filter", field, fc
   end
 
   private
@@ -20,14 +20,16 @@ format :html do
     check_or_radio_filter :radio, *args
   end
 
-  def select_filter field, default, options, multiple: false, view: :name
-    options = filter_options options, field
+  def select_filter field, config
+    options = filter_options config[:options], field
+    default = config[:default]
+    multiple = config[:multiple] || false
     data = {}
 
     if options.is_a? String
       data = { "options-card": options }
       options = Array.wrap(filter_param(field)).map do |val|
-        select_filter_option val, view
+        [val.cardname, val]
       end
     else
       options = [["--", ""]] + options unless default
@@ -35,13 +37,8 @@ format :html do
     select_filter_tag field, default, options, multiple: multiple, data: data
   end
 
-  def multiselect_filter field, default, options
-    select_filter field, default, options, multiple: true
-  end
-
-  def select_filter_option value, view
-    display = view == :name ? value.cardname : nest(value, view)
-    [display, value]
+  def multiselect_filter field, config
+    select_filter field, config.merge(multiple: true)
   end
 
   # def autocomplete_filter field, default, options_cardname
@@ -55,15 +52,15 @@ format :html do
   #   #                            "data-options-card": options_card
   # end
 
-  def text_filter field, default, opts
-    opts ||= {}
-    value = filter_param(field) || default
+  def text_filter field, config
+    opts = config[:options] || {}
+    value = filter_param(field) || config[:default]
     text_filter_with_name_and_value filter_input_name(field), value, opts
   end
 
-  def range_filter field, default, opts
-    opts ||= {}
-    default ||= {}
+  def range_filter field, config
+    opts = config[:options] || {}
+    default = config[:default] || {}
     add_class opts, "simple-text range-filter-field"
     wrap_with :div, class: "input-group" do
       [range_sign(:from),
@@ -75,13 +72,13 @@ format :html do
 
   # ~~~~~~~ HELPER METHODS ~~~~~~~~~~~~~~~ #
 
-  def check_or_radio_filter check_or_radio, field, default, options
+  def check_or_radio_filter check_or_radio, field, config
     haml :check_filter,
          field_type: check_or_radio,
          field: field,
          input_name: filter_input_name(field, multi: (check_or_radio == :check)),
-         options: filter_options(options, field),
-         default: Array.wrap(filter_param(field) || default)
+         options: filter_options(config[:options], field),
+         default: Array.wrap(filter_param(field) || config[:default])
   end
 
   def text_filter_with_name_and_value name, value, opts
