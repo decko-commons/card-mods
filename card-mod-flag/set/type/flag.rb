@@ -31,7 +31,7 @@ format :html do
   end
 
   view :credit do
-    wrap_with :div, class: "credit text-muted text-end" do
+    wrap_with :div, class: "credit text-muted" do
       ["Flagged", create_date, create_by_whom].join " "
     end
   end
