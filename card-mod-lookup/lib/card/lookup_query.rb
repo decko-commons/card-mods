@@ -104,7 +104,7 @@ class Card
 
     def sort_by sort_by
       if (id_field = sort_by_cardname[sort_by])
-        sort_by_join sort_by, lookup_table, id_field
+        sort_by_cardname_join sort_by, lookup_table, id_field
       elsif sort_by == :random
         "rand()"
       else
