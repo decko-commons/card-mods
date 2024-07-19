@@ -124,9 +124,11 @@ class Card
       sort_by
     end
 
-    def sort_by_join sort_by, from_table, from_id_field
+    def sort_by_cardname_join sort_by, from_table, from_id_field
       @sort_joins <<
-        "JOIN cards as #{sort_by} ON #{sort_by}.id = #{from_table}.#{from_id_field}"
+        "JOIN cards AS #{sort_by} USE INDEX (cards_key_index) " \
+          "ON #{sort_by}.id = #{from_table}.#{from_id_field} " \
+          "AND #{sort_by}.key IS NOT NULL"
       "#{sort_by}.key"
     end
   end
