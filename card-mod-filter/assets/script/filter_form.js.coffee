@@ -9,6 +9,11 @@ decko.filter =
     updateUrlBarWithFilter form, query
     resetOffCanvas form
 
+  updateUrl: (el) ->
+    form = decko.filter.resultsForm el
+    query = form.data "query"
+    updateUrlBarWithFilter form, query
+
   query: (el) ->
     decko.filter.resultsForm(el).data "query"
 
