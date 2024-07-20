@@ -104,7 +104,7 @@ class Card
 
     def sort_by sort_by
       if (id_field = sort_by_cardname[sort_by])
-        sort_by_join sort_by, lookup_table, id_field
+        sort_by_cardname_join sort_by, lookup_table, id_field
       elsif sort_by == :random
         "rand()"
       else
@@ -124,9 +124,11 @@ class Card
       sort_by
     end
 
-    def sort_by_join sort_by, from_table, from_id_field
+    def sort_by_cardname_join sort_by, from_table, from_id_field
       @sort_joins <<
-        "JOIN cards as #{sort_by} ON #{sort_by}.id = #{from_table}.#{from_id_field}"
+        "JOIN cards AS #{sort_by} USE INDEX (cards_key_index) " \
+          "ON #{sort_by}.id = #{from_table}.#{from_id_field} " \
+          "AND #{sort_by}.key IS NOT NULL"
       "#{sort_by}.key"
     end
   end
