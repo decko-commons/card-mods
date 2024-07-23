@@ -24,7 +24,7 @@ format :html do
     options = filter_options config[:options], field
     default = config[:default]
     multiple = config[:multiple] || false
-    data = {}
+    data = config[:data] || {}
 
     if options.is_a? String
       data = { "options-card": options }
