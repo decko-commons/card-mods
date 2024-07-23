@@ -66,10 +66,12 @@ class Card
         @restrict_to_ids[col] = existing ? (existing & ids) : ids
       end
 
-      def restrict_by_cql suffix, col, cql
+      def restrict_by_cql(suffix, col, cql, name_restriction: false)
         q = Card::Query.new cql.merge(table_suffix: suffix)
         on = "#{filter_table col}.#{col} = #{q.table_alias}.#{cql[:return] || :id}"
-        @joins << "JOIN cards #{q.table_alias} ON #{on}"
+        on += " AND #{q.table_alias}.key is not null" if name_restriction
+        index = "USE INDEX (cards_key_index)" if name_restriction
+        @joins << "JOIN cards #{q.table_alias} #{index} ON #{on}"
         @joins << q.sql_statement.joins
         @conditions << q.sql_statement.where(false)
 
