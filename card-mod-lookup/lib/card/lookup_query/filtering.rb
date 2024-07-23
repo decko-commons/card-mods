@@ -114,8 +114,6 @@ class Card
         value.to_s.split ","
       end
 
-      private
-
       def restrict_by_cql_join q, col, cql
         on = "ON #{filter_table col}.#{col} = #{q.table_alias}.#{cql[:return] || :id}"
         if cql.key?(:name) && cql.keys.size == 1

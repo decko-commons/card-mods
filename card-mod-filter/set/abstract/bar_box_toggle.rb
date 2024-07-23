@@ -3,7 +3,7 @@ include_set Abstract::FilteredBodyToggle
 format :html do
   def filtered_body_views
     { bar_results: { icon: :bars, title: "List" },
-      box_results: { icon: :boxes, title: "Box" } }
+      box_results: { icon: :boxes, title: "Grid" } }
   end
 
   def default_filtered_body
