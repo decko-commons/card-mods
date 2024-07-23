@@ -66,12 +66,9 @@ class Card
         @restrict_to_ids[col] = existing ? (existing & ids) : ids
       end
 
-      def restrict_by_cql(suffix, col, cql, name_restriction: false)
+      def restrict_by_cql suffix, col, cql
         q = Card::Query.new cql.merge(table_suffix: suffix)
-        on = "#{filter_table col}.#{col} = #{q.table_alias}.#{cql[:return] || :id}"
-        on += " AND #{q.table_alias}.key is not null" if name_restriction
-        index = "USE INDEX (cards_key_index)" if name_restriction
-        @joins << "JOIN cards #{q.table_alias} #{index} ON #{on}"
+        @joins << restrict_by_cql_join(q, col, cql)
         @joins << q.sql_statement.joins
         @conditions << q.sql_statement.where(false)
 
@@ -115,6 +112,16 @@ class Card
       def not_ids_value value
         return value if value.is_a? Array
         value.to_s.split ","
+      end
+
+      private
+
+      def restrict_by_cql_join q, col, cql
+        on = "ON #{filter_table col}.#{col} = #{q.table_alias}.#{cql[:return] || :id}"
+        if cql.key?(:name) && cql.keys.size == 1
+          on = "USE INDEX (cards_key_index) #{on} AND #{q.table_alias}.key is not null"
+        end
+        "JOIN cards #{q.table_alias} #{on}"
       end
     end
   end
