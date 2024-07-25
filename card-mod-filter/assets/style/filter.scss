@@ -1,3 +1,13 @@
+$filter-bar-hover-color: $bar-body-hover-color;
+
+.filter-form {
+  .accordion-button {
+    &.collapsed:hover {
+      background-color: $bar-body-hover-color;
+    }
+  }
+}
+
 .filter-and-sort {
   padding-top: 1.5em;
 }
