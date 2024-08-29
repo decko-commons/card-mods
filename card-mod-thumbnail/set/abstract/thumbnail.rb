@@ -58,3 +58,9 @@ format :html do
     ""
   end
 end
+
+format :json do
+  view :select2_option do
+    super().merge html: card.format(:html).render_thumbnail
+  end
+end
