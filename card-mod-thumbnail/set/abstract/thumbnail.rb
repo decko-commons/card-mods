@@ -60,7 +60,7 @@ format :html do
 end
 
 format :json do
-  view :select2_option do
+  view :select2_option, cache: :never do
     super().merge html: card.format(:html).render_thumbnail
   end
 end
