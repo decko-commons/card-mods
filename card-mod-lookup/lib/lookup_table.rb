@@ -36,9 +36,13 @@ module LookupTable
     save!
   end
 
+  def no_refresh
+    ["id"]
+  end
+
   def refresh_fields fields=nil
     keys = fields.present? ? fields : attribute_names
-    keys.delete("id")
+    no_refresh.each { |k| keys.delete k }
     keys.each { |method_name| refresh_value method_name }
   end
 
