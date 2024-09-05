@@ -2,8 +2,7 @@ module LookupTable
   # shared class methods for lookup tables.
   module ClassMethods
     attr_reader :card_column,
-                :card_query, # cql that finds all items in the cards table
-                :no_refresh
+                :card_query # cql that finds all items in the cards table
 
     def for_card cardish
       card_id = Card.id cardish
