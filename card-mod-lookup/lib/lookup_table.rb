@@ -2,6 +2,8 @@
 #
 # TODO: make this a class and have lookup classes inherit from it
 module LookupTable
+  @no_refresh = ["id"]
+
   def self.included host_class
     host_class.extend LookupTable::ClassMethods
     host_class.define_main_fetcher
@@ -38,7 +40,7 @@ module LookupTable
 
   def refresh_fields fields=nil
     keys = fields.present? ? fields : attribute_names
-    keys.delete("id")
+    self.class.no_refresh.each { |k| keys.delete k }
     keys.each { |method_name| refresh_value method_name }
   end
 
