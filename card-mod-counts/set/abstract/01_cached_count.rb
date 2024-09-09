@@ -7,7 +7,7 @@ def self.included host_class
 end
 
 def cached_count
-  @cached_count || hard_cached_count(::Count.fetch_value(self))
+  @cached_count || hard_cached_count(Count.fetch_value(self))
 end
 
 def hard_cached_count value
@@ -24,7 +24,7 @@ def recount
 end
 
 event :update_cached_count, :integrate_with_delay, trigger: :required, priority: 15 do
-  hard_cached_count ::Count.refresh(self)
+  hard_cached_count Count.refresh(self)
 end
 
 # cannot delay event without id
