@@ -1,4 +1,4 @@
-RSpec.describe Count do
+RSpec.describe Card::Count do
   let :card do
     instance_double "count card", compound?: true, recount: 10, left_id: 1, right_id: 5
   end

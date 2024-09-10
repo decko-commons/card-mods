@@ -1,13 +1,13 @@
-.filter-badges._filter-closers
+.filter-badges._filter-closers.d-flex.align-items-center.flex-wrap
   - removables = removable_filters
   - removables.each do |key, value, pretty_value|
-    %a.btn.btn-sm.btn-outline-primary.m-1.ms-0{ "data-remove-filter": [key, value].to_json,
-                                                class: "filter-closer close-filter-#{key}" }
+    %a.btn.btn-outline-primary.m-2.ms-0.me-3.ps-3{ "data-remove-filter": [key, value].to_json,
+                                              class: "filter-closer close-filter-#{key}" }
       = "#{filter_label key}: "
       %span.fw-bold
         = filter_closer_value key, pretty_value
 
       = icon_tag :remove, class: "ms-2"
   - if removables.size > 1
-    %a.clear-filters.m-1.ms-0{ "data-remove-filter": "all", href: "#" }
+    %a.clear-filters.m-1.ms-2.fw-bold{ "data-remove-filter": "all", href: "#" }
       Clear All
