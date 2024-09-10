@@ -18,6 +18,10 @@ $filter-bar-hover-color: $bar-body-hover-color;
   padding: 0.5rem;
 }
 
+.filter-buttons .btn {
+  text-wrap: nowrap;
+}
+
 // Fix to prevent that the dropdown becomes bigger than the area it is inside.
 // happens for example for project filter
 // The reason is that dropdownAutoWidth in script_load_select2.js.coffee sets a fixed
