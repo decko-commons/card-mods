@@ -83,12 +83,19 @@ class Card
 
       def reason_invalid card
         if !card.respond_to? :recount
-          "has to respond to 'recount'"
+          "has no 'recount' method"
         elsif card.compound?
-          "needs left_id" unless left_id(card)
-          "needs right_id" unless right_id(card)
+          reason_compound_card_invalid card
         elsif !card.id
           "needs id"
+        end
+      end
+
+      def reason_compound_card_invalid card
+        if !left_id(card)
+          "needs left_id"
+        elsif !right_id(card)
+          "needs right_id"
         end
       end
     end
