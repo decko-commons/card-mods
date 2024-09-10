@@ -44,7 +44,7 @@ class Card
 
       def add_sort_join rel, join_field
         rel.joins(
-          "LEFT JOIN counts cts " \
+          "LEFT JOIN card_counts cts " \
           "ON #{join_field} = cts.left_id AND cts.right_id = #{Card::BookmarkersID}"
         )
       end
