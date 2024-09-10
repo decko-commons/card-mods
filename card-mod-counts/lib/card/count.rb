@@ -1,4 +1,5 @@
 class Card
+  # store counts of cards in the db
   class Count < ActiveRecord::Base
     def step
       update value + 1
@@ -74,16 +75,21 @@ class Card
       end
 
       def validate_count_card card
-        reason = "has to respond to 'recount'" unless card.respond_to? :recount
-        reason ||=
-          if card.compound?
-            "needs left_id" unless left_id(card)
-            "needs right_id" unless right_id(card)
-          elsif !card.id
-            "needs id"
-          end
-        return unless reason
-        raise Error, card.name, "count not cacheable: card #{card.name} #{reason}"
+        invalidity = reason_invalid card
+        return unless invalidity
+
+        raise Error, card.name, "count not cacheable: card #{card.name} #{invalidity}"
+      end
+
+      def reason_invalid card
+        if !card.respond_to? :recount
+          "has to respond to 'recount'"
+        elsif card.compound?
+          "needs left_id" unless left_id(card)
+          "needs right_id" unless right_id(card)
+        elsif !card.id
+          "needs id"
+        end
       end
     end
   end
