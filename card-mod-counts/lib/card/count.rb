@@ -7,15 +7,17 @@ class Card
       update value + 1
     end
 
-    def update new_value
+    def update card
+      new_value = card.recount
       return if new_value == value
       update! value: new_value
+      card.hard_cached_count value
       new_value
     end
 
     def refresh
       if (c = card)
-        update c.recount
+        update c
       else
         delete
       end

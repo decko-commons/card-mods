@@ -30,7 +30,7 @@ class Card
       def refresh card
         count = find_by_card(card)
         return create(card).value unless count
-        count.update card.recount
+        count.update card
       end
 
       private
