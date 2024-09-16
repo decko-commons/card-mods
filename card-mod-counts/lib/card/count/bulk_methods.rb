@@ -7,7 +7,7 @@ class Card
       end
 
       def each_flagged
-        where(flagged: true).find_in_batches do |group|
+        where(flag: true).find_in_batches do |group|
           group.each do |count|
             yield count
           end

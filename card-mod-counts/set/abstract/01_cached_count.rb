@@ -24,7 +24,7 @@ def recount
 end
 
 event :update_cached_count, :integrate_with_delay, trigger: :required, priority: 15 do
-  hard_cached_count Count.refresh(self)
+  Count.refresh self
 end
 
 # cannot delay event without id
