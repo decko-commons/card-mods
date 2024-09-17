@@ -36,6 +36,13 @@ RSpec.describe Card::Count do
     end
   end
 
+  describe ".flag" do
+    it "flags count" do
+      described_class.flag card
+      expect(described_class.send(:find_by_card, card).flag).to be_truthy
+    end
+  end
+
   describe ".step" do
     context "when existing entry" do
       it "returns 11" do

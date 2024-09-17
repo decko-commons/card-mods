@@ -1,6 +1,7 @@
 class Card
   # store counts of cards in the db
   class Count
+    # Card::Count class methods
     module ClassMethods
       include BulkMethods
 
@@ -32,12 +33,9 @@ class Card
       def create card, flag: false
         validate_count_card card
         args = { left_id: left_id(card),
-                 right_id: right_id(card) }
-        if flag
-          args.merge! flag: true, value: 1
-        else
-          args[:value] = card.recount
-        end
+                 right_id: right_id(card),
+                 flag: flag,
+                 value: (flag ? 1 : card.recount) }
         count = new args
         count.save!
         count

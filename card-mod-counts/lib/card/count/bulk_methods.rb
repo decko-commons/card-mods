@@ -1,9 +1,10 @@
 class Card
   # store counts of cards in the db
   class Count
+    # Card::Count bulk methods
     module BulkMethods
       def refresh_flagged
-        each_flagged &:refresh
+        each_flagged(&:refresh)
       end
 
       def each_flagged
