@@ -1,8 +1,10 @@
 RSpec.describe Card::Count do
   let :card do
-    instance_double "count card", compound?: true, recount: 10, left_id: 1, right_id: 5
+    instance_double "count card",
+                    left_id: 1, right_id: 5,
+                    compound?: true, recount: 10, hard_cached_count: true
   end
-  let(:create_count) { described_class.create(card) }
+  let(:create_count) { described_class.send :create, card }
 
   describe ".create" do
     it "has count 10" do
@@ -10,27 +12,27 @@ RSpec.describe Card::Count do
     end
   end
 
-  describe ".fetch_value" do
+  describe ".value" do
     context "when existing entry" do
       it "returns 10" do
         create_count
-        expect(described_class.fetch_value(card)).to eq 10
+        expect(described_class.value(card)).to eq 10
       end
     end
 
     context "when new entry" do
       it "returns 10" do
-        expect(described_class.fetch_value(card)).to eq 10
+        expect(described_class.value(card)).to eq 10
       end
     end
   end
 
   describe ".refresh" do
     it "returns 15" do
-      expect(described_class.fetch_value(card)).to eq 10
+      expect(described_class.value(card)).to eq 10
       allow(card).to receive(:recount).and_return 15
       described_class.refresh card
-      expect(described_class.fetch_value(card)).to eq 15
+      expect(described_class.value(card)).to eq 15
     end
   end
 

@@ -4,7 +4,8 @@ class Card
     extend ClassMethods
 
     def step
-      update! value + 1
+      update! value: value + 1
+      value
     end
 
     def recount card
