@@ -9,11 +9,8 @@ class Card
     end
 
     def recount card
-      new_value = card.recount
-      return if new_value == value
-      update! value: new_value, flag: false
+      update! value: card.recount, flag: false
       card.hard_cached_count value
-      new_value
     end
 
     def refresh

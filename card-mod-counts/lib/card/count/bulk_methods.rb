@@ -11,6 +11,7 @@ class Card
           group.each do |count|
             yield count
           end
+          Card::Cache.reset_soft
         end
       end
     end
