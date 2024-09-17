@@ -10,7 +10,7 @@ class Card
     def update card
       new_value = card.recount
       return if new_value == value
-      update! value: new_value
+      update! value: new_value, flag: false
       card.hard_cached_count value
       new_value
     end
