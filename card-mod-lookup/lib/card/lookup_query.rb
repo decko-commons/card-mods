@@ -40,19 +40,17 @@ class Card
 
     # @return args for AR's where method
     def lookup_conditions
-      condition_sql([@conditions.join(" AND ")] + @values)
+      return "true = false" if @empty_result
+
+      condition_sql [@conditions.join(" AND ")] + @values
     end
 
-    # TODO: support optionally returning lookup objects
-
-    # @return array of metric answer card objects
-    #   if filtered by missing values then the card objects
-    #   are newly instantiated and not in the database
+    # @return [Array]
     def run
       @empty_result ? [] : main_results
     end
 
-    # @return [Array]
+    # @return [Integer]
     def count
       # we need the id because some joins distort the count
       @empty_result ? 0 : main_query.select("#{lookup_table}.id").distinct.count
