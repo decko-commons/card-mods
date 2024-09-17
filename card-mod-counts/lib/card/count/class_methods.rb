@@ -33,7 +33,11 @@ class Card
         validate_count_card card
         args = { left_id: left_id(card),
                  right_id: right_id(card) }
-        flag ? args[:flag] = true : args[:value] = card.recount
+        if flag
+          args.merge! flag: true, value: 1
+        else
+          args[:value] = card.recount
+        end
         count = new args
         count.save!
         count
