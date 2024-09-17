@@ -40,7 +40,11 @@ class Card
 
     # @return args for AR's where method
     def lookup_conditions
-      condition_sql([@conditions.join(" AND ")] + @values)
+      if @empty_result
+        "true = false"
+      else
+        condition_sql([@conditions.join(" AND ")] + @values)
+      end
     end
 
     # TODO: support optionally returning lookup objects

@@ -7,7 +7,7 @@
 # @example count for topic cards the metrics that are tagged with the topic
 # via a +topic card
 #   include_set Abstract::ListRefCachedCount, type_to_count: :metric,
-#                                             list_field: :wikirate_topic
+#                                             list_field: :topic
 
 include_set Abstract::SearchCachedCount
 
