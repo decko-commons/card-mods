@@ -7,7 +7,7 @@ def self.included host_class
 end
 
 def cached_count
-  @cached_count || hard_cached_count(Count.fetch_value(self))
+  @cached_count || hard_cached_count(Count.value(self))
 end
 
 def hard_cached_count value
@@ -23,14 +23,12 @@ def recount
   count
 end
 
-event :update_cached_count, :integrate_with_delay, trigger: :required, priority: 15 do
-  Count.refresh self
+def flag_cached_count
+  Count.flag self
 end
 
-# cannot delay event without id
-# TODO: fix or explain better
-def update_cached_count_when_ready
-  send "update_cached_count#{'_without_callbacks' if new?}"
+def refresh_cached_count
+  Count.refresh self
 end
 
 module ClassMethods
@@ -60,7 +58,7 @@ module ClassMethods
   def define_recount_event set, event_name, event_args
     set.class_eval do
       event event_name, :after_integrate, event_args do
-        Array.wrap(yield(self)).compact.each(&:update_cached_count_when_ready)
+        Array.wrap(yield(self)).compact.each(&:flag_cached_count)
       end
     end
   end
@@ -69,7 +67,7 @@ module ClassMethods
     changed_set = set.to_s.tr(":", "_").underscore
     count_set = to_s.tr(":", "_").underscore
     on_actions = on.present? ? "_on_#{Array.wrap(on).join '_'}" : nil
-    :"update_cached_count_for_#{count_set}_triggered_by_#{changed_set}#{on_actions}"
+    :"flag_cached_count_for_#{count_set}_triggered_by_#{changed_set}#{on_actions}"
   end
 end
 

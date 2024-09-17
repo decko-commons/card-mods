@@ -4,36 +4,40 @@ class Card
     module ClassMethods
       include BulkMethods
 
-      def create card
-        validate_count_card card
-        count = new left_id: left_id(card),
-                    right_id: right_id(card),
-                    value: card.recount
-        count.save!
-        count
-      end
-
-      def fetch_value card
+      def value card
         find_value_by_card(card) || create(card).value
       end
+
+      def step card
+        count = find_by_card card
+        count ? count.step : create(card).value
+      end
+
+      def refresh card
+        count = find_by_card card
+        count ? count.recount(card) : create(card).value
+      end
+
+      def flag card
+        count = find_by_card card
+        count ? count.flag : create(card, flag: true)
+      end
+
+      private
 
       def fetch card
         find_by_card(card) || create(card)
       end
 
-      def step card
-        count = find_by_card(card)
-        return create(card).value unless count
-        count.step
+      def create card, flag: false
+        validate_count_card card
+        args = { left_id: left_id(card),
+                 right_id: right_id(card) }
+        flag ? args[:flag] = true : args[:value] = card.recount
+        count = new args
+        count.save!
+        count
       end
-
-      def refresh card
-        count = find_by_card(card)
-        return create(card).value unless count
-        count.update card
-      end
-
-      private
 
       def find_by_card card
         where_card(card).take

@@ -4,10 +4,10 @@ class Card
     extend ClassMethods
 
     def step
-      update value + 1
+      update! value + 1
     end
 
-    def update card
+    def recount card
       new_value = card.recount
       return if new_value == value
       update! value: new_value, flag: false
@@ -17,10 +17,14 @@ class Card
 
     def refresh
       if (c = card)
-        update c
+        recount c
       else
         delete
       end
+    end
+
+    def flag
+      update! flag: true
     end
 
     def card
