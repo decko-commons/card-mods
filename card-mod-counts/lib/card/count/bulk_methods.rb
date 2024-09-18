@@ -3,11 +3,13 @@ class Card
   class Count
     # Card::Count bulk methods
     module BulkMethods
+      # flag counts for all combinations of left_ids and right_ids
       def flag_all left_ids, right_ids, increment: 0
         flag_all_existing left_ids, right_ids, increment
         flag_all_missing left_ids, right_ids, (increment.positive? ? increment : 0)
       end
 
+      # refresh counts for each flagged answer
       def refresh_flagged
         each_flagged(&:refresh)
       end
@@ -42,7 +44,7 @@ class Card
 
       def each_flagged &block
         where(flag: true).find_in_batches do |group|
-          group.each &block
+          group.each(&block)
           Card::Cache.reset_soft
         end
       end
