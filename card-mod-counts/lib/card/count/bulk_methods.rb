@@ -26,7 +26,7 @@ class Card
           left_ids.each_slice(1000) do |slice|
             exist = where(left_id: slice, right_id: right_id).pluck :left_id
             missing = slice - exist
-            insert_missing_counts missing, right_id, increment
+            insert_missing missing, right_id, increment
           end
         end
       end
