@@ -13,10 +13,16 @@ for sharks to date is an override of the `:count` view and a `CQL` extension (se
 
 ## Database
 
-Installing the mod will add a `counts` table. It mimics the cards table structure by
+Installing the mod will add a `card_counts` table. It mimics the cards table structure by
 storing `value` for a unique `left_id` and `right_id`. No card with those two ids is
 required; counts are often stored for virtual cards.
 
+## Background jobs
+
+You will need a cron job or other background mechanism to run `rake card:count:refresh` 
+at regular intervals. A typical use is to add a script that calls this rake task to 
+`/etc/cron.hourly`. It may often be wise to ensure the call times out before it is
+called again.
 
 ## Abstract Sets
 
