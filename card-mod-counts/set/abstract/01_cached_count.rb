@@ -23,8 +23,12 @@ def recount
   count
 end
 
-def flag_cached_count
-  Count.flag self
+def update_cached_count
+  if Cardio.config.card_count == :flag
+    Count.flag self
+  else
+    Count.refresh self
+  end
 end
 
 def refresh_cached_count
@@ -58,7 +62,7 @@ module ClassMethods
   def define_recount_event set, event_name, event_args
     set.class_eval do
       event event_name, :after_integrate, event_args do
-        Array.wrap(yield(self)).compact.each(&:flag_cached_count)
+        Array.wrap(yield(self)).compact.each(&:update_cached_count)
       end
     end
   end
@@ -67,7 +71,7 @@ module ClassMethods
     changed_set = set.to_s.tr(":", "_").underscore
     count_set = to_s.tr(":", "_").underscore
     on_actions = on.present? ? "_on_#{Array.wrap(on).join '_'}" : nil
-    :"flag_cached_count_for_#{count_set}_triggered_by_#{changed_set}#{on_actions}"
+    :"recount_#{count_set}_triggered_by_#{changed_set}#{on_actions}"
   end
 end
 
