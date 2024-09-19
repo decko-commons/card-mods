@@ -19,7 +19,8 @@ required; counts are often stored for virtual cards.
 
 ## Background jobs
 
-You will need a cron job or other background mechanism to run `rake card:count:refresh` 
+To move counting into the background, you can use `config.card_count = :flag` and
+use a cron job or other background mechanism to run `rake card:count:refresh` 
 at regular intervals. A typical use is to add a script that calls this rake task to 
 `/etc/cron.hourly`. It may often be wise to ensure the call times out before it is
 called again.
