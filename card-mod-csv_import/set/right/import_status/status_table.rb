@@ -65,7 +65,7 @@ format :html do
   end
 
   def mapped_link id, text=nil
-    text ||= Card.fetch_name id
+    text ||= id.cardname
     modal_link text, path: { mark: id, view: :accordion_bar }, size: :xl
   end
 
