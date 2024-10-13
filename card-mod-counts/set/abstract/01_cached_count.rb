@@ -11,7 +11,7 @@ def cached_count
 end
 
 def hard_cached_count value
-  Card.cache.hard&.write_attribute key, :cached_count, value
+  Card.cache.shared&.write_attribute key, :cached_count, value
   @cached_count = value
 end
 

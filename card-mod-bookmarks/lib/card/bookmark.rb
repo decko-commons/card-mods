@@ -52,7 +52,7 @@ class Card
       private
 
       def cache
-        Card.cache.soft
+        Card.cache.temp
       end
 
       def restrict_to_current_ids bookmarked
