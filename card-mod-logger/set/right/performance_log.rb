@@ -45,8 +45,8 @@ def add_csv_entry page, wbench_data, runs
     File.open(csv_path, 'a') { |f| f.puts csv_line }
   end
 
-  if left != Card[:all]
-    all = Card.fetch "#{Card[:all].name}+#{Card[:performance_log].name}", :new=>{}
+  if left != :all.card
+    all = Card.fetch :all, :performance_log, :new=>{}
     all.add_csv_entry page, wbench_data, runs
   end
 end
