@@ -33,7 +33,7 @@ format :html do
   private
 
   def filter_label_from_name field
-    Card.fetch_name(field) { field.to_s.sub(/^\*/, "").titleize }
+    Codename.name(field) || field.to_s.sub(/^\*/, "").titleize
   end
 
   def filter_closer_value field, value

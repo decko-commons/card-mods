@@ -45,7 +45,7 @@ class Card
       def each_flagged &block
         where(flag: true).find_in_batches do |group|
           group.each(&block)
-          Card::Cache.reset_soft
+          Card::Cache.reset_temp
         end
       end
     end
