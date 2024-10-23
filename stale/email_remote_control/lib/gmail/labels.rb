@@ -23,10 +23,9 @@ module Gmail
     end
     
     # Returns +true+ when given label defined. 
-    def exists?(label)
+    def exist?(label)
       all.include?(label)
     end
-    alias :exist? :exists?
     
     # Creates given label in your account.
     def create(label)

@@ -45,7 +45,7 @@
 
 
     %tbody
-      - card.map[map_type].each do |name_in_file, cardid|
+      - card.map[map_type]&.each do |name_in_file, cardid|
         - cardname = cardid&.cardname
         - status = cardname ? :matched : :unmatched
         %tr._import-map-item.import-map-item{ "data-status": status,

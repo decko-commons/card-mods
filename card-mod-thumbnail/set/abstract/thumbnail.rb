@@ -2,23 +2,23 @@ include_set Abstract::Media
 
 format :html do
   # a linked image with a title and subtitle
-  view :thumbnail do
+  view :thumbnail, cache: :yes do
     # voo.show :thumbnail_link
     thumbnail
   end
 
-  view :thumbnail_minimal do
+  view :thumbnail_minimal, cache: :yes do
     voo.hide! :thumbnail_subtitle
     voo.hide! :thumbnail_link
     thumbnail
   end
 
-  view :thumbnail_no_link do
+  view :thumbnail_no_link, cache: :yes do
     voo.hide :thumbnail_link
     thumbnail
   end
 
-  view :thumbnail_no_subtitle do
+  view :thumbnail_no_subtitle, cache: :yes do
     voo.hide :thumbnail_subtitle
     thumbnail
   end
