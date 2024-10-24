@@ -15,7 +15,7 @@ class Card
 
     def refresh
       if (c = card)
-        recount c
+        recount(c).tap { c.expire }
       else
         delete
       end

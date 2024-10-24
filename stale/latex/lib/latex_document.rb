@@ -228,7 +228,7 @@ module LatexDocument
   end
 
   def ensure_home
-    FileUtils.mkpath home unless Dir.exists? home
+    FileUtils.mkpath home unless Dir.exist? home
   end
 
   def get_cited_biblabels
