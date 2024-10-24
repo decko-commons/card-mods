@@ -5,7 +5,7 @@ include_set Abstract::AceEditor
 add_attributes :ignore_tex_errors
 attr_accessor :ignore_tex_errors
 
-if Card::Codename.exists? :survey
+if Card::Codename.exist? :survey
   LATEX_TYPE_IDS = [Card::SurveyID, Card::LatexID, Card::ProblemID,
                     Card::DefinitionID]
 end

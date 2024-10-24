@@ -12,7 +12,7 @@ module LookupTable
   end
 
   def card
-    @card ||= Card.fetch send(card_column), look_in_trash: true
+    @card ||= Card.fetch card_id, look_in_trash: true
   end
 
   def card_id
