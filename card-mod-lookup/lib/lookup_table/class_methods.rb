@@ -53,7 +53,7 @@ module LookupTable
     end
 
     def refresh_entry fields, card_id
-      if Card.exists? card_id
+      if Card.exist? card_id
         create_or_update card_id, *fields
       else
         delete_for_card card_id

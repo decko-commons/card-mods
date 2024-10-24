@@ -66,7 +66,9 @@ class Card
 
     def main_results
       # puts "SQL: #{lookup_relation.to_sql}"
-      lookup_relation.map(&:card)
+      ids = lookup_relation.map(&:card_id)
+      Cache.populate_ids ids
+      ids.map(&:card)
     end
 
     private
