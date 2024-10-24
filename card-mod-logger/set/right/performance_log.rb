@@ -1,6 +1,6 @@
 def log_dir
   dir = File.join File.dirname(Decko.paths['log'].existent.first), 'performance'
-  Dir.mkdir dir unless Dir.exists? dir
+  Dir.mkdir dir unless Dir.exist? dir
   dir
 end
 
