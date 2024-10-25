@@ -65,13 +65,16 @@ class Card
     end
 
     def main_results
-      # puts "SQL: #{lookup_relation.to_sql}"
-      ids = lookup_relation.map(&:card_id)
-      Cache.populate_ids ids
-      ids.map(&:card)
+      relation_to_ids(lookup_relation).map(&:card)
     end
 
     private
+
+    def relation_to_ids relation
+      relation.map(&:card_id).tap do |ids|
+        Cache.populate_ids ids
+      end
+    end
 
     def sort_and_page
       relation = yield
