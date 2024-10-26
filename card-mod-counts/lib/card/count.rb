@@ -22,6 +22,7 @@ class Card
         delete
       end
     rescue StandardError
+      Rails.logger.info "count refresh failed"
     end
 
     def flag
