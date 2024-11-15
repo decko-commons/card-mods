@@ -24,7 +24,7 @@ $(document).ready ->
   $('body').on 'click', '._save-mapping', () ->
     $(".tab-pane-import_status_tab").html ""
 
-    tab = $(".TYPE-answer_import.page-view > .tabbable > .nav > .nav-item:nth-child(2) > .nav-link")
+    tab = $(".TYPE-record_import.page-view > .tabbable > .nav > .nav-item:nth-child(2) > .nav-link")
     tab.addClass("load")
 
   # handle metric name selection (new text, new hidden value, new value editor)
