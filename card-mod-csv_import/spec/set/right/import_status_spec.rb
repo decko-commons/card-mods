@@ -42,7 +42,7 @@ RSpec.describe Card::Set::Right::ImportStatus do
 
   describe "#generate!" do
     # TODO: reenable after record eating works
-    # (test assumes original content was created when records already existed)
+    # (test assumes original content was created when import items already existed)
     xit "generates a fresh status hash based on mappings/validations alone" do
       initial_content_hash = card_subject.content_hash
       card_subject.update_items
