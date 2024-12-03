@@ -17,15 +17,15 @@ But to work, these CQL queries must be translated into SQL and executed,
 and when a database grows large, it can become quite expensive to execute all
 the implied self joins.
 
-For example, consider the use case that first inspired this code: _answers_ on
-wikirate.org. Wikirate is a site that collects answers to questions about 
-companies. A given answer is a response to a given metric for a given year
+For example, consider the use case that first inspired this code: _records_ on
+wikirate.org. Wikirate is a site that collects records to questions about 
+companies. A given record is a response to a given metric for a given year
 for a given company. When you consider all the kinds of companies and metrics
 and metric designers that Wikirate supports, you can imagine the queries 
 becoming quite complex if we have to re-join the cards table to itself every
 time we want to consider a different variable.
 
-The solution was to make a "lookup" table for answers that employs much more
+The solution was to make a "lookup" table for records that employs much more
 conventional relational database design. 
 
 _An increasingly common Decko pattern is to design structures organically and

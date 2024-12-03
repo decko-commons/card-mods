@@ -33,7 +33,7 @@ module LookupTable
       lookup.refresh(*fields)
     end
 
-    # @param ids [Array<Integer>] ids of answers in the answer table (NOT card ids)
+    # @param ids [Array<Integer>] ids of records in the lookup table (NOT card ids)
     def update_by_ids ids, *fields
       Array(ids).each do |id|
         next unless (entry = find_by_id(id))
@@ -45,7 +45,7 @@ module LookupTable
       for_card(cardish)&.destroy
     end
 
-    # @param ids [Integer, Array<Integer>] card ids of metric answer cards
+    # @param ids [Integer, Array<Integer>] card ids of lookup cards
     def refresh ids=nil, *fields
       Array(ids).compact.each do |ma_id|
         refresh_entry fields, ma_id
