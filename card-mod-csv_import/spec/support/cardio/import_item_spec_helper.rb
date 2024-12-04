@@ -32,7 +32,7 @@ module Cardio
       yield
     end
 
-    # TODO: generalize for use in imports that aren't answer imports
+    # TODO: generalize for use in imports that aren't record imports
     def default_map
       default_item_hash.each_with_object({}) do |(column, val), hash|
         next if column.in? %i[value comment]
