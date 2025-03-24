@@ -41,8 +41,7 @@ $(window).ready ->
     e.preventDefault()
 
   $("body").on "click", "._filter-closers a", (e) ->
-    link = $(this)
-    removeFromQuery link
+    removeFromQuery $(this)
     decko.filter.refilter this
     e.preventDefault()
 
@@ -71,9 +70,9 @@ $(window).ready ->
     e.preventDefault()
 
   $("body").on "click", "._filtered-results-header ._quick-filter-link", (e) ->
-    console.log "woot"
-    debugger
-
+    addToQuery $(this)
+    decko.filter.refilter this
+    e.preventDefault()
 
 resetOffCanvas = (el) ->
   ocbody = decko.filter.findInFilteredContent el, ".offcanvas-body"
@@ -98,12 +97,25 @@ removeFromQuery = (link) ->
   else
     removeSingleFilter query.filter, remove[0], remove[1]
 
+addToQuery = (link) ->
+  query = decko.filter.query link
+  add = link.data "filter"
+  addSingleFilter query.filter, Object.keys(add)[0], Object.values(add)[0]
+
 removeSingleFilter = (filter, key, value) ->
   if Array.isArray filter[key]
     i = filter[key].indexOf value
     filter[key].splice i, 1
   else
     delete filter[key]
+
+addSingleFilter = (filter, key, value) ->
+  console.log "addSingleFilter: #{filter}, #{key}, #{value}"
+  if Array.isArray filter[key]
+    filter[key].push value
+  else
+    filter[key] = value
+
 
 #  $("body").on "click", "a.card-paging-link", ->
 #    id = $(this).slot().attr("id")
