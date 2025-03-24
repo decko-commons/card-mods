@@ -5,10 +5,12 @@ format :html do
   # including prototypes, filters, sorting, "More", and reset
 
   view :compact_filter_form, cache: :never, template: :haml
-  view :filter_sort_dropdown, cache: :never, template: :haml
   view :compact_quick_filters, cache: :never, template: :haml
 
   # ~~~~ FILTER RESULTS
+
+  view :quick_filters, cache: :never, template: :haml
+  view :filter_sort_dropdown, cache: :never, template: :haml
 
   view :filtered_content do
     wrap true, class: "_filtered-content nodblclick" do
@@ -118,11 +120,13 @@ format :html do
   end
 
   def quick_filter_item hash, filter_key
+    icon = hash.delete :icon
     {
       text: (hash.delete(:text) || hash[filter_key]),
       class: css_classes(hash.delete(:class),
-                         "_compact-filter-link quick-filter-by-#{filter_key}"),
-      filter: JSON(hash[:filter] || hash)
+                         "_quick-filter-link quick-filter-by-#{filter_key}"),
+      filter: JSON(hash[:filter] || hash),
+      icon: (icon || icon_tag(filter_key))
     }
   end
 

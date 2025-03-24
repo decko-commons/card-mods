@@ -117,7 +117,6 @@ decko.compactFilter = (el) ->
 
   @updateUrlBar = () ->
 
-
   @update = ()->
     @form.submit()
     @updateQuickLinks()
@@ -129,7 +128,7 @@ decko.compactFilter = (el) ->
 
   @updateQuickLinks = ()->
     widget = this
-    links = @quickFilter.find "._compact-filter-link"
+    links = @quickFilter.find "._quick-filter-link"
     links.addClass "active"
     links.each ->
       link = $(this)

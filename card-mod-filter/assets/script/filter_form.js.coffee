@@ -70,6 +70,11 @@ $(window).ready ->
     decko.filter.refilter this
     e.preventDefault()
 
+  $("body").on "click", "._filtered-results-header ._quick-filter-link", (e) ->
+    console.log "woot"
+    debugger
+
+
 resetOffCanvas = (el) ->
   ocbody = decko.filter.findInFilteredContent el, ".offcanvas-body"
   ocbody.parent().offcanvas "hide"

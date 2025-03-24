@@ -1,0 +1,15 @@
+- if (quick_filters = quick_filter_list).present?
+  .quick-filter._quick-filter.mb-2
+
+    //= icon_tag :quick_filter, "filter-section-icon"
+    .quick-filter-links.d-flex.flex-wrap
+      - quick_filters.each do |hash|
+        - f = quick_filter_item hash.clone, hash.keys.first
+        %a.btn.btn-outline-secondary.mb-2.me-2.text-nowrap{ "data-filter": f[:filter],
+                                      href: "#",
+                                      class: f[:class],
+                                      title: "Quick Filter: #{f[:text]}" }
+          = f[:icon]
+          %span.px-1
+            = f[:text]
+      = custom_quick_filters
