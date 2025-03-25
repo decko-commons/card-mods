@@ -100,7 +100,7 @@ removeFromQuery = (link) ->
 addToQuery = (link) ->
   query = decko.filter.query link
   add = link.data "filter"
-  addSingleFilter query.filter, Object.keys(add)[0], Object.values(add)[0]
+  addSingleFilter query.filter, add[0], add[1]
 
 removeSingleFilter = (filter, key, value) ->
   if Array.isArray filter[key]

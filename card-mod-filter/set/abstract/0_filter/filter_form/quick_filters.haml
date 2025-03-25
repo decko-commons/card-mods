@@ -4,11 +4,13 @@
     //= icon_tag :quick_filter, "filter-section-icon"
     .quick-filter-links.d-flex.flex-wrap
       - quick_filters.each do |hash|
-        - f = quick_filter_item hash.clone, hash.keys.first
-        %a.btn.btn-outline-secondary.mb-2.me-2.text-nowrap{ "data-filter": f[:filter],
-                                      href: "#",
-                                      class: f[:class],
-                                      title: "Quick Filter: #{f[:text]}" }
+        - f = quick_filter_item hash.clone
+        - filter_key = f[:active] ? "data-remove-filter" : "data-filter"
+
+        %a.mb-2.me-2.text-nowrap{ filter_key => f[:filter],
+                                  href: "#",
+                                  class: f[:class],
+                                  title: "Quick Filter: #{f[:text]}" }
           = f[:icon]
           %span.px-1
             = f[:text]
