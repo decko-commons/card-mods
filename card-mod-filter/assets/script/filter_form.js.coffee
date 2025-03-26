@@ -70,7 +70,11 @@ $(window).ready ->
     e.preventDefault()
 
   $("body").on "click", "._filtered-results-header ._quick-filter-link", (e) ->
-    addToQuery $(this)
+    link = $(this)
+    if link.data "filter"
+      addToQuery $(this)
+    else
+      removeFromQuery $(this)
     decko.filter.refilter this
     e.preventDefault()
 
@@ -103,6 +107,7 @@ addToQuery = (link) ->
   addSingleFilter query.filter, add[0], add[1]
 
 removeSingleFilter = (filter, key, value) ->
+  value = value[0] if Array.isArray value
   if Array.isArray filter[key]
     i = filter[key].indexOf value
     filter[key].splice i, 1
@@ -112,7 +117,7 @@ removeSingleFilter = (filter, key, value) ->
 addSingleFilter = (filter, key, value) ->
   console.log "addSingleFilter: #{filter}, #{key}, #{value}"
   if Array.isArray filter[key]
-    filter[key].push value
+    filter[key].push value[0]
   else
     filter[key] = value
 

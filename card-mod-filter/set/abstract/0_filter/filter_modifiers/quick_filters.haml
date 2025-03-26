@@ -1,13 +1,12 @@
-- if (quick_filters = quick_filter_list).present?
+- if quick_filter_items.present?
   .quick-filter._quick-filter.mb-2
 
     //= icon_tag :quick_filter, "filter-section-icon"
     .quick-filter-links.d-flex.flex-wrap
-      - quick_filters.each do |hash|
-        - f = quick_filter_item hash.clone
+      - quick_filter_items.each do |f|
         - filter_key = f[:active] ? "data-remove-filter" : "data-filter"
 
-        %a.mb-2.me-2.text-nowrap{ filter_key => f[:filter],
+        %a.mb-2.me-2.text-nowrap{ filter_key => JSON(f[:filter]),
                                   href: "#",
                                   class: f[:class],
                                   title: "Quick Filter: #{f[:text]}" }

@@ -5,11 +5,9 @@ format :html do
   # including prototypes, filters, sorting, "More", and reset
 
   view :compact_filter_form, cache: :never, template: :haml
-  view :compact_quick_filters, cache: :never, template: :haml
 
   # ~~~~ FILTER RESULTS
 
-  view :quick_filters, cache: :never, template: :haml
   view :filter_sort_dropdown, cache: :never, template: :haml
 
   view :filtered_content do
@@ -38,7 +36,6 @@ format :html do
   view :offcanvas_filters, template: :haml, cache: :never
   view :filtered_results_header, template: :haml, cache: :never
   view :open_filters_button, template: :haml
-  view :filter_closers, cache: :never, template: :haml
   view :filtered_results_stats, cache: :never do
     labeled_badge count_with_params, "Results"
   end
@@ -119,52 +116,6 @@ format :html do
     JSON default_filter_hash
   end
 
-  def quick_filter_item hash
-    filter_key = hash.keys.first
-    klass = hash.delete :class
-
-    quick_filter_item_value do
-      {
-        text: (hash.delete(:text) || hash[filter_key]),
-        icon: (hash.delete(:icon) || icon_tag(filter_key)),
-        class: css_classes(klass, "_quick-filter-link quick-filter-by-#{filter_key} ")
-      }
-    end
-  end
-
-  def quick_filter_active? key, test_value
-    return false unless (active_value = filter_hash[key])
-
-    if active_value.is_a? Array
-      active_value.include? test_value
-    else
-      active_value == test_value
-    end
-  end
-
-  def quick_filter_item_value
-    yield.tap do |hash|
-      filter = (hash[:filter] || hash).to_a.first
-      if quick_filter_active? filter.first, filter.last
-        hash[:active] = true
-        hash[:class] << active_quick_filter_class
-      else
-        hash[:class] << inactive_quick_filter_class
-      end
-      hash[:filter] = JSON filter
-    end
-  end
-
-  # for override
-  def active_quick_filter_class
-    "btn btn-secondary"
-  end
-
-  # for override
-  def inactive_quick_filter_class
-    "btn btn-outline-secondary"
-  end
-
   # for override
   def quick_filter_list
     []
@@ -174,6 +125,8 @@ format :html do
   def custom_quick_filters
     ""
   end
+
+  private
 
   def active_filter? field
     if filter_keys_from_params.present?
