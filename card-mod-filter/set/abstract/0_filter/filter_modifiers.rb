@@ -30,17 +30,19 @@ format :html do
   def each_removable_filter
     filter_hash&.each_with_object([]) do |(key, val), arr|
       each_removable_filter_value key, val do |value|
-        yield key, value, arr
+        yield key, value, arr if removable_filter_value? key, value
       end
     end
   end
 
   def each_removable_filter_value key, val
-    return if val.blank? || filter_config(key)[:default] == val
-
     Array.wrap(val).each do |value|
       yield value unless empty_filter_value_hash?(value) || quick_filter?(key, value)
     end
+  end
+
+  def removable_filter_value? key, val
+    val.present? && filter_config(key)[:default] != val
   end
 
   def empty_filter_value_hash? value
