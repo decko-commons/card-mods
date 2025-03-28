@@ -29,11 +29,17 @@ format :html do
 
   def each_removable_filter
     filter_hash&.each_with_object([]) do |(key, val), arr|
-      next if val.blank? || filter_config(key)[:default] == val
-      Array.wrap(val).each do |v|
-        next if empty_filter_value_hash?(v) || quick_filter?(key, v)
-        yield key, v, arr
+      each_removable_filter_value key, val do |value|
+        yield key, value, arr
       end
+    end
+  end
+
+  def each_removable_filter_value key, val
+    return if val.blank? || filter_config(key)[:default] == val
+
+    Array.wrap(val).each do |value|
+      yield value unless empty_filter_value_hash?(value) || quick_filter?(key, value)
     end
   end
 
@@ -74,14 +80,20 @@ format :html do
   end
 
   def quick_filter_active? filter
+    active_filter_key filter do |active_value, test_value|
+      if active_value.is_a? Array
+        active_value.include? Array.wrap(test_value).first
+      else
+        active_value == test_value
+      end
+    end
+  end
+
+  def active_filter_key filter
     key, test_value = filter
     return false unless (active_value = filter_hash[key] || default_filter_hash[key])
 
-    if active_value.is_a? Array
-      active_value.include? Array.wrap(test_value).first
-    else
-      active_value == test_value
-    end
+    yield active_value, test_value
   end
 
   def normalize_quick_filter_item_value filter
