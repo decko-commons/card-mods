@@ -10,6 +10,10 @@ format :html do
       end
   end
 
+  def filter_value_array? category
+    try("filter_#{category}_type").in? %i[check multiselect]
+  end
+
   def filter_option_values category
     options = send "filter_#{category}_options"
     options.is_a?(Hash) ? options.values : options
