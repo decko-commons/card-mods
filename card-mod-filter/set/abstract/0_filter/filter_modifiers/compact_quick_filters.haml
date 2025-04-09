@@ -4,7 +4,7 @@
     = icon_tag :quick_filter, "filter-section-icon"
     .quick-filter-links.d-flex.flex-wrap
       - quick_filters.each do |hash|
-        - f = quick_filter_item hash.clone, hash.keys.first
+        - f = quick_filter_item hash.clone
         %a{ "data-filter": f[:filter],
             href: "#",
             class: f[:class],
