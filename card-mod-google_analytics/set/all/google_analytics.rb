@@ -1,5 +1,3 @@
-require "staccato"
-
 event :track_page, before: :show_page, when: :track_page_from_server? do
   track_page!
 end
