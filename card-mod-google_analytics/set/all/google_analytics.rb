@@ -1,5 +1,8 @@
+require "faraday"
+
 event :track_page, before: :show_page, when: :track_page_from_server? do
-  track_page!
+  # track_page!
+  puts tracker_options
 end
 
 def track_page!
@@ -24,11 +27,19 @@ end
 def tracker_options
   r = Env.controller.request
   {
-    path: r.path,
-    host: Env.host,
-    title: name,
-    user_id: Auth.current_id,
-    user_ip: r.remote_ip
+    cardtype: type_name,
+    cardtype_id: type_id,
+    card_id: id,
+    card_name: name,
+    # status_code: "XXXX",
+    profile_type:,
+    user_type:,
+    limit: Env.params[:limit],
+    # error_message:,
+    api_key: Auth.api_keys.first,
+    query_string: Env.request.query_string,
+    client:,
+    response_time:,
   }
 end
 
