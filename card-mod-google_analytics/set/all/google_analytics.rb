@@ -2,11 +2,11 @@ require "faraday"
 
 event :track_page, before: :show_page, when: :track_page_from_server? do
   # track_page!
-  puts tracker_options
+  puts tracker_event_paramaters
 end
 
 def track_page!
-  tracker.pageview tracker_options
+  tracker&.pageview tracker_options
 end
 
 def google_analytics_keys
@@ -16,6 +16,7 @@ def google_analytics_keys
 end
 
 def tracker
+  return nil
   tracker_key && ::Staccato.tracker(tracker_key) # , nil, ssl: true
 end
 
