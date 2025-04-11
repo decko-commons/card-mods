@@ -24,22 +24,20 @@ def tracker_key
   Card.config.google_analytics_tracker_key || google_analytics_keys.first
 end
 
-def tracker_options
+def tracker_event_parameters
   r = Env.controller.request
   {
     cardtype: type_name,
     cardtype_id: type_id,
     card_id: id,
     card_name: name,
-    # status_code: "XXXX",
-    profile_type:,
-    user_type:,
     limit: Env.params[:limit],
-    # error_message:,
     api_key: Auth.api_keys.first,
-    query_string: Env.request.query_string,
-    client:,
-    response_time:,
+    query_string: r.query_string,
+    # status_code: "XXXX",
+    # error_message:,
+    # client:,
+    # response_time:,
   }
 end
 
