@@ -4,6 +4,14 @@ event :create_alias_upon_rename, :finalize,
   subcard name_before_act, type_code: :alias, content: name
 end
 
+event :delete_alias_upon_delete, :prepare_to_store, on: :delete do
+  aliases.each &:delete
+end
+
+def aliases
+  Card.search type: :alias, refer_to: id
+end
+
 # actual aliases override this in narrower sets.
 def alias?
   false
