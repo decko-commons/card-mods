@@ -5,7 +5,7 @@ event :create_alias_upon_rename, :finalize,
 end
 
 event :delete_alias_upon_delete, :prepare_to_store, on: :delete do
-  aliases.each &:delete
+  aliases.each(&:delete)
 end
 
 def aliases

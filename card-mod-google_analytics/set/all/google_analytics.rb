@@ -16,8 +16,8 @@ def google_analytics_keys
 end
 
 def tracker
-  return nil
-  tracker_key && ::Staccato.tracker(tracker_key) # , nil, ssl: true
+  nil
+  # tracker_key && ::Staccato.tracker(tracker_key) # , nil, ssl: true
 end
 
 # can have separate keys for web and API
