@@ -1,11 +1,12 @@
-require "staccato"
+require "faraday"
 
 event :track_page, before: :show_page, when: :track_page_from_server? do
-  track_page!
+  # track_page!
+  puts tracker_event_paramaters
 end
 
 def track_page!
-  tracker.pageview tracker_options
+  tracker&.pageview tracker_options
 end
 
 def google_analytics_keys
@@ -15,7 +16,8 @@ def google_analytics_keys
 end
 
 def tracker
-  tracker_key && ::Staccato.tracker(tracker_key) # , nil, ssl: true
+  nil
+  # tracker_key && ::Staccato.tracker(tracker_key) # , nil, ssl: true
 end
 
 # can have separate keys for web and API
@@ -23,14 +25,20 @@ def tracker_key
   Card.config.google_analytics_tracker_key || google_analytics_keys.first
 end
 
-def tracker_options
+def tracker_event_parameters
   r = Env.controller.request
   {
-    path: r.path,
-    host: Env.host,
-    title: name,
-    user_id: Auth.current_id,
-    user_ip: r.remote_ip
+    cardtype: type_name,
+    cardtype_id: type_id,
+    card_id: id,
+    card_name: name,
+    limit: Env.params[:limit],
+    api_key: Auth.api_keys.first,
+    query_string: r.query_string,
+    # status_code: "XXXX",
+    # error_message:,
+    # client:,
+    # response_time:,
   }
 end
 
