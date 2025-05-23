@@ -45,9 +45,7 @@ format :html do
   end
 
   view :filtered_body, cache: :never do
-    view = params[:filtered_body]
-    view = default_filtered_body unless view.present?
-    render view
+    render filtered_body_view
   end
 
   # for override
@@ -57,6 +55,11 @@ format :html do
 
   before(:select_item) { class_up "card-slot", "_filter-result-slot" }
   view :select_item, cache: :never, wrap: :slot, template: :haml
+
+  def filtered_body_view
+    view = params[:filtered_body]
+    view.present? ? view : default_filtered_body
+  end
 
   def default_filtered_body
     :core
@@ -74,7 +77,10 @@ format :html do
       "accept-charset": "UTF-8",
       "data-remote": true,
       "data-slot-selector": "._filter-result-slot",
-      "data-query": { filter: filter_hash }.to_json
+      "data-query": {
+        filter: filter_hash,
+        filtered_body: filtered_body_view
+      }.to_json
     }
   end
 
