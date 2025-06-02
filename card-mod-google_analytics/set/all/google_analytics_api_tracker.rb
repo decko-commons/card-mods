@@ -29,8 +29,8 @@ end
 private
 
 def api_tracker_client_id
-  Digest::SHA256.hexdigest Auth.current_id.to_s +
-    Cardio.config.google_analytics_api_tracker_salt
+  Digest::SHA256.hexdigest(Auth.current_id.to_s +
+                           Cardio.config.google_analytics_api_tracker_salt)
 end
 
 def api_tracker_connection
@@ -67,7 +67,8 @@ def api_tracker_body
 end
 
 def api_tracker_status_code
-
+  # tudu
+  200
 end
 
 def api_tracker_event_params
