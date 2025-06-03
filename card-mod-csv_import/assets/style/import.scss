@@ -1,7 +1,10 @@
 
+.import-status-body .tab-pane {
+  overflow: scroll;
+}
+
 table.import-status-table {
-  max-width: 100%;
-  overflow: hidden;
+  width: auto !important;
   td {
     overflow: hidden;
     white-space: nowrap;

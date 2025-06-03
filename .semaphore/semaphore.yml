@@ -24,7 +24,7 @@ global_job_config:
       - cp .semaphore/Gemfile .
       - git submodule update --init --recursive
 
-      - cache delete bundle-gems # occasionally delete
+      # - cache delete bundle-gems # occasionally delete
       - cache restore bundle-gems
       - bundle update # note: gem updates can cause failures
       - cache store bundle-gems ~/bundle

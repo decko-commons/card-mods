@@ -3,9 +3,10 @@ source "http://rubygems.org"
 CARD_MODS_DIR = ENV["CARD_MODS_REPO_PATH"].freeze
 DECKO_DIR = "#{CARD_MODS_DIR}/.semaphore/decko".freeze
 
-def card_mods_in dir, glob
+def card_mods_in dir, glob, except: nil
   Dir.chdir dir do
     Dir.glob(glob).each do |mod|
+      next if except && mod.match?(except)
       mod = "card-mod-#{mod}" unless mod.match?(/^card-mod/)
       gem mod
     end
@@ -22,7 +23,7 @@ gem "mysql2", '~> 0.5'
 gem "thin"
 
 path "#{DECKO_DIR}/mod" do
-  card_mods_in "#{DECKO_DIR}/mod", "*"
+  card_mods_in "#{DECKO_DIR}/mod", "*", except: "platypus"
 end
 
 path "#{DECKO_DIR}/support" do
