@@ -67,27 +67,29 @@ def api_tracker_body
 end
 
 def api_tracker_status_code
-  # tudu
-  200
+  Env.controller.format.error_status || 200
+end
+
+def api_tracker_result_count
+  results = Env.controller.format.instance_variable_get("@search_with_params")
+  results.present? ? results.count : ""
+end
+
+def api_tracker_error_message
+  Env.controller.card.format(:text).error_messages.join "; "
 end
 
 def api_tracker_event_params
   r = Env.controller.request
-  # {
-  #   limit: Env.params[:limit],
-  #   # status_code: "XXXX",
-  #   # error_message:,
-  #   # client:,
-  #   # response_time:,
-  # }
 
   {
     cardtype: type_name,
     cardtype_id: type_id,
     card_id: id,
     card_name: name,
-    status_code: 200,
-    result_count: 25,
+    status_code: api_tracker_status_code,
+    result_count: api_tracker_result_count,
+    error_message: api_tracker_error_message,
     query_params: r.query_string,
     client: r.user_agent,
     engagement_time_msec: 1
