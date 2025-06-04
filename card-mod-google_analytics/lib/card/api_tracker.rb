@@ -1,6 +1,7 @@
 require "faraday"
 
 class Card
+  # supports tracking api requests with Google Analytics measurement id
   class ApiTracker
     attr_reader :event
 
