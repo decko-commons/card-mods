@@ -91,7 +91,6 @@ class Card
 
       def debug?
         config :debug
-        true
       end
 
       def connection
