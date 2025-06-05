@@ -1,0 +1,5 @@
+en:
+  google_analytics_api_key_generate_with_tracker: "Generate API Key and Allow Analytics"
+  google_analytics_api_key_regenerate_with_tracker: "Regenerate API Key and Allow Analytics"
+  google_analytics_api_key_generate_without_tracker: "Generate API Key (No Analytics)"
+  google_analytics_api_key_regenerate_without_tracker: "Regenerate API Key (No Analytics)"
