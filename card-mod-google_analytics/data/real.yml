@@ -2,3 +2,5 @@
 - :name: "*google analytics key"
   :codename: google_analytics_key
   :type: phrase
+- :name: API tracker
+  :codename: api_tracker
