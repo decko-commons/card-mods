@@ -1,7 +1,7 @@
-delegate :api_tracker_card, :to => :account_card
+delegate :api_tracker_card, to: :account_card
 
 format :html do
-  delegate :api_tracker_card, :to => :card
+  delegate :api_tracker_card, to: :card
 
   view :current_and_tracker_status, unknown: true, template: :haml
 
@@ -21,9 +21,11 @@ format :html do
   end
 
   def generate_button_text
-    key = "google_analytics_api_key" +
-      (card.content.present? ? "_regenerate" : "_generate") +
-      (voo.explicit_show?(:analytics) ? "_with_tracker" : "_without_tracker")
+    key = ["google_analytics_api_key_",
+           ("re" if card.content.present?),
+           "generate_with",
+           ("out" unless voo.explicit_show? :analytics),
+           "_tracker"].compact.join
     t :"#{key}"
   end
 
