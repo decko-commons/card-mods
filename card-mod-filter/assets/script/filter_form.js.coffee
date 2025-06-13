@@ -4,6 +4,7 @@ decko.filter =
   refilter: (el) ->
     form = decko.filter.resultsForm el
     query = form.data "query"
+    query["refilter"] = true
     url = decko.path form.attr("action") + "?" + $.param(query)
     form.slot().slotReload url
     updateUrlBarWithFilter form, query
