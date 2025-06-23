@@ -1,5 +1,5 @@
 format :html do
-  view :filter_bars, cache: :never, template: :haml
+  view :filter_bars, cache: :never, template: :haml, wrap: :slot
 
   # ~~~~ Compact (inline) sort and filter ui
   # including prototypes, filters, sorting, "More", and reset
