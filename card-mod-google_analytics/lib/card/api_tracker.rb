@@ -59,7 +59,7 @@ class Card
     end
 
     def format_params
-      format.api_tracker_event_params
+      format&.api_tracker_event_params || {}
     end
 
     class << self
