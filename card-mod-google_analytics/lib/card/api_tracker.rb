@@ -86,7 +86,7 @@ class Card
       def track?
         Cardio.config.track_api_requests &&
           Auth.api_request? &&
-          Auth.current.account.api_tracker == "yes"
+          Auth.current.account&.api_tracker == "yes"
       end
 
       def debug?
