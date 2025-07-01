@@ -59,7 +59,7 @@ class Card
     end
 
     def format_params
-      format.api_tracker_event_params
+      format&.api_tracker_event_params || {}
     end
 
     class << self
@@ -86,7 +86,7 @@ class Card
       def track?
         Cardio.config.track_api_requests &&
           Auth.api_request? &&
-          Auth.current.account.api_tracker == "yes"
+          Auth.current.account&.api_tracker == "yes"
       end
 
       def debug?
