@@ -87,7 +87,7 @@ format do
 
   def sort_by_from_param
     # :sort is DEPRECATED
-    valid_sort_param(:sort_by)|| valid_sort_param(:sort)
+    valid_sort_param(:sort_by) || valid_sort_param(:sort)
   end
 
   def sort_dir_from_param

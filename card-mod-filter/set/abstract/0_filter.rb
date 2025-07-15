@@ -100,7 +100,11 @@ format do
     return unless (param = params[key]).present?
 
     param = param.to_sym
-    param if param.in? valid_sort_options
+    if param.in? valid_sort_options
+      param
+    else
+      raise Error::UserError, "Invalid Sort Param: #{param}"
+    end
   end
 
   def valid_sort_options
