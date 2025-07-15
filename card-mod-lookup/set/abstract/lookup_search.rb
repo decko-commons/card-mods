@@ -62,32 +62,12 @@ format do
 
   def sort_dir
     return unless sort_by
-    @sort_dir ||= safe_sql_param("sort_dir") || default_sort_dir(sort_by)
-  end
 
-  def default_sort_dir sort_by
-    if default_desc_sort_dir.include? sort_by.to_sym
-      :desc
-    else
-      :asc
-    end
-  end
-
-  def default_desc_sort_dir
-    []
+    @sort_dir ||= sort_dir_from_param || default_sort_dir(sort_by)
   end
 
   def sort_by
     @sort_by ||= sort_by_from_param || default_sort_option
-  end
-
-  def default_sort_option
-    # override
-  end
-
-  def sort_by_from_param
-    # :sort is DEPRECATED
-    safe_sql_param(:sort_by)&.to_sym || safe_sql_param(:sort)&.to_sym
   end
 
   # not a CQL search
@@ -97,8 +77,35 @@ format do
 
   private
 
+  def default_sort_dir sort_by
+    if default_desc_sort_dir.include? sort_by.to_sym
+      :desc
+    else
+      :asc
+    end
+  end
+
+  def sort_by_from_param
+    # :sort is DEPRECATED
+    valid_sort_param(:sort_by)|| valid_sort_param(:sort)
+  end
+
+  def sort_dir_from_param
+    param = params["sort_dir"]
+    param if param.in? %w[asc desc]
+  end
+
   def secondary_sort
     @secondary_sort ||= secondary_sort_hash[sort_by]
+  end
+
+  # for override
+  def default_desc_sort_dir
+    []
+  end
+
+  def default_sort_option
+    # override
   end
 
   # for override
