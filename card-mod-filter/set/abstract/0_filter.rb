@@ -97,8 +97,9 @@ format do
   private
 
   def valid_sort_param key
-    return unless (param = params[key].to_sym).present?
+    return unless (param = params[key]).present?
 
+    param = param.to_sym
     param if param.in? valid_sort_options
   end
 
