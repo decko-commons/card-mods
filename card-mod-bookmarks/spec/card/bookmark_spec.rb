@@ -11,7 +11,7 @@ RSpec.describe Card::Bookmark do
     end
 
     it "is not true for bot" do
-      Card::Auth.signin Card::WagnBotID
+      Card::Auth.signin Card::DeckoBotID
       expect(described_class.ok?).to be_falsey
     end
   end

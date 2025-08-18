@@ -97,7 +97,7 @@ total: [\d.]+ms\n/
     it 'handles procs and integers for method log options' do  # use method arguments and procs to customize log messages
       log_method( :instance => { :name= => { :title => proc { |method_context| "change name '#{method_context.name}' to"}, :message=>1 } } )
       expect_logger_to_receive_once(/change name 'c1' to: Alfred/) do
-        "c1".card.name = 'Alfred'
+        "c1".card.name = "Alfred"
       end
     end
 

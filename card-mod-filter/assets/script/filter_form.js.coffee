@@ -4,6 +4,7 @@ decko.filter =
   refilter: (el) ->
     form = decko.filter.resultsForm el
     query = form.data "query"
+    query["refilter"] = true
     url = decko.path form.attr("action") + "?" + $.param(query)
     form.slot().slotReload url
     updateUrlBarWithFilter form, query
@@ -41,8 +42,7 @@ $(window).ready ->
     e.preventDefault()
 
   $("body").on "click", "._filter-closers a", (e) ->
-    link = $(this)
-    removeFromQuery link
+    removeFromQuery $(this)
     decko.filter.refilter this
     e.preventDefault()
 
@@ -70,6 +70,15 @@ $(window).ready ->
     decko.filter.refilter this
     e.preventDefault()
 
+  $("body").on "click", "._filtered-results-header ._quick-filter-link", (e) ->
+    link = $(this)
+    if link.data "filter"
+      addToQuery $(this)
+    else
+      removeFromQuery $(this)
+    decko.filter.refilter this
+    e.preventDefault()
+
 resetOffCanvas = (el) ->
   ocbody = decko.filter.findInFilteredContent el, ".offcanvas-body"
   ocbody.parent().offcanvas "hide"
@@ -93,12 +102,26 @@ removeFromQuery = (link) ->
   else
     removeSingleFilter query.filter, remove[0], remove[1]
 
+addToQuery = (link) ->
+  query = decko.filter.query link
+  add = link.data "filter"
+  addSingleFilter query.filter, add[0], add[1]
+
 removeSingleFilter = (filter, key, value) ->
+  value = value[0] if Array.isArray value
   if Array.isArray filter[key]
     i = filter[key].indexOf value
     filter[key].splice i, 1
   else
     delete filter[key]
+
+addSingleFilter = (filter, key, value) ->
+  console.log "addSingleFilter: #{filter}, #{key}, #{value}"
+  if Array.isArray filter[key]
+    filter[key].push value[0]
+  else
+    filter[key] = value
+
 
 #  $("body").on "click", "a.card-paging-link", ->
 #    id = $(this).slot().attr("id")

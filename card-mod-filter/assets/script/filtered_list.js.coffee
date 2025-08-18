@@ -1,5 +1,5 @@
 # FILTERED LIST / ITEMS INTERFACE
-# (fancy pointer ui)
+# (fancy list editing ui)
 
 $.extend decko,
   # singular

@@ -9,16 +9,20 @@ class Card
     end
 
     def recount card
-      update! value: card.recount, flag: false
-      card.hard_cached_count value
+      Error.rescue_card card do
+        update! value: card.recount, flag: false
+        card.hard_cached_count value
+      end
     end
 
     def refresh
       if (c = card)
-        recount c
+        recount(c).tap { c.expire }
       else
         delete
       end
+    rescue StandardError
+      Rails.logger.info "count refresh failed"
     end
 
     def flag
@@ -27,9 +31,9 @@ class Card
 
     def card
       if right_id == -1
-        left_id.card
+        left_id&.card
       else
-        Card.fetch([left_id, right_id])
+        Card.fetch [left_id, right_id]
       end
     end
   end

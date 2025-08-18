@@ -9,7 +9,7 @@ class Card
         flag_all_missing left_ids, right_ids, (increment.positive? ? increment : 0)
       end
 
-      # refresh counts for each flagged answer
+      # refresh counts for each flagged item
       def refresh_flagged
         each_flagged(&:refresh)
       end

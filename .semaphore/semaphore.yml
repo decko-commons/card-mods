@@ -18,12 +18,13 @@ global_job_config:
   prologue:
     commands:
       - checkout # semaphore does git checkout and cds into card-mods
-      - sem-version ruby 3.0.2
+      - sem-version ruby 3.2.4
       - gem update --system
       - alias be='bundle exec'
       - cp .semaphore/Gemfile .
       - git submodule update --init --recursive
 
+      # - cache delete bundle-gems # occasionally delete
       - cache restore bundle-gems
       - bundle update # note: gem updates can cause failures
       - cache store bundle-gems ~/bundle

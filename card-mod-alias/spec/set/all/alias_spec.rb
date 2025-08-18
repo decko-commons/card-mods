@@ -12,6 +12,14 @@ RSpec.describe Card::Set::All::Alias do
     end
   end
 
+  describe "event: delete_alias_upon_delete" do
+    specify do
+      Card.create! name: "TT", type: :alias, content: "T"
+      simple_card.delete!
+      expect("TT".card).to be_nil
+    end
+  end
+
   describe "#auto_alias_checkbox" do
     specify do
       expect_view(:name_form).to have_tag(".auto-alias")

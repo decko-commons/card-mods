@@ -38,7 +38,10 @@ format do
 
   # current filters in key value pairs
   def filter_hash
-    @filter_hash ||= filter_hash_from_params || voo.filter || default_filter_hash
+    @filter_hash ||=
+      filter_hash_from_params ||
+      voo.filter ||
+      (Env.params[:refilter].present? ? {} : default_filter_hash)
   end
 
   def filter_hash_from_params
@@ -53,12 +56,7 @@ format do
   end
 
   def sort_param
-    @sort_param ||= safe_sql_param :sort_by
-  end
-
-  def safe_sql_param key
-    param = Env.params[key]
-    param.blank? ? nil : Card::Query.safe_sql(param)
+    @sort_param ||= valid_sort_param(:sort_by)
   end
 
   # list of keys of available filters
@@ -76,26 +74,6 @@ format do
   # initial values for filtered search
   def default_filter_hash
     {}
-  end
-
-  def removable_filters
-    each_removable_filter do |key, value, array|
-      if value.is_a? Array
-        value.each { |v| array << [key, v, user_friendly_value(v)] }
-      elsif !empty_filter_value_hash? value
-        array << [key, value, user_friendly_value(value)]
-      end
-    end
-  end
-
-  def empty_filter_value_hash? value
-    value.is_a?(Hash) && value.values.present? && !value.values.select(&:present?).any?
-  end
-
-  def each_removable_filter
-    filter_hash&.each_with_object([]) do |(key, val), arr|
-      yield key, val, arr if val.present? && filter_config(key)[:default] != val
-    end
   end
 
   def extra_paging_path_args
@@ -117,6 +95,21 @@ format do
   end
 
   private
+
+  def valid_sort_param key
+    return unless (param = params[key]).present?
+
+    param = param.to_sym
+    if param.in? valid_sort_options
+      param
+    else
+      raise Error::UserError, "Invalid Sort Param: #{param}"
+    end
+  end
+
+  def valid_sort_options
+    sort_options.values
+  end
 
   def user_friendly_value value
     case value

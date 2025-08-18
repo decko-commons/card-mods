@@ -1,14 +1,14 @@
 format :html do
-  view :filter_bars, cache: :never, template: :haml
+  view :filter_bars, cache: :never, template: :haml, wrap: :slot
 
   # ~~~~ Compact (inline) sort and filter ui
   # including prototypes, filters, sorting, "More", and reset
 
   view :compact_filter_form, cache: :never, template: :haml
-  view :filter_sort_dropdown, cache: :never, template: :haml
-  view :compact_quick_filters, cache: :never, template: :haml
 
   # ~~~~ FILTER RESULTS
+
+  view :filter_sort_dropdown, cache: :never, template: :haml
 
   view :filtered_content do
     wrap true, class: "_filtered-content nodblclick" do
@@ -36,7 +36,6 @@ format :html do
   view :offcanvas_filters, template: :haml, cache: :never
   view :filtered_results_header, template: :haml, cache: :never
   view :open_filters_button, template: :haml
-  view :filter_closers, cache: :never, template: :haml
   view :filtered_results_stats, cache: :never do
     labeled_badge count_with_params, "Results"
   end
@@ -46,9 +45,7 @@ format :html do
   end
 
   view :filtered_body, cache: :never do
-    view = params[:filtered_body]
-    view = default_filtered_body unless view.present?
-    render view
+    render filtered_body_view
   end
 
   # for override
@@ -58,6 +55,11 @@ format :html do
 
   before(:select_item) { class_up "card-slot", "_filter-result-slot" }
   view :select_item, cache: :never, wrap: :slot, template: :haml
+
+  def filtered_body_view
+    view = params[:filtered_body]
+    view.present? ? view : default_filtered_body
+  end
 
   def default_filtered_body
     :core
@@ -75,7 +77,10 @@ format :html do
       "accept-charset": "UTF-8",
       "data-remote": true,
       "data-slot-selector": "._filter-result-slot",
-      "data-query": { filter: filter_hash }.to_json
+      "data-query": {
+        filter: filter_hash,
+        filtered_body: filtered_body_view
+      }.to_json
     }
   end
 
@@ -117,15 +122,6 @@ format :html do
     JSON default_filter_hash
   end
 
-  def quick_filter_item hash, filter_key
-    {
-      text: (hash.delete(:text) || hash[filter_key]),
-      class: css_classes(hash.delete(:class),
-                         "_compact-filter-link quick-filter-by-#{filter_key}"),
-      filter: JSON(hash[:filter] || hash)
-    }
-  end
-
   # for override
   def quick_filter_list
     []
@@ -135,6 +131,8 @@ format :html do
   def custom_quick_filters
     ""
   end
+
+  private
 
   def active_filter? field
     if filter_keys_from_params.present?

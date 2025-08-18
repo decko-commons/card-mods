@@ -1,6 +1,6 @@
 def log_dir
   dir = File.join File.dirname(Decko.paths['log'].existent.first), 'performance'
-  Dir.mkdir dir unless Dir.exists? dir
+  Dir.mkdir dir unless Dir.exist? dir
   dir
 end
 
@@ -45,10 +45,9 @@ def add_csv_entry page, wbench_data, runs
     File.open(csv_path, 'a') { |f| f.puts csv_line }
   end
 
-  if left != :all.card
-    all = Card.fetch :all, :performance_log, :new=>{}
-    all.add_csv_entry page, wbench_data, runs
-  end
+  return if left_id == :all.card_id
+
+  :all.fetch(:performance_log, new: {}).add_csv_entry page, wbench_data, runs
 end
 
 format :html do

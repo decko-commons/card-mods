@@ -80,3 +80,8 @@ format do
     card.cached_count
   end
 end
+
+format :html do
+  view(:count_badge, cache: :deep) { super() }
+  view(:count, cache: :yes) { super() }
+end
