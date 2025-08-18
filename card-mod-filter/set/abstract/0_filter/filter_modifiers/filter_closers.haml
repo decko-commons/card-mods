@@ -4,7 +4,7 @@
     %a.btn.btn-outline-primary.m-2.ms-0.me-3.ps-3{ "data-remove-filter": [key, value].to_json,
                                               class: "filter-closer close-filter-#{key}" }
       = "#{filter_label key}: "
-      %span.fw-bold
+      %span.fw-bold{ title: value }
         = filter_closer_value key, pretty_value
 
       = icon_tag :remove, class: "ms-2"
