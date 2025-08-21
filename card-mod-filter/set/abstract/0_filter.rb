@@ -56,12 +56,7 @@ format do
   end
 
   def sort_param
-    @sort_param ||= safe_sql_param :sort_by
-  end
-
-  def safe_sql_param key
-    param = Env.params[key]
-    param.blank? ? nil : Card::Query.safe_sql(param)
+    @sort_param ||= valid_sort_param(:sort_by)
   end
 
   # list of keys of available filters
@@ -100,6 +95,21 @@ format do
   end
 
   private
+
+  def valid_sort_param key
+    return unless (param = params[key]).present?
+
+    param = param.to_sym
+    if param.in? valid_sort_options
+      param
+    else
+      raise Error::UserError, "Invalid Sort Param: #{param}"
+    end
+  end
+
+  def valid_sort_options
+    sort_options.values
+  end
 
   def user_friendly_value value
     case value

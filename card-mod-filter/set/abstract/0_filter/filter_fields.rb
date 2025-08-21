@@ -44,6 +44,10 @@ format :html do
     try("filter_#{field}_closer_value", value) || value
   end
 
+  def filter_closer_label field, value
+    try("filter_#{field}_closer_label", value) || filter_label(field)
+  end
+
   def filter_options raw, field
     case raw
     when Array, String, Name
