@@ -61,9 +61,6 @@ blocks:
       env_vars:
         - name: RAILS_ENV
           value: test
-      prologue:
-        commands:
-          - $CARD_MODS_REPO_PATH/cc-test-reporter before-build
       jobs:
         - name: RSpec
           commands:
