@@ -54,6 +54,10 @@ format :html do
     end
   end
 
+  def export_ok?
+    Card::Auth.signed_in?
+  end
+
   def export_formats
     %i[csv json]
   end
@@ -70,8 +74,22 @@ format :html do
     link_to_card card, format, path: export_link_path_args(format)
   end
 
-  def default_export_link_path
-    path export_link_path_args(default_export_format)
+  def default_export_link_args
+    if export_ok?
+      { href: path(export_link_path_args default_export_format) }
+    else
+      denied_export_link_args
+    end
+  end
+
+  private
+
+  def denied_export_link_args
+    {
+      href: path(view: :denial),
+      class: "slotter",
+      data: { remote: true, "slotter-mode": "modal" }
+    }
   end
 
   def default_export_format
