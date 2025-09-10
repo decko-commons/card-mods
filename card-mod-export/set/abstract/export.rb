@@ -44,6 +44,12 @@ format :json do
   end
 end
 
+format :jsonld do
+  def format_ext
+    "jsonld"
+  end
+end
+
 format :html do
   # don't cache because many export links include filter/sort params
   view :export_links, cache: :never do
@@ -59,7 +65,7 @@ format :html do
   end
 
   def export_formats
-    %i[csv json]
+    %i[csv json jsonld]
   end
 
   def filter_buttons
