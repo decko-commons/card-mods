@@ -13,8 +13,8 @@ global_job_config:
     - name: CARD_LOAD_STRATEGY
       value: tmp_files
   secrets:
-    - name: s3-credentials
-    - name: code-climate-mods
+    - name: cardmods-qlty-coverage
+    - name: cardmods-cypress
   prologue:
     commands:
       - checkout # semaphore does git checkout and cds into card-mods
@@ -31,9 +31,10 @@ global_job_config:
 
       - sem-service start mysql
 
-      # INSTALL CODE CLIMATE REPORTER
-      - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-      - chmod +x ./cc-test-reporter
+      # INSTALL QLTY REPORTER
+      # Assumes $QLTY_COVERAGE_TOKEN is set in the environment
+      - curl https://qlty.sh | sh
+      - source /home/semaphore/.bash_profile
 
       - be decko new monkey --monkey
       - cp .semaphore/Gemfile monkey
@@ -53,7 +54,6 @@ global_job_config:
       # without the following, code climate uses git to get git details.
       # Semaphore uses the merge sha for PRS, so this leads to coverage report failures.
       - if [ $SEMAPHORE_GIT_PR_SHA ]; then export GIT_COMMIT_SHA=$SEMAPHORE_GIT_PR_SHA; fi;
-      - export S3_PATH="s3://deckodev-test/$SEMAPHORE_PROJECT_NAME/$SEMAPHORE_GIT_BRANCH/coverage/$SEMAPHORE_WORKFLOW_ID/"
 
 blocks:
   - name: Unit Tests
@@ -61,9 +61,6 @@ blocks:
       env_vars:
         - name: RAILS_ENV
           value: test
-      prologue:
-        commands:
-          - $CARD_MODS_REPO_PATH/cc-test-reporter before-build
       jobs:
         - name: RSpec
           commands:
@@ -75,8 +72,8 @@ blocks:
         on_pass:
           commands:
             - cd $CARD_MODS_REPO_PATH
-            - ./cc-test-reporter format-coverage --output "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" -t simplecov
-            - aws s3 cp "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" $S3_PATH
+            - qlty coverage publish --incomplete --override-commit-sha $SEMAPHORE_GIT_PR_SHA --override-branch $SEMAPHORE_GIT_BRANCH coverage/.resultset.json
+
 
   - name: Integration Tests
     task:
@@ -92,15 +89,14 @@ blocks:
           - cp -R ../.semaphore/decko/decko/spec/cypress .
           - be decko server -p 5002 &
           # - nvm use 16.0.0
-          - yarn install
+          - yarn install --frozen-lockfile
 
       jobs:
         - name: Cypress
           commands:
             # --key should not be necessary. secrets not working
-            - yarn run cypress run --record
+            - yarn run cypress run --record --reporter junit --reporter-options "mochaFile=/home/semaphore/reports/cypress-output-[hash].xml"
             - pkill -2 -f puma
-            - sleep 5
 
       epilogue:
         always:
@@ -109,11 +105,14 @@ blocks:
         on_pass:
           commands:
             - cd $CARD_MODS_REPO_PATH
-            - ./cc-test-reporter format-coverage --output "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" -t simplecov
-            - aws s3 cp "coverage/codeclimate.$SEMAPHORE_JOB_ID.json" $S3_PATH
-            - aws s3 sync $S3_PATH coverage/
-            - ./cc-test-reporter sum-coverage --output - --parts $(ls -1 coverage/codeclimate.*.json | wc -l) coverage/codeclimate.*.json > coverage/codeclimate.json
-            - ./cc-test-reporter upload-coverage
+            - qlty coverage publish --incomplete --override-commit-sha $SEMAPHORE_GIT_PR_SHA --override-branch $SEMAPHORE_GIT_BRANCH coverage/.resultset.json
+
+  - name: Coverage Report
+    task:
+      jobs:
+        - name: Qlty Coverage
+          commands:
+            - qlty coverage complete --override-commit-sha $SEMAPHORE_GIT_PR_SHA
 
 after_pipeline:
   task:
