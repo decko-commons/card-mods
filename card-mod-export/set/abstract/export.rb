@@ -54,8 +54,9 @@ format :html do
     end
   end
 
+  # for override
   def export_ok?
-    Card::Auth.signed_in?
+    card.ok? :read
   end
 
   def export_formats

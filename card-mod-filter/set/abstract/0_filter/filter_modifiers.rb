@@ -62,6 +62,7 @@ format :html do
       {
         text: (hash.delete(:text) || hash[filter_key]),
         icon: (hash.delete(:icon) || icon_tag(filter_key)),
+        separator: hash.delete(:separator),
         class: css_classes(hash.delete(:class),
                            "_quick-filter-link quick-filter-by-#{filter_key} "),
         filter:  normalize_quick_filter_item_value(hash)

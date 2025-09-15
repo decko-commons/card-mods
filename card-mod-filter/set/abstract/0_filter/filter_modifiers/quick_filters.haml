@@ -6,6 +6,10 @@
       - quick_filter_items.each do |f|
         - filter_key = f[:active] ? "data-remove-filter" : "data-filter"
 
+        - if f[:separator]
+          %span.d-inline-block.me-2.my-1.fs-4
+            |
+
         %a.mb-2.me-2.text-nowrap{ filter_key => JSON(f[:filter]),
                                   href: "#",
                                   class: f[:class],
