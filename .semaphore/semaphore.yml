@@ -72,7 +72,7 @@ blocks:
         on_pass:
           commands:
             - cd $CARD_MODS_REPO_PATH
-            - qlty coverage publish --incomplete --override-commit-sha $SEMAPHORE_GIT_PR_SHA --override-branch $SEMAPHORE_GIT_BRANCH coverage/.resultset.json
+            - qlty coverage publish --incomplete --override-branch $SEMAPHORE_GIT_BRANCH coverage/.resultset.json
 
 
   - name: Integration Tests
@@ -105,14 +105,14 @@ blocks:
         on_pass:
           commands:
             - cd $CARD_MODS_REPO_PATH
-            - qlty coverage publish --incomplete --override-commit-sha $SEMAPHORE_GIT_PR_SHA --override-branch $SEMAPHORE_GIT_BRANCH coverage/.resultset.json
+            - qlty coverage publish --incomplete --override-branch $SEMAPHORE_GIT_BRANCH coverage/.resultset.json
 
   - name: Coverage Report
     task:
       jobs:
         - name: Qlty Coverage
           commands:
-            - qlty coverage complete --override-commit-sha $SEMAPHORE_GIT_PR_SHA
+            - qlty coverage complete
 
 after_pipeline:
   task:
