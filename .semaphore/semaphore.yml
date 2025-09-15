@@ -13,7 +13,7 @@ global_job_config:
     - name: CARD_LOAD_STRATEGY
       value: tmp_files
   secrets:
-    - name: cardmods-qlty-coverage
+    - name: card-mods-qlty-coverage
     - name: cardmods-cypress
   prologue:
     commands:
