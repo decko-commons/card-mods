@@ -70,7 +70,7 @@ class Card
         q = Card::Query.new cql.merge(table_suffix: suffix)
         @joins << restrict_by_cql_join(q, col, cql)
         @joins << q.sql_statement.joins
-        @conditions << q.sql_statement.where(false)
+        @conditions << q.sql_statement.where(explicit: false)
 
         # cql.reverse_merge! return: :id, limit: 0
         # @conditions << "#{filter_table col}.#{col} IN (#{Card::Query.new(cql).sql})"
