@@ -65,7 +65,7 @@ format :html do
   end
 
   def export_formats
-    %i[csv json jsonld]
+    %i[csv json]
   end
 
   def filter_buttons
