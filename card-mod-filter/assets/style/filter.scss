@@ -106,3 +106,18 @@ h2.accordion-header {
 ._filter_container .input-group-btn .btn {
   height: 100%;
 }
+
+.filter-closer {
+  border: 0;
+  margin-right: 1em;
+  max-width: 20em;
+  display: inline-block;
+  white-space: nowrap;
+  .filter-closer-text {
+    display: inline-block;
+    max-width: calc(100% - 2em);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    line-height: normal;
+  }
+}
