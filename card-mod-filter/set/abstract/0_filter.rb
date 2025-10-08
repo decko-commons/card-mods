@@ -51,7 +51,7 @@ format do
     elsif param.to_s == "empty"
       {}
     else
-      Env.hash(param).deep_symbolize_keys
+      valid_filter_options { Env.hash(param).deep_symbolize_keys }
     end
   end
 
@@ -95,6 +95,23 @@ format do
   end
 
   private
+
+  def valid_filter_options
+    return unless (hash = yield).present?
+
+    hash.each do |key, value|
+      if (options = try "filter_#{key}_options").present?
+        next if options.is_a? String
+        values = options.is_a?(Hash) ? options.values : options
+        Array.wrap(value).each do |val|
+          val = val.cardname
+          next if values.include? val
+
+          raise Error::UserError, "Invalid Filter Option for #{key}: #{val}"
+        end
+      end
+    end
+  end
 
   def valid_sort_param key
     return unless (param = params[key]).present?
