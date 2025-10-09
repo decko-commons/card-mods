@@ -100,16 +100,22 @@ format do
     return unless (hash = yield).present?
 
     hash.each do |key, value|
+      next if value.is_a? Hash
       if (options = try "filter_#{key}_options").present?
-        next if options.is_a? String
-        values = options.is_a?(Hash) ? options.values : options
-        Array.wrap(value).each do |val|
-          val = val.cardname
-          next if values.include? val
+        next if options.is_a?(String) || options.is_a?(Symbol)
 
-          raise Error::UserError, "Invalid Filter Option for #{key}: #{val}"
-        end
+        valid_values = options.is_a?(Hash) ? options.values : options
+        validate_filter_option! key, value, valid_values.map(&:to_s)
       end
+    end
+  end
+
+  def validate_filter_option! key, value, valid_values
+    Array.wrap(value).each do |val|
+      val = val.cardname
+      next if valid_values.include? val
+
+      raise Error::UserError, "Invalid Filter Option for #{key}: #{val}"
     end
   end
 
