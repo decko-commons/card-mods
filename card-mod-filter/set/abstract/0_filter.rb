@@ -112,10 +112,10 @@ format do
 
   def validate_filter_option! key, value, options
     options = options.values if options.is_a? Hash
-    valid_values = options.map(&:cardname)
+    valid_values = options.map { |o| o.cardname.key }
 
     Array.wrap(value).each do |val|
-      val = val.cardname
+      val = val.cardname.key
       next if valid_values.include? val
 
       raise Error::UserError, "Invalid Filter Option for #{key}: #{val}"
