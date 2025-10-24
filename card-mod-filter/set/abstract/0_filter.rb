@@ -112,7 +112,7 @@ format do
 
   def validate_filter_option! key, value, options
     options = options.values if options.is_a? Hash
-    valid_values = options.map { |o| o.cardname.key }
+    valid_values = options.map { |o| o.to_name.key }
 
     Array.wrap(value).each do |val|
       val = val.cardname.key
