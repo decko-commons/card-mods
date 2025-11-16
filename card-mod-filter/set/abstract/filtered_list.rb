@@ -80,7 +80,7 @@ format :html do
 
   def filtered_list_item item_card
     nest_item item_card do |rendered, item_view|
-      wrap_item rendered, item_view
+      wrap_item item_card, rendered, item_view
     end
   end
 
